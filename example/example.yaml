@@ -1,0 +1,33 @@
+description: this is an example command
+options:
+  option-a:
+    short: a
+    description: this is an option for root command
+    type: string
+    default: aaa
+  option-b:
+    short: b
+    description: this is an option for root command
+    type: integer
+    default: 1
+  subcommands:
+    sub1:
+      description: this is a sub command
+      options:
+        option-a:
+          short: a
+          description: this is an option for sub1
+          type: float
+          default: 2
+        option-b:
+          short: b
+          description: this is an option for sub1
+          type: boolean
+          default: true
+      args:
+        - name: args-a
+          description: this is an argument for sub1
+          type: string
+        - name: args-b
+          description: this is an argument for sub1
+          type: integer

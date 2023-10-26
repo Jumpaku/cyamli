@@ -1,0 +1,9 @@
+version: "3.5"
+
+services:
+  work:
+    build: "./"
+    working_dir: "/work/"
+    command: ["sleep", "infinity"]
+    volumes:
+      - "../:/work/:delegated"
