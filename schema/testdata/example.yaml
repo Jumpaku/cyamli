@@ -6,7 +6,7 @@ options:
     short: -a
     description: a - this is an option for root command
     type: string
-    default: aaa
+    default: abc
   -option-b:
     short: -b
     description: b - this is an option for root command
@@ -16,7 +16,7 @@ options:
     short: -c
     description: c - this is an option for root command
     type: boolean
-    default: false
+    default: true
   -option-d:
     short: -d
     description: d - this is an option for root command
@@ -42,21 +42,21 @@ arguments:
     variadic: true
 subcommands:
   sub1:
-    description: this is a sub command
+    description: 1 - this is a sub command
     options: {}
     arguments: []
   sub2:
-    description: this is a sub command
+    description: 2 - this is a sub command
     options: {}
     arguments: []
   sub3:
-    description: this is an example command
+    description: 3 - this is a sub command
     options:
       -option-a:
         short: -a
         description: 3 - a - this is an option for root command
         type: string
-        default: aaa
+        default: abc
       -option-b:
         short: -b
         description: 3 - b - this is an option for root command
@@ -66,7 +66,7 @@ subcommands:
         short: -c
         description: 3 - c - this is an option for root command
         type: boolean
-        default: false
+        default: true
       -option-d:
         short: -d
         description: 3 - d - this is an option for root command
@@ -90,3 +90,6 @@ subcommands:
       - name: arg_v
         description: 3 - v - this is an argument for root command
         variadic: true
+    subcommands:
+      sub1: {}
+      sub2: {}

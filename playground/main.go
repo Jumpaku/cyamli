@@ -1,22 +1,17 @@
 package main
 
 import (
-	"cliautor"
-	"cliautor/golang"
-	"io"
+	"cliautor/schema"
 	"log"
 	"os"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
-	exampleYAML, err := io.ReadAll(os.Stdin)
+	schema, err := schema.Load(os.Stdin)
 	if err != nil {
 		log.Panic(err)
 	}
-	schema, err := cliautor.Load(exampleYAML)
-	if err != nil {
-		log.Panic(err)
-	}
-	golang.Generate(schema, os.Stdout)
-
+	spew.Dump(schema)
 }

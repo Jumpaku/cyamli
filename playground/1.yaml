@@ -1,28 +1,6 @@
 name: example
 version: "v1.0.0"
 description: this is an example command
-options:
-  -option-a:
-    short: -a
-    description: a - this is an option for root command
-    type: string
-    default: aaa
-  -option-b:
-    short: -b
-    description: b - this is an option for root command
-    type: integer
-    default: -123
-  -option-c:
-    short: -c
-    description: c - this is an option for root command
-    type: boolean
-    default: false
-  -option-d:
-    short: -d
-    description: d - this is an option for root command
-    type: float
-    default: -123.456
-  -option-e: {}
 arguments:
   - name: arg_a
     description: a - this is an argument for root command
@@ -51,28 +29,6 @@ subcommands:
     arguments: []
   sub3:
     description: this is an example command
-    options:
-      -option-a:
-        short: -a
-        description: 3 - a - this is an option for root command
-        type: string
-        default: aaa
-      -option-b:
-        short: -b
-        description: 3 - b - this is an option for root command
-        type: integer
-        default: -123
-      -option-c:
-        short: -c
-        description: 3 - c - this is an option for root command
-        type: boolean
-        default: false
-      -option-d:
-        short: -d
-        description: 3 - d - this is an option for root command
-        type: float
-        default: -123.456
-      -option-e: {}
     arguments:
       - name: arg_a
         description: 3 - a - this is an argument for root command
