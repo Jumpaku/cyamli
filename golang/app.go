@@ -14,8 +14,8 @@ type InterpretResult[Input any] struct {
 	Input          Input
 }
 
-func InterpretSubcommand(s *cliautor.Schema, args []string) (subcommand *cliautor.Cmd, subcommandPath []string, restArgs []string) {
-	cmd := s.Program.Cmd()
+func InterpretSubcommand(s *cliautor.Schema, args []string) (subcommand *cliautor.Command, subcommandPath []string, restArgs []string) {
+	cmd := s.Program.Command()
 
 	// Extract subcommand path
 	for _, arg := range args {
@@ -29,7 +29,7 @@ func InterpretSubcommand(s *cliautor.Schema, args []string) (subcommand *cliauto
 
 	return cmd, subcommandPath, args[len(subcommandPath):]
 }
-func InterpretInput[Input any](cmd *cliautor.Cmd, restArgs []string) (result Input, err error) {
+func InterpretInput[Input any](cmd *cliautor.Command, restArgs []string) (result Input, err error) {
 	// initialize Options with default values
 	inputRV := reflect.Indirect(reflect.ValueOf(&result))
 	for optName, opt := range cmd.Options {
@@ -89,7 +89,7 @@ type InterpretedValue struct {
 	Value any
 }
 
-func resolveOpt(cmd *cliautor.Cmd, arg string) (val InterpretedValue, err error) {
+func resolveOpt(cmd *cliautor.Command, arg string) (val InterpretedValue, err error) {
 	for optName, opt := range cmd.Options {
 		name, lit, cut := strings.Cut(arg, "=")
 		if optName == name || opt.Short == name {
@@ -111,12 +111,12 @@ func resolveOpt(cmd *cliautor.Cmd, arg string) (val InterpretedValue, err error)
 	return val, fmt.Errorf("fail to resolve specified option %q", arg)
 }
 
-func resolveArg(cmd *cliautor.Cmd, args []string, at int) (val InterpretedValue, err error) {
-	if at >= len(cmd.Args) {
+func resolveArg(cmd *cliautor.Command, args []string, at int) (val InterpretedValue, err error) {
+	if at >= len(cmd.Arguments) {
 		return InterpretedValue{}, fmt.Errorf("too many positional arguments")
 	}
-	val = InterpretedValue{Name: cmd.Args[at].Name}
-	val.Value, err = parseGoValue(cmd.Args[at].Type, cmd.Args[at].Variadic, args[at], args[at:]...)
+	val = InterpretedValue{Name: cmd.Arguments[at].Name}
+	val.Value, err = parseGoValue(cmd.Arguments[at].Type, cmd.Arguments[at].Variadic, args[at], args[at:]...)
 	if err != nil {
 		return val, fmt.Errorf("fail to resolve positional arguments")
 	}
@@ -152,7 +152,7 @@ func PathFullIdentifier(path []string) string {
 		return "Cmd"
 	}
 	titled := lo.Map(path, func(p string, i int) string {
-		return Title(strings.Join(cliautor.Words(p), ""))
+		return Title(strings.Join(cliautor.MakeName(p), ""))
 	})
 	return "Cmd_" + strings.Join(titled, "")
 }

@@ -43,14 +43,14 @@ func (d CLISubCmdData) Identifier() string {
 		return "Cmd"
 	}
 	name := d.Path[len(d.Path)-1]
-	return "Cmd_" + title(strings.Join(cliautor.Words(name), ""))
+	return "Cmd_" + Title(strings.Join(cliautor.MakeName(name), ""))
 }
 
 func (d CLISubCmdData) FullIdentifier() string {
 	if len(d.Path) == 0 {
 		return "Cmd"
 	}
-	titled := lo.Map(d.Path, func(p string, i int) string { return title(strings.Join(cliautor.Words(p), "")) })
+	titled := lo.Map(d.Path, func(p string, i int) string { return Title(strings.Join(cliautor.MakeName(p), "")) })
 	return "Cmd_" + strings.Join(titled, "")
 }
 
@@ -58,7 +58,7 @@ func (d CLISubCmdData) FuncIdentifier() string {
 	if len(d.Path) == 0 {
 		return "Func"
 	}
-	titled := lo.Map(d.Path, func(p string, i int) string { return "Cmd_" + title(strings.Join(cliautor.Words(p), "")) })
+	titled := lo.Map(d.Path, func(p string, i int) string { return "Cmd_" + Title(strings.Join(cliautor.MakeName(p), "")) })
 	return strings.Join(titled, ".") + ".Func"
 }
 
@@ -68,7 +68,7 @@ type CLIOptData struct {
 }
 
 func (d CLIOptData) Identifier() string {
-	titled := lo.Map(cliautor.Words(d.Name), func(p string, i int) string { return title(p) })
+	titled := lo.Map(cliautor.MakeName(d.Name), func(p string, i int) string { return Title(p) })
 	return "Opt_" + strings.Join(titled, "")
 }
 
@@ -94,7 +94,7 @@ func createCLIData(schema *cliautor.Schema) (CLIData, error) {
 	}
 	data.SchemaYAML = fmt.Sprintf("%q", string(schemaYAMLBytes))
 
-	err = walkCmd(nil, schema.Program.Cmd(), func(path []string, cmd *cliautor.Cmd) error {
+	err = walkCmd(nil, schema.Program.Command(), func(path []string, cmd *cliautor.Command) error {
 		cmdData := CLICmdData{
 			CLISubCmdData: CLISubCmdData{Path: path},
 		}
@@ -104,7 +104,7 @@ func createCLIData(schema *cliautor.Schema) (CLIData, error) {
 				GoType: goType(opt.Type),
 			})
 		}
-		for _, arg := range cmd.Args {
+		for _, arg := range cmd.Arguments {
 			cmdData.Args = append(cmdData.Args, CLIArgData{
 				Name:   arg.Name,
 				GoType: goType(arg.Type),
@@ -138,7 +138,7 @@ func createCLIData(schema *cliautor.Schema) (CLIData, error) {
 	return data, nil
 }
 
-func walkCmd(path []string, cmd *cliautor.Cmd, f func(path []string, cmd *cliautor.Cmd) error) error {
+func walkCmd(path []string, cmd *cliautor.Command, f func(path []string, cmd *cliautor.Command) error) error {
 	if err := f(path, cmd); err != nil {
 		return err
 	}
@@ -163,13 +163,4 @@ func goType(t cliautor.Type) string {
 	case cliautor.TypeString, cliautor.TypeUnspecified:
 		return "string"
 	}
-}
-
-func title(w string) string {
-	runes := []rune(strings.ToLower(w))
-	if len(runes) == 0 {
-		return ""
-	}
-	runes[0] += 'A' - 'a'
-	return string(runes)
 }

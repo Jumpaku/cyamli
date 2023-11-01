@@ -9,6 +9,8 @@ require (
 
 require (
 	github.com/Jumpaku/go-assert v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/samber/lo v1.38.1 // indirect
+	github.com/stretchr/testify v1.8.4 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 )
