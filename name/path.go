@@ -12,26 +12,16 @@ func MakePath(s string) Path {
 	runes := []rune{}
 	for _, r := range strings.ToLower(s) {
 		switch {
-		case isUpper(r):
-			if len(runes) > 0 && !isUpper(runes[len(runes)-1]) {
-				runes = append(runes, ' ')
-			}
-			runes = append(runes, r-('A'-'a'))
-		case isLower(r):
-			if len(runes) > 0 && !isLower(runes[len(runes)-1]) {
-				runes = append(runes, ' ')
-			}
-			runes = append(runes, r)
-		case isDigit(r):
-			if len(runes) > 0 && !isDigit(runes[len(runes)-1]) {
-				runes = append(runes, ' ')
-			}
+		case isUpper(r), isLower(r), isDigit(r):
 			runes = append(runes, r)
 		default:
 			if len(runes) > 0 && runes[len(runes)-1] != ' ' {
 				runes = append(runes, ' ')
 			}
 		}
+	}
+	if len(runes) == 0 {
+		return Path{}
 	}
 	return strings.Split(string(runes), " ")
 }
@@ -40,7 +30,7 @@ func (name Path) Join(separator, prefix, suffix string) string {
 	return prefix + strings.Join(name, separator) + suffix
 }
 func (name Path) Append(w string) Path {
-	return append([]string(name), w)
+	return append(append([]string{}, name...), w)
 }
 func (name Path) Map(f func(string) string) Path {
 	return lo.Map(name, func(s string, i int) string { return f(s) })
