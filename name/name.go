@@ -1,4 +1,4 @@
-package cliautor
+package name
 
 import "strings"
 

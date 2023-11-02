@@ -1,7 +1,8 @@
 package golang
 
 import (
-	"cliautor"
+	"cliautor/name"
+	"cliautor/schema"
 	"fmt"
 	"reflect"
 	"strings"
@@ -14,7 +15,7 @@ type InterpretResult[Input any] struct {
 	Input          Input
 }
 
-func InterpretSubcommand(s *cliautor.Schema, args []string) (subcommand *cliautor.Command, subcommandPath []string, restArgs []string) {
+func InterpretSubcommand(s *schema.Schema, args []string) (subcommand *schema.Command, subcommandPath []string, restArgs []string) {
 	cmd := s.Program.Command()
 
 	// Extract subcommand path
@@ -29,7 +30,7 @@ func InterpretSubcommand(s *cliautor.Schema, args []string) (subcommand *cliauto
 
 	return cmd, subcommandPath, args[len(subcommandPath):]
 }
-func InterpretInput[Input any](cmd *cliautor.Command, restArgs []string) (result Input, err error) {
+func InterpretInput[Input any](cmd *schema.Command, restArgs []string) (result Input, err error) {
 	// initialize Options with default values
 	inputRV := reflect.Indirect(reflect.ValueOf(&result))
 	for optName, opt := range cmd.Options {
@@ -89,13 +90,13 @@ type InterpretedValue struct {
 	Value any
 }
 
-func resolveOpt(cmd *cliautor.Command, arg string) (val InterpretedValue, err error) {
+func resolveOpt(cmd *schema.Command, arg string) (val InterpretedValue, err error) {
 	for optName, opt := range cmd.Options {
 		name, lit, cut := strings.Cut(arg, "=")
 		if optName == name || opt.Short == name {
 			val := InterpretedValue{Name: optName}
 			if !cut {
-				if opt.Type == cliautor.TypeBoolean {
+				if opt.Type == schema.TypeBoolean {
 					lit = "false"
 				} else {
 					return val, fmt.Errorf("fail to set value for option %q", optName)
@@ -111,7 +112,7 @@ func resolveOpt(cmd *cliautor.Command, arg string) (val InterpretedValue, err er
 	return val, fmt.Errorf("fail to resolve specified option %q", arg)
 }
 
-func resolveArg(cmd *cliautor.Command, args []string, at int) (val InterpretedValue, err error) {
+func resolveArg(cmd *schema.Command, args []string, at int) (val InterpretedValue, err error) {
 	if at >= len(cmd.Arguments) {
 		return InterpretedValue{}, fmt.Errorf("too many positional arguments")
 	}
@@ -124,20 +125,20 @@ func resolveArg(cmd *cliautor.Command, args []string, at int) (val InterpretedVa
 	return val, nil
 }
 
-func parseGoValue(typ cliautor.Type, variadic bool, str string, variadicStr ...string) (any, error) {
+func parseGoValue(typ schema.Type, variadic bool, str string, variadicStr ...string) (any, error) {
 	if variadic {
 		switch typ {
-		case cliautor.TypeBoolean:
+		case schema.TypeBoolean:
 
-		case cliautor.TypeFloat:
-		case cliautor.TypeInteger:
+		case schema.TypeFloat:
+		case schema.TypeInteger:
 		default:
 		}
 	} else {
 		switch typ {
-		case cliautor.TypeBoolean:
-		case cliautor.TypeFloat:
-		case cliautor.TypeInteger:
+		case schema.TypeBoolean:
+		case schema.TypeFloat:
+		case schema.TypeInteger:
 		default:
 		}
 	}
@@ -152,7 +153,7 @@ func PathFullIdentifier(path []string) string {
 		return "Cmd"
 	}
 	titled := lo.Map(path, func(p string, i int) string {
-		return Title(strings.Join(cliautor.MakeName(p), ""))
+		return name.Title(strings.Join(name.MakeName(p), ""))
 	})
 	return "Cmd_" + strings.Join(titled, "")
 }
