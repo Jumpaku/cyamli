@@ -153,7 +153,7 @@ func PathFullIdentifier(path []string) string {
 		return "Cmd"
 	}
 	titled := lo.Map(path, func(p string, i int) string {
-		return name.Title(strings.Join(name.MakeName(p), ""))
+		return name.Title(strings.Join(name.MakePath(p), ""))
 	})
 	return "Cmd_" + strings.Join(titled, "")
 }

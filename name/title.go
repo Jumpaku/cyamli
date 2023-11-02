@@ -7,6 +7,8 @@ func Title(w string) string {
 	if len(runes) == 0 {
 		return ""
 	}
-	runes[0] += 'A' - 'a'
+	if isLower(runes[0]) {
+		runes[0] += 'A' - 'a'
+	}
 	return string(runes)
 }

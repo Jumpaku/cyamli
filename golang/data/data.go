@@ -1,15 +1,14 @@
 package data
 
 import (
+	"bytes"
+	"cliautor"
 	"cliautor/name"
 	"cliautor/schema"
 	"fmt"
-
-	"github.com/Jumpaku/go-assert"
-	"gopkg.in/yaml.v3"
 )
 
-type CLIData struct {
+type Data struct {
 	Package          string
 	Generator        string
 	GeneratorVersion string
@@ -18,43 +17,43 @@ type CLIData struct {
 	Commands         []Command
 }
 
-func Construct(s *schema.Schema) (CLIData, error) {
-	data := CLIData{
-		Package:          "cmd",
-		Generator:        "cliautor",
-		GeneratorVersion: "0.0.0",
+func Construct(packageName string, s *schema.Schema) (Data, error) {
+	data := Data{
+		Package:          packageName,
+		Generator:        cliautor.Name,
+		GeneratorVersion: cliautor.Version,
 	}
 
-	schemaYAMLBytes, err := yaml.Marshal(s)
-	if err != nil {
-		return CLIData{}, fmt.Errorf("fail to create CLI data: %w", err)
+	buffer := bytes.NewBuffer(nil)
+	if err := s.Save(buffer); err != nil {
+		return Data{}, fmt.Errorf("fail to create CLI data: %w", err)
 	}
-	data.SchemaYAML = fmt.Sprintf("%q", string(schemaYAMLBytes))
+	data.SchemaYAML = fmt.Sprintf("%q", buffer.String())
 
-	err = walkCmd(nil, s.Program.Command(), func(path []string, cmd *schema.Command) error {
+	err := walkCmd(nil, s.Program.Command(), func(path []string, cmd *schema.Command) error {
 		cmdData := Command{Name: path}
 		for optName, opt := range cmd.Options {
 			cmdData.Options = append(cmdData.Options, Option{
-				Name:   name.MakeName(optName),
-				GoType: goType(opt.Type),
+				Name: name.MakePath(optName),
+				Type: opt.Type,
 			})
 		}
 		for _, arg := range cmd.Arguments {
 			cmdData.Arguments = append(cmdData.Arguments, Argument{
-				Name:   name.MakeName(arg.Name),
-				GoType: goType(arg.Type),
+				Name: name.MakePath(arg.Name),
+				Type: arg.Type,
 			})
 		}
 		for subName := range cmd.Subcommands {
 			cmdData.Subcommands = append(cmdData.Subcommands, Subcommand{
-				Name: name.Name(path).Append(subName),
+				Name: name.Path(path).Append(subName),
 			})
 		}
 
 		if len(path) == 0 {
 			data.Program = Program{
 				Version:     s.Program.Version,
-				Name:        s.Program.Name,
+				Name:        name.MakePath(s.Program.Name),
 				Options:     cmdData.Options,
 				Arguments:   cmdData.Arguments,
 				Subcommands: cmdData.Subcommands,
@@ -67,7 +66,7 @@ func Construct(s *schema.Schema) (CLIData, error) {
 	})
 
 	if err != nil {
-		return CLIData{}, fmt.Errorf("fail to create CLI data: %w", err)
+		return Data{}, fmt.Errorf("fail to create CLI data: %w", err)
 	}
 
 	return data, nil
@@ -83,19 +82,4 @@ func walkCmd(path []string, cmd *schema.Command, f func(path []string, cmd *sche
 		}
 	}
 	return nil
-}
-
-func goType(t schema.Type) string {
-	switch t {
-	default:
-		return assert.Unexpected1[string]("unexpected type: %s", t)
-	case schema.TypeBoolean:
-		return "bool"
-	case schema.TypeFloat:
-		return "float64"
-	case schema.TypeInteger:
-		return "int64"
-	case schema.TypeString, schema.TypeUnspecified:
-		return "string"
-	}
 }

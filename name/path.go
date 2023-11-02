@@ -1,10 +1,14 @@
 package name
 
-import "strings"
+import (
+	"strings"
 
-type Name []string
+	"github.com/samber/lo"
+)
 
-func MakeName(s string) Name {
+type Path []string
+
+func MakePath(s string) Path {
 	runes := []rune{}
 	for _, r := range strings.ToLower(s) {
 		switch {
@@ -32,11 +36,14 @@ func MakeName(s string) Name {
 	return strings.Split(string(runes), " ")
 }
 
-func (name Name) Join(separator, prefix, suffix string) string {
+func (name Path) Join(separator, prefix, suffix string) string {
 	return prefix + strings.Join(name, separator) + suffix
 }
-func (name Name) Append(w string) Name {
+func (name Path) Append(w string) Path {
 	return append([]string(name), w)
+}
+func (name Path) Map(f func(string) string) Path {
+	return lo.Map(name, func(s string, i int) string { return f(s) })
 }
 func isUpper(r rune) bool {
 	return 'A' <= r && r <= 'Z'
