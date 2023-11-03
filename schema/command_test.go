@@ -42,6 +42,27 @@ func TestCommand_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "duplicated option name",
+			sut: &schema.Command{
+				Options: map[string]*schema.Option{"-s": {}, "-o": {Short: "-s"}},
+			},
+			shouldErr: true,
+		},
+		{
+			name: "empty options",
+			sut: &schema.Command{
+				Options: map[string]*schema.Option{"-o1": {}, "-o2": {}},
+			},
+			shouldErr: false,
+		},
+		{
+			name: "duplicated option name",
+			sut: &schema.Command{
+				Options: map[string]*schema.Option{"-o": {Short: "-s"}, "-s": {}},
+			},
+			shouldErr: true,
+		},
+		{
 			name: "duplicated option short name",
 			sut: &schema.Command{
 				Options: map[string]*schema.Option{"-o1": {Short: "-s"}, "-o2": {Short: "-s"}},

@@ -14,8 +14,16 @@ type Program struct {
 	Subcommands []Subcommand
 }
 
+func (d Program) NameLiteral() string {
+	return `""`
+}
+
 func (d Program) CLIStructName() string {
 	return "CLI"
+}
+
+func (d Program) CLIFuncMethodChain() string {
+	return "Func"
 }
 
 func (d Program) CLIInputStructName() string {

@@ -117,3 +117,32 @@ func TestCommand_NameLiteral(t *testing.T) {
 		})
 	}
 }
+
+func TestCommand_FuncMethodChain(t *testing.T) {
+	testcases := []struct {
+		sut  data.Command
+		want string
+	}{
+		{
+			sut: data.Command{
+				Name:        name.Path{"cmd", "name", "abc"},
+				Description: "command description",
+			},
+			want: `Sub_Cmd.Sub_Name.Sub_Abc.Func`,
+		},
+		{
+			sut: data.Command{
+				Name:        name.Path{"cmdname"},
+				Description: "command description",
+			},
+			want: `Sub_Cmdname.Func`,
+		},
+	}
+
+	for number, testcase := range testcases {
+		t.Run(fmt.Sprintf("%03d: %#v", number, testcase.sut.Name), func(t *testing.T) {
+			got := testcase.sut.CLIFuncMethodChain()
+			assert.Equal(t, testcase.want, got)
+		})
+	}
+}

@@ -14,16 +14,23 @@ type Command struct {
 }
 
 func (c *Command) Validate() error {
-	optShortNames := map[string]bool{}
+	optNames := map[string]bool{}
 	for name, opt := range c.Options {
 		if err := validateOptionName(name); err != nil {
 			return fmt.Errorf("invalid option name: %s: %w", name, err)
 		}
-		if opt.Short != "" && optShortNames[opt.Short] {
-			return fmt.Errorf("option short name %q duplicated", opt.Short)
-		} else {
-			optShortNames[opt.Short] = true
+		if optNames[name] {
+			return fmt.Errorf("option short %q duplicated", name)
 		}
+		optNames[name] = true
+
+		if opt.Short != "" {
+			if optNames[opt.Short] {
+				return fmt.Errorf("option short name %q duplicated", opt.Short)
+			}
+			optNames[opt.Short] = true
+		}
+
 		if err := opt.Validate(); err != nil {
 			return fmt.Errorf("invalid option: %s: %w", name, err)
 		}
