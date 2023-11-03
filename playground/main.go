@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	err = golang.Generate("cmd", schema, os.Stdout)
+	err = golang.Generate("main", schema, os.Stdout)
 	if err != nil {
 		log.Panic(err)
 	}
