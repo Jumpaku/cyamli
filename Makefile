@@ -6,5 +6,5 @@ help: ## Show help
 
 
 .PHONY: gen-cli
-gen-cli: ## Generates Go CLI for cliautor command
+gen-cli: ## Generates Go CLI for cliautor command.
 	mkdir -p "cmd/cliautor" && go run playground/main.go < playground/cli.yaml > cmd/cliautor/cli.gen.go

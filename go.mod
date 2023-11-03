@@ -4,13 +4,13 @@ go 1.21.0
 
 require (
 	github.com/Jumpaku/go-assert v1.0.0
-	github.com/davecgh/go-spew v1.1.1
 	github.com/goccy/go-yaml v1.11.2
 	github.com/samber/lo v1.38.1
 	github.com/stretchr/testify v1.8.4
 )
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

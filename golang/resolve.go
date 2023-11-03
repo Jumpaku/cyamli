@@ -12,12 +12,18 @@ import (
 	"github.com/Jumpaku/go-assert"
 )
 
-func ResolveSubcommand(s *schema.Schema, args []string) (cmd *schema.Command, subcommandString string, restArgs []string) {
+func NewDefaultFunc[Input any]() func(subcommand []string, input Input) (err error) {
+	return func(subcommand []string, input Input) (err error) {
+		fmt.Printf("subcommand: %q, input: %#v\n", strings.Join(subcommand, " "), input)
+		return nil
+	}
+}
+
+func ResolveSubcommand(s *schema.Schema, args []string) (cmd *schema.Command, subcommand []string, restArgs []string) {
 	assert.Params(len(args) >= 1, "first element of args must be a path of the executable file")
 	cmd = s.Program.Command()
 
 	// Extract subcommand path
-	var subcommand name.Path
 	for _, arg := range args[1:] {
 		if arg == "--" {
 			break
@@ -28,10 +34,10 @@ func ResolveSubcommand(s *schema.Schema, args []string) (cmd *schema.Command, su
 		}
 
 		cmd = found
-		subcommand = subcommand.Append(arg)
+		subcommand = append(subcommand, arg)
 	}
 
-	return cmd, subcommand.Join(" ", "", ""), args[1:][len(subcommand):]
+	return cmd, subcommand, args[1:][len(subcommand):]
 }
 
 func ResolveInput(schemaCommand *schema.Command, restArgs []string, inputPtr any) error {

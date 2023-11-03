@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"bytes"
+	"strings"
 
 	cliautor_schema "cliautor/schema"
 	cliautor_golang "cliautor/golang"
@@ -15,7 +16,7 @@ func newSchema() *cliautor_schema.Schema {
 }
 
 
-type Func[Input any] func(input Input) (err error)
+type Func[Input any] func(subcommand []string, input Input) (err error)
 
 
 
@@ -56,10 +57,21 @@ type CLI_Golang_Input struct {
 
 
 
+func NewCLI() CLI {
+	cli := CLI{}
+
+	cli.Func = cliautor_golang.NewDefaultFunc[CLI_Input]()
+
+
+	cli.Sub_Golang.Func = cliautor_golang.NewDefaultFunc[CLI_Golang_Input]()
+
+	return cli
+}
+
 
 func Run(cli CLI, args []string) error {
 	cmd, subcommand, restArgs := cliautor_golang.ResolveSubcommand(newSchema(), args)
-	switch subcommand {
+	switch strings.Join(subcommand, " ") {
 
 	case "":
 		input := CLI_Input{
@@ -74,7 +86,7 @@ func Run(cli CLI, args []string) error {
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Func not assigned", "")
 		}
-		if err := funcMethod(input); err != nil {
+		if err := funcMethod(subcommand, input); err != nil {
 			return fmt.Errorf("cli.Func(input) failed: %w", err)
 		}
 
@@ -94,7 +106,7 @@ func Run(cli CLI, args []string) error {
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Golang.Func not assigned", "golang")
 		}
-		if err := cli.Sub_Golang.Func(input); err != nil {
+		if err := funcMethod(subcommand, input); err != nil {
 			return fmt.Errorf("cli.Sub_Golang.Func(input) failed: %w", err)
 		}
 

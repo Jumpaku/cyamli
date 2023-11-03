@@ -9,13 +9,15 @@ import (
 )
 
 func main() {
-	cli := CLI{}
+	cli := NewCLI()
 	cli.Sub_Golang.Func = funcGolang
 
-	Run(cli, os.Args)
+	if err := Run(cli, os.Args); err != nil {
+		panic(err)
+	}
 }
 
-func funcGolang(input CLI_Golang_Input) (err error) {
+func funcGolang(subcommand []string, input CLI_Golang_Input) (err error) {
 	var reader io.Reader = os.Stdin
 	if input.Opt_SchemaPath != "" {
 		f, err := os.Open(input.Opt_SchemaPath)

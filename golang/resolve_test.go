@@ -326,113 +326,113 @@ func TestResolveSubcommand(t *testing.T) {
 	testcases := []struct {
 		args      []string
 		want_cmd  *schema.Command
-		want_str  string
+		want_sub  []string
 		want_args []string
 	}{
 		{
 			args:      []string{"program"},
 			want_cmd:  program.Command(),
-			want_str:  "",
+			want_sub:  []string{},
 			want_args: nil,
 		},
 		{
 			args:      []string{"program", "-opt-x", "arg_x"},
 			want_cmd:  program.Command(),
-			want_str:  "",
+			want_sub:  []string{},
 			want_args: []string{"-opt-x", "arg_x"},
 		},
 		{
 			args:      []string{"program", "sub1"},
 			want_cmd:  program.Subcommands["sub1"],
-			want_str:  "sub1",
+			want_sub:  []string{"sub1"},
 			want_args: nil,
 		},
 		{
 			args:      []string{"program", "sub1", "-opt-x", "arg_x"},
 			want_cmd:  program.Subcommands["sub1"],
-			want_str:  "sub1",
+			want_sub:  []string{"sub1"},
 			want_args: []string{"-opt-x", "arg_x"},
 		},
 		{
 			args:      []string{"program", "--", "sub1", "-opt-x", "arg_x"},
 			want_cmd:  program.Command(),
-			want_str:  "",
+			want_sub:  []string{},
 			want_args: []string{"--", "sub1", "-opt-x", "arg_x"},
 		},
 		{
 			args:      []string{"program", "sub2"},
 			want_cmd:  program.Subcommands["sub2"],
-			want_str:  "sub2",
+			want_sub:  []string{"sub2"},
 			want_args: nil,
 		},
 		{
 			args:      []string{"program", "sub2", "-opt-x", "arg_x"},
 			want_cmd:  program.Subcommands["sub2"],
-			want_str:  "sub2",
+			want_sub:  []string{"sub2"},
 			want_args: []string{"-opt-x", "arg_x"},
 		},
 		{
 			args:      []string{"program", "sub3"},
 			want_cmd:  program.Subcommands["sub3"],
-			want_str:  "sub3",
+			want_sub:  []string{"sub3"},
 			want_args: nil,
 		},
 		{
 			args:      []string{"program", "sub3", "-opt-x", "arg_x"},
 			want_cmd:  program.Subcommands["sub3"],
-			want_str:  "sub3",
+			want_sub:  []string{"sub3"},
 			want_args: []string{"-opt-x", "arg_x"},
 		},
 		{
 			args:      []string{"program", "sub3", "subx"},
 			want_cmd:  program.Subcommands["sub3"].Subcommands["subx"],
-			want_str:  "sub3 subx",
+			want_sub:  []string{"sub3", "subx"},
 			want_args: nil,
 		},
 		{
 			args:      []string{"program", "sub3", "subx", "-opt-x", "arg_x"},
 			want_cmd:  program.Subcommands["sub3"].Subcommands["subx"],
-			want_str:  "sub3 subx",
+			want_sub:  []string{"sub3", "subx"},
 			want_args: []string{"-opt-x", "arg_x"},
 		},
 		{
 			args:      []string{"program", "sub3", "suby"},
 			want_cmd:  program.Subcommands["sub3"].Subcommands["suby"],
-			want_str:  "sub3 suby",
+			want_sub:  []string{"sub3", "suby"},
 			want_args: nil,
 		},
 		{
 			args:      []string{"program", "sub3", "--", "subx"},
 			want_cmd:  program.Subcommands["sub3"],
-			want_str:  "sub3",
+			want_sub:  []string{"sub3"},
 			want_args: []string{"--", "subx"},
 		},
 		{
 			args:      []string{"program", "sub3", "--", "suby"},
 			want_cmd:  program.Subcommands["sub3"],
-			want_str:  "sub3",
+			want_sub:  []string{"sub3"},
 			want_args: []string{"--", "suby"},
 		},
 		{
 			args:      []string{"program", "--", "sub3", "subx"},
 			want_cmd:  program.Command(),
-			want_str:  "",
+			want_sub:  []string{},
 			want_args: []string{"--", "sub3", "subx"},
 		},
 		{
 			args:      []string{"program", "--", "sub3", "suby"},
 			want_cmd:  program.Command(),
-			want_str:  "",
+			want_sub:  []string{},
 			want_args: []string{"--", "sub3", "suby"},
 		},
 	}
 
 	for _, testcase := range testcases {
 		t.Run(fmt.Sprintf("%#v", testcase.args), func(t *testing.T) {
-			got_cmd, got_str, got_args := golang.ResolveSubcommand(&schema.Schema{Program: program}, testcase.args)
+			got_cmd, got_sub, got_args := golang.ResolveSubcommand(&schema.Schema{Program: program}, testcase.args)
 
 			test.AssertMatchCommand(t, testcase.want_cmd, got_cmd)
-			assert.Equal(t, testcase.want_str, got_str)
+			assert.ElementsMatch(t, testcase.want_sub, got_sub)
 			assert.ElementsMatch(t, testcase.want_args, got_args)
 		})
 	}

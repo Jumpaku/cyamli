@@ -4,6 +4,7 @@ package {{.Package}}
 import (
 	"fmt"
 	"bytes"
+	"strings"
 
 	cliautor_schema "cliautor/schema"
 	cliautor_golang "cliautor/golang"
@@ -15,7 +16,7 @@ func newSchema() *cliautor_schema.Schema {
 }
 
 
-type Func[Input any] func(input Input) (err error)
+type Func[Input any] func(subcommand []string, input Input) (err error)
 
 {{/* Root command */}}
 {{with .Program}}
@@ -54,11 +55,22 @@ type {{.CLIInputStructName}} struct {
 
 {{end}}
 
+{{/* CLI Constructor */}}
+func NewCLI() {{.Program.CLIStructName}} {
+	cli := CLI{}
+{{with .Program}}
+	cli.{{.CLIFuncMethodChain}} = cliautor_golang.NewDefaultFunc[{{.CLIInputStructName}}]()
+{{end}}
+{{range .Commands}}
+	cli.{{.CLIFuncMethodChain}} = cliautor_golang.NewDefaultFunc[{{.CLIInputStructName}}]()
+{{end}}
+	return cli
+}
 
 {{/* Entry point */}}
 func Run(cli CLI, args []string) error {
 	cmd, subcommand, restArgs := cliautor_golang.ResolveSubcommand(newSchema(), args)
-	switch subcommand {
+	switch strings.Join(subcommand, " ") {
 {{with .Program}}
 	case {{.NameLiteral}}:
 		input := {{.CLIInputStructName}}{
@@ -72,7 +84,7 @@ func Run(cli CLI, args []string) error {
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.NameLiteral}})
 		}
-		if err := funcMethod(input); err != nil {
+		if err := funcMethod(subcommand, input); err != nil {
 			return fmt.Errorf("cli.{{.CLIFuncMethodChain}}(input) failed: %w", err)
 		}
 {{end}}
@@ -89,7 +101,7 @@ func Run(cli CLI, args []string) error {
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.NameLiteral}})
 		}
-		if err := cli.{{.CLIFuncMethodChain}}(input); err != nil {
+		if err := funcMethod(subcommand, input); err != nil {
 			return fmt.Errorf("cli.{{.CLIFuncMethodChain}}(input) failed: %w", err)
 		}
 {{end}}
