@@ -1,11 +1,10 @@
 package main
 
 import (
+	"cliautor/golang"
 	"cliautor/schema"
 	"log"
 	"os"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
@@ -13,5 +12,8 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	spew.Dump(schema)
+	err = golang.Generate("cmd", schema, os.Stdout)
+	if err != nil {
+		log.Panic(err)
+	}
 }

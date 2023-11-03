@@ -9,7 +9,7 @@ import (
 	"text/template"
 )
 
-//go:embed cli.go.tpl
+//go:embed cli.gen.go.tpl
 var cliGoTemplate string
 var executor = template.Must(template.New("cli.go.tpl").Parse(cliGoTemplate))
 
