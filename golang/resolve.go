@@ -13,20 +13,25 @@ import (
 )
 
 func ResolveSubcommand(s *schema.Schema, args []string) (cmd *schema.Command, subcommandString string, restArgs []string) {
+	assert.Params(len(args) >= 1, "first element of args must be a path of the executable file")
 	cmd = s.Program.Command()
 
 	// Extract subcommand path
 	var subcommand name.Path
 	for _, arg := range args[1:] {
-		var ok bool
-		cmd, ok = cmd.Subcommands[arg]
+		if arg == "--" {
+			break
+		}
+		found, ok := cmd.Subcommands[arg]
 		if !ok {
 			break
 		}
+
+		cmd = found
 		subcommand = subcommand.Append(arg)
 	}
 
-	return cmd, subcommand.Join(" ", "", ""), args[len(subcommand):]
+	return cmd, subcommand.Join(" ", "", ""), args[1:][len(subcommand):]
 }
 
 func ResolveInput(schemaCommand *schema.Command, restArgs []string, inputPtr any) error {
@@ -46,18 +51,33 @@ func ResolveOptions(schemaOptions map[string]*schema.Option, restArgs []string, 
 	}
 
 	structRV := reflect.Indirect(ptrRV)
-	if ptrRV.Kind() != reflect.Struct {
+	if structRV.Kind() != reflect.Struct {
 		return fmt.Errorf("inputPtr must be a not nil pointer to struct: %T", inputPtr)
 	}
 
 	options := map[string]*schema.Option{}
-	for name, schemaOption := range schemaOptions {
-		options[name] = schemaOption
+	for optName, schemaOption := range schemaOptions {
+		options[optName] = schemaOption
 		if schemaOption.Short != "" {
 			options[schemaOption.Short] = schemaOption
 		}
 	}
+
+	nameMap := map[string]string{}
+	for optName, schemaOption := range schemaOptions {
+		nameMap[optName] = optName
+		if schemaOption.Short != "" {
+			nameMap[schemaOption.Short] = optName
+		}
+	}
+
 	for _, arg := range restArgs {
+		if arg == "--" {
+			return nil
+		}
+		if !strings.HasPrefix(arg, "-") {
+			continue
+		}
 		optName, lit, cut := strings.Cut(arg, "=")
 		option, ok := options[optName]
 		if !ok {
@@ -70,7 +90,7 @@ func ResolveOptions(schemaOptions map[string]*schema.Option, restArgs []string, 
 			lit = "true"
 		}
 
-		fieldName := data.Option{Name: name.MakePath(optName)}.InputFieldName()
+		fieldName := data.Option{Name: name.MakePath(nameMap[optName])}.InputFieldName()
 
 		value, err := ParseGoValue(option.Type, false, lit)
 		if err != nil {
@@ -89,12 +109,16 @@ func ResolveArguments(arguments []*schema.Argument, restArgs []string, inputPtr 
 	}
 
 	structRV := reflect.Indirect(ptrRV)
-	if ptrRV.Kind() != reflect.Struct {
+	if structRV.Kind() != reflect.Struct {
 		return fmt.Errorf("inputPtr must be a not nil pointer to struct: %T", inputPtr)
 	}
 
 	var args []string
-	for _, arg := range restArgs {
+	for idx, arg := range restArgs {
+		if arg == "--" {
+			args = append(args, restArgs[idx+1:]...)
+			break
+		}
 		if !strings.HasPrefix(arg, "-") {
 			args = append(args, arg)
 		}
@@ -189,19 +213,19 @@ func ParseGoValue(typ schema.Type, variadic bool, str ...string) (any, error) {
 			if err != nil {
 				return nil, fmt.Errorf("fail to parse %q as bool: %w", str, err)
 			}
-			return strconv.FormatBool(val), nil
+			return val, nil
 		case schema.TypeFloat:
 			val, err := strconv.ParseFloat(str, 64)
 			if err != nil {
 				return nil, fmt.Errorf("fail to parse %q as float64: %w", str, err)
 			}
-			return strconv.FormatFloat(val, 'f', -1, 64), nil
+			return val, nil
 		case schema.TypeInteger:
 			val, err := strconv.ParseInt(str, 0, 64)
 			if err != nil {
 				return nil, fmt.Errorf("fail to parse %q as int64: %w", str, err)
 			}
-			return strconv.FormatInt(val, 10), nil
+			return val, nil
 		case schema.TypeString, schema.TypeUnspecified:
 			return str, nil
 		}

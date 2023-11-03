@@ -24,7 +24,6 @@ func TestSchema_Load(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-
 			name: "empty",
 			in:   emptyYAML,
 			want: &schema.Schema{
