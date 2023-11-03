@@ -1,0 +1,17 @@
+name: greet
+description: this is an example program
+options:
+  -help:
+    short: -h
+    description: Show help information.
+    type: boolean
+subcommands:
+  hello:
+    description: Prints "Hello, <target name>! My name is <greeter>!"
+    options:
+      -target-name:
+        short: -t
+        description: The name of the person to be said hello.
+    arguments:
+      - name: greeter
+        description: The name of the person who says hello.
