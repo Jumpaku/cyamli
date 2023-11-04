@@ -25,6 +25,12 @@ The CLI code generator `cliautor` can be installed as follows:
 go install "github.com/Jumpaku/cliautor/cmd/cliautor"
 ```
 
+The generated code requires:
+
+```sh
+go get "github.com/Jumpaku/cliautor"
+```
+
 ### Usage
 
 1. Generating the CLI type.
@@ -94,7 +100,7 @@ func main() {
 Example implementations for `showHelp` and `sayHello` are as follows:
 
 ```go
-func showHelp(subcommand []string, input CLI_Input) (err error) {
+func showHelp(cmd *schema.Command, subcommand []string, input CLI_Input) (err error) {
 	if input.Opt_Help {
 		fmt.Println("This is an example program.")
 	} else {
@@ -102,7 +108,7 @@ func showHelp(subcommand []string, input CLI_Input) (err error) {
 	}
 	return nil
 }
-func sayHello(subcommand []string, input CLI_Hello_Input) (err error) {
+func sayHello(cmd *schema.Command, subcommand []string, input CLI_Hello_Input) (err error) {
 	hello := "Hello"
 	if input.Opt_TargetName != "" {
 		hello += ", " + input.Opt_TargetName
