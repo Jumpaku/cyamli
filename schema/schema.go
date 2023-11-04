@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"cliautor/name"
 	"fmt"
 	"io"
 
@@ -34,4 +35,20 @@ func (s *Schema) Save(writer io.Writer) error {
 
 func (s *Schema) Validate() error {
 	return s.Program.Validate()
+}
+
+func (s *Schema) Walk(f func(path name.Path, cmd *Command) error) error {
+	return walkImpl(nil, s.Program.Command(), f)
+}
+
+func walkImpl(path name.Path, cmd *Command, f func(path name.Path, cmd *Command) error) error {
+	if err := f(path, cmd); err != nil {
+		return err
+	}
+	for cmdName, cmd := range cmd.Subcommands {
+		if err := walkImpl(name.Path(path).Append(cmdName), cmd, f); err != nil {
+			return err
+		}
+	}
+	return nil
 }

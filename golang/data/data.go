@@ -35,7 +35,7 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 	}
 	data.SchemaYAML = buffer.String()
 
-	err := walkCmd(nil, s.Program.Command(), func(path []string, cmd *schema.Command) error {
+	err := s.Walk(func(path name.Path, cmd *schema.Command) error {
 		cmdData := Command{
 			Name:        path,
 			Description: cmd.Description,
@@ -63,7 +63,7 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 
 		for subName := range cmd.Subcommands {
 			cmdData.Subcommands = append(cmdData.Subcommands, Subcommand{
-				Name: name.Path(path).Append(subName),
+				Name: path.Append(subName),
 			})
 		}
 		sortSubcommands(cmdData.Subcommands)
@@ -95,18 +95,6 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 	sortCommands(data.Commands)
 
 	return data, nil
-}
-
-func walkCmd(path []string, cmd *schema.Command, f func(path []string, cmd *schema.Command) error) error {
-	if err := f(path, cmd); err != nil {
-		return err
-	}
-	for name, cmd := range cmd.Subcommands {
-		if err := walkCmd(append(append([]string{}, path...), name), cmd, f); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func sortOptions(options []Option) []Option {

@@ -7,44 +7,39 @@ import (
 	"cliautor/name"
 	"cliautor/schema"
 	"cliautor/test"
+	"cliautor/test/testdata"
 	_ "embed"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-//go:embed testdata/empty.yaml
-var emptyYAML []byte
-
-//go:embed testdata/example.yaml
-var exampleYAML []byte
-
 func TestData_Construct(t *testing.T) {
 	testcases := []struct {
 		packageName string
-		schemaYAML  []byte
+		schemaYAML  string
 		want        data.Data
 	}{
 		{
 			packageName: "empty",
-			schemaYAML:  emptyYAML,
+			schemaYAML:  testdata.EmptyYAML,
 			want: data.Data{
 				Package:          "empty",
 				Generator:        cliautor.Name,
 				GeneratorVersion: cliautor.Version,
-				SchemaYAML:       string(emptyYAML),
+				SchemaYAML:       testdata.EmptyYAML,
 				Program:          data.Program{},
 				Commands:         []data.Command{},
 			},
 		},
 		{
 			packageName: "example",
-			schemaYAML:  exampleYAML,
+			schemaYAML:  testdata.ExampleYAML,
 			want: data.Data{
 				Package:          "example",
 				Generator:        cliautor.Name,
 				GeneratorVersion: cliautor.Version,
-				SchemaYAML:       string(exampleYAML),
+				SchemaYAML:       testdata.ExampleYAML,
 				Program: data.Program{
 					Name:        name.Path{"example"},
 					Version:     "v1.0.0",
@@ -211,7 +206,7 @@ func TestData_Construct(t *testing.T) {
 
 	for _, testcase := range testcases {
 		t.Run(testcase.packageName, func(t *testing.T) {
-			originalSchema, err := schema.Load(bytes.NewBuffer(testcase.schemaYAML))
+			originalSchema, err := schema.Load(bytes.NewBufferString(testcase.schemaYAML))
 			if err != nil {
 				t.Fatalf("fail to read load schema: %+v", err)
 			}

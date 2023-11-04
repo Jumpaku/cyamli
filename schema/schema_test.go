@@ -4,17 +4,12 @@ import (
 	"bytes"
 	"cliautor/schema"
 	"cliautor/test"
+	"cliautor/test/testdata"
 	_ "embed"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-//go:embed testdata/empty.yaml
-var emptyYAML string
-
-//go:embed testdata/example.yaml
-var exampleYAML string
 
 func TestSchema_Load(t *testing.T) {
 	testcases := []struct {
@@ -25,14 +20,14 @@ func TestSchema_Load(t *testing.T) {
 	}{
 		{
 			name: "empty",
-			in:   emptyYAML,
+			in:   testdata.EmptyYAML,
 			want: &schema.Schema{
 				Program: schema.Program{},
 			},
 		},
 		{
 			name: "example",
-			in:   exampleYAML,
+			in:   testdata.ExampleYAML,
 			want: &schema.Schema{
 				Program: schema.Program{
 					Name:        "example",
@@ -168,8 +163,8 @@ func TestSchema_Load(t *testing.T) {
 								},
 							},
 							Subcommands: map[string]*schema.Command{
-								"sub1": {},
-								"sub2": {},
+								"subx": {},
+								"suby": {},
 							},
 						},
 					},
