@@ -18,8 +18,6 @@ import (
 
 func NewDefaultFunc[Input any](programName string) func(cmd *schema.Command, subcommand []string, input Input) (err error) {
 	return func(cmd *schema.Command, subcommand []string, input Input) (err error) {
-		fmt.Printf("subcommand: %q, input: %#v\n\n", strings.Join(subcommand, " "), input)
-
 		descData := description.CreateCommandData(programName, subcommand, cmd)
 		err = description.DescribeCommand(description.DetailExecutor(), descData, os.Stdout)
 		if err != nil {

@@ -84,6 +84,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Func
@@ -105,6 +106,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Sub_Hello.Func

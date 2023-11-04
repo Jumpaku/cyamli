@@ -167,6 +167,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Func
@@ -187,6 +188,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Sub_Sub1.Func
@@ -206,6 +208,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Sub_Sub2.Func
@@ -230,6 +233,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Sub_Sub3.Func
@@ -249,6 +253,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Sub_Sub3.Sub_Subx.Func
@@ -268,6 +273,7 @@ func Run(cli CLI, args []string) error {
 			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
 				panic(fmt.Errorf("fail to create command description: %w", err))
 			}
+			fmt.Fprintln(os.Stderr, "")
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Sub_Sub3.Sub_Suby.Func
