@@ -2,7 +2,7 @@
 type Schema = Program;
 
 /** 
- * Program - Root command that may have name and a version.
+ * Program - Root command that may have a name and a version.
  * It consists of Commands recursively.
  */
 type Program = Command & {
@@ -21,12 +21,12 @@ type Program = Command & {
 /** Command - The root command or subcommand. */
 type Command = {
     /** 
-     * description - the description of a root command or subcommand of your program. 
+     * description - the description of this command. 
      * The default value is an empty string.
      */
     description?: string;
     /** 
-     * options - a mapping from option_name to Option. 
+     * options - a mapping from option names to Options. 
      * The default value is an empty object.
      * option_name is a name of an option, which must match the regular expression `^(-[a-z][a-z0-9]*)+$` and be unique in options of this Command.
      */
@@ -37,9 +37,9 @@ type Command = {
      */
     arguments?: Argument[];
     /** 
-     * subcommands - a mapping from subcommand_name to child Command. 
+     * subcommands - a mapping from subcommand names to child Commands. 
      * The default value is an empty object.
-     * subcommand_name is a name of an subcommand, which must match the regular expression `^[a-z][a-z0-9]*$` and be unique in subcommands of this Command.
+     * subcommand_name is a name of a subcommand, which must match the regular expression `^[a-z][a-z0-9]*$` and be unique in subcommands of this Command.
      */
     subcommands?: { [subcommand_name: string]: Command };
 }
@@ -47,7 +47,7 @@ type Command = {
 /** Type - type of values of options or arguments. */
 type Type = "boolean" | "string" | "integer" | "float";
 
-/** Option - optional argument for a Command. */
+/** Option - an optional argument for a Command. */
 type Option = {
     /**
      * short - short name of this Option, which must match the regular expression `^-[a-z]$` and be unique in the command which this option belongs to. 
@@ -55,7 +55,7 @@ type Option = {
      */
     short?: string;
     /** 
-     * description - the description of a this option. 
+     * description - the description of this option. 
      * The default value is an empty string. 
      */
     description?: string;
@@ -75,14 +75,14 @@ type Option = {
     default?: string;
 };
 
-/** Argument - positional and required argument for a Command. */
+/** Argument - a positional and required argument for a Command. */
 type Argument = {
     /** 
-     * name - the name of argument, which must match the regular expression `^[a-z][a-z0-9]*(_[a-z0-9])*$` and be unique in the command which this argument belongs to. 
+     * name - the name of this argument, which must match the regular expression `^[a-z][a-z0-9]*(_[a-z0-9])*$` and be unique in the command which this argument belongs to. 
      */
     name: string;
     /** 
-     * description - the description of a this argument. 
+     * description - the description of this argument. 
      * The default value is an empty string.
      * */
     description?: string;

@@ -1,25 +1,23 @@
-# `cliautor`
+# cliautor
 
-A command line tool to generate command line interfaces for your command line tools from YAML-based schema.
+A command line tool to generate command line interfaces for your command line tools from the YAML-based CLI schemas.
 
 ## Highlights
 
-- defines a CLI schema in YAML.
-- provides a typed CLI code generator.
+- It defines the CLI schema in YAML.
+- It provides a typed CLI code generator.
 
 ## CLI schema
 
-The CLI schema definition is provided as `cli-schema-definition.ts`.
+The CLI schema definition is provided in [`cli-schema-definition.ts`](https://github.com/Jumpaku/cliautor/blob/main/cli-schema-definition.ts).
 
 ## CLI code generator
 
-`cliautor` generates a typed code for handling command line arguments from a YAML file written according to the CLI schema definition.
-
-Supported programming language is only Go currently.
+From a YAML file written according to the CLI schema definition, `cliautor` generates a typed code for handling command line arguments.
 
 ### Installation
 
-The CLI code generator `cliautor` can be installed as follows:
+`cliautor` can be installed as follows:
 
 ```sh
 go install "github.com/Jumpaku/cliautor/cmd/cliautor"
@@ -132,7 +130,11 @@ go run main.go hello -target-name=Bob Alice
 # => Hello, Bob! My name is Alice!
 ```
 
-## Details specifications
+## Details
+
+### Supported programming languages
+
+Only Go is supported currently.
 
 ### handling command line arguments
 
