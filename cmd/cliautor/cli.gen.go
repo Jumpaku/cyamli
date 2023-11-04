@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"bytes"
 	"strings"
+	"os"
 
 	cliautor_schema "github.com/Jumpaku/cliautor/schema"
 	cliautor_golang "github.com/Jumpaku/cliautor/golang"
+	cliautor_description "github.com/Jumpaku/cliautor/description"
 )
 
 func newSchema() *cliautor_schema.Schema {
@@ -71,7 +73,8 @@ func NewCLI() CLI {
 
 
 func Run(cli CLI, args []string) error {
-	cmd, subcommand, restArgs := cliautor_golang.ResolveSubcommand(newSchema(), args)
+	s := newSchema()
+	cmd, subcommand, restArgs := cliautor_golang.ResolveSubcommand(s, args)
 	switch strings.Join(subcommand, " ") {
 
 	case "":
@@ -81,6 +84,10 @@ func Run(cli CLI, args []string) error {
 
 		}
 		if err := cliautor_golang.ResolveInput(cmd, restArgs, &input); err != nil {
+			descData := cliautor_description.CreateCommandData(s.Program.Name, subcommand, cmd)
+			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
+				panic(fmt.Errorf("fail to create command description: %w", err))
+			}
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Func
@@ -101,6 +108,10 @@ func Run(cli CLI, args []string) error {
 
 		}
 		if err := cliautor_golang.ResolveInput(cmd, restArgs, &input); err != nil {
+			descData := cliautor_description.CreateCommandData(s.Program.Name, subcommand, cmd)
+			if err := cliautor_description.DescribeCommand(cliautor_description.SimpleExecutor(), descData, os.Stderr); err != nil {
+				panic(fmt.Errorf("fail to create command description: %w", err))
+			}
 			return fmt.Errorf("fail to resolve input: %w", err)
 		}
 		funcMethod := cli.Sub_Golang.Func

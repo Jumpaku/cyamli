@@ -42,7 +42,6 @@ func ResolveSubcommand(s *schema.Schema, args []string) (cmd *schema.Command, su
 		if !ok {
 			break
 		}
-
 		cmd = found
 		subcommand = append(subcommand, arg)
 	}
@@ -151,6 +150,9 @@ func ResolveArguments(arguments []*schema.Argument, restArgs []string, inputPtr 
 	}
 	if !arguments[len(arguments)-1].Variadic && len(args) < len(arguments) {
 		return fmt.Errorf("too few arguments")
+	}
+	if !arguments[len(arguments)-1].Variadic && len(args) > len(arguments) {
+		return fmt.Errorf("too many arguments")
 	}
 
 	for idx, argument := range arguments {
