@@ -1,20 +1,30 @@
 package golang
 
 import (
-	"cliautor/golang/data"
-	"cliautor/name"
-	"cliautor/schema"
 	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
 
+	"github.com/Jumpaku/cliautor/schema"
+
+	"github.com/Jumpaku/cliautor/description"
+	"github.com/Jumpaku/cliautor/golang/data"
+	"github.com/Jumpaku/cliautor/name"
+
 	"github.com/Jumpaku/go-assert"
 )
 
-func NewDefaultFunc[Input any]() func(subcommand []string, input Input) (err error) {
-	return func(subcommand []string, input Input) (err error) {
-		fmt.Printf("subcommand: %q, input: %#v\n", strings.Join(subcommand, " "), input)
+func NewDefaultFunc[Input any](programName string) func(cmd *schema.Command, subcommand []string, input Input) (err error) {
+	return func(cmd *schema.Command, subcommand []string, input Input) (err error) {
+		fmt.Printf("subcommand: %q, input: %#v\n\n", strings.Join(subcommand, " "), input)
+
+		descData := description.CreateCommandData(programName, subcommand, cmd)
+		err = description.DescribeCommand(description.DetailExecutor(), descData, os.Stdout)
+		if err != nil {
+			return fmt.Errorf("fail to create command description: %w", err)
+		}
 		return nil
 	}
 }

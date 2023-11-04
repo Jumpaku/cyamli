@@ -1,16 +1,14 @@
 package data
 
 import (
-	"cliautor/name"
-	"cliautor/schema"
-	"fmt"
+	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cliautor/schema"
 )
 
 type Argument struct {
-	Name        name.Path
-	Type        schema.Type
-	Variadic    bool
-	Description string
+	Name     name.Path
+	Type     schema.Type
+	Variadic bool
 }
 
 func (d Argument) InputFieldName() string {
@@ -19,8 +17,4 @@ func (d Argument) InputFieldName() string {
 
 func (d Argument) InputFieldType() string {
 	return GoType(d.Type, d.Variadic)
-}
-
-func (d Argument) DescriptionLiteral() string {
-	return fmt.Sprintf("%q", d.Description)
 }

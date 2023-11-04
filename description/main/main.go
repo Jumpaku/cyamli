@@ -1,10 +1,11 @@
 package main
 
 import (
-	"cliautor/description"
-	"cliautor/name"
-	"cliautor/schema"
 	"os"
+
+	"github.com/Jumpaku/cliautor/description"
+	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cliautor/schema"
 )
 
 func main() {

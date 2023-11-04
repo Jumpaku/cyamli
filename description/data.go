@@ -2,12 +2,13 @@ package description
 
 import (
 	"bufio"
-	"cliautor/name"
-	"cliautor/schema"
 	"cmp"
 	"fmt"
 	"slices"
 	"strings"
+
+	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cliautor/schema"
 )
 
 type CommandData struct {

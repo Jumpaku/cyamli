@@ -1,20 +1,20 @@
 package data
 
 import (
-	"cliautor/name"
-	"cliautor/schema"
 	"fmt"
 	"strconv"
+
+	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cliautor/schema"
 
 	"github.com/Jumpaku/go-assert"
 )
 
 type Option struct {
-	Name        name.Path
-	Short       name.Path
-	Type        schema.Type
-	Description string
-	Default     string
+	Name    name.Path
+	Short   name.Path
+	Type    schema.Type
+	Default string
 }
 
 func (d Option) DefaultLiteral() string {
@@ -61,8 +61,4 @@ func (d Option) InputFieldType() string {
 
 func (d Option) InputFieldName() string {
 	return d.Name.Map(name.Title).Join("", "Opt_", "")
-}
-
-func (d Option) DescriptionLiteral() string {
-	return fmt.Sprintf("%q", d.Description)
 }

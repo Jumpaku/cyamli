@@ -1,10 +1,11 @@
 package data_test
 
 import (
-	"cliautor/golang/data"
-	"cliautor/name"
 	"fmt"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/golang/data"
+	"github.com/Jumpaku/cliautor/name"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -16,15 +17,13 @@ func TestCommand_CLIStructName(t *testing.T) {
 	}{
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmd", "name", "abc"},
-				Description: "command description",
+				Name: name.Path{"cmd", "name", "abc"},
 			},
 			want: `CLI_CmdNameAbc`,
 		},
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmdname"},
-				Description: "command description",
+				Name: name.Path{"cmdname"},
 			},
 			want: `CLI_Cmdname`,
 		},
@@ -45,15 +44,13 @@ func TestCommand_CLIInputStructName(t *testing.T) {
 	}{
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmd", "name", "abc"},
-				Description: "command description",
+				Name: name.Path{"cmd", "name", "abc"},
 			},
 			want: `CLI_CmdNameAbc_Input`,
 		},
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmdname"},
-				Description: "command description",
+				Name: name.Path{"cmdname"},
 			},
 			want: `CLI_Cmdname_Input`,
 		},
@@ -67,28 +64,6 @@ func TestCommand_CLIInputStructName(t *testing.T) {
 	}
 }
 
-func TestCommand_DescriptionLiteral(t *testing.T) {
-	testcases := []struct {
-		sut  data.Command
-		want string
-	}{
-		{
-			sut: data.Command{
-				Name:        name.Path{"cmd", "name", "abc"},
-				Description: "command description",
-			},
-			want: `"command description"`,
-		},
-	}
-
-	for number, testcase := range testcases {
-		t.Run(fmt.Sprintf("%03d: %#v", number, testcase.sut.Name), func(t *testing.T) {
-			got := testcase.sut.DescriptionLiteral()
-			assert.Equal(t, testcase.want, got)
-		})
-	}
-}
-
 func TestCommand_NameLiteral(t *testing.T) {
 	testcases := []struct {
 		sut  data.Command
@@ -96,15 +71,13 @@ func TestCommand_NameLiteral(t *testing.T) {
 	}{
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmd", "name", "abc"},
-				Description: "command description",
+				Name: name.Path{"cmd", "name", "abc"},
 			},
 			want: `"cmd name abc"`,
 		},
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmdname"},
-				Description: "command description",
+				Name: name.Path{"cmdname"},
 			},
 			want: `"cmdname"`,
 		},
@@ -125,15 +98,13 @@ func TestCommand_FuncMethodChain(t *testing.T) {
 	}{
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmd", "name", "abc"},
-				Description: "command description",
+				Name: name.Path{"cmd", "name", "abc"},
 			},
 			want: `Sub_Cmd.Sub_Name.Sub_Abc.Func`,
 		},
 		{
 			sut: data.Command{
-				Name:        name.Path{"cmdname"},
-				Description: "command description",
+				Name: name.Path{"cmdname"},
 			},
 			want: `Sub_Cmdname.Func`,
 		},

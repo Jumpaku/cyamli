@@ -1,11 +1,12 @@
 package main
 
 import (
-	"cliautor/golang"
-	"cliautor/schema"
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/Jumpaku/cliautor/golang"
+	"github.com/Jumpaku/cliautor/schema"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 	}
 }
 
-func funcGolang(subcommand []string, input CLI_Golang_Input) (err error) {
+func funcGolang(cmd *schema.Command, subcommand []string, input CLI_Golang_Input) (err error) {
 	var reader io.Reader = os.Stdin
 	if input.Opt_SchemaPath != "" {
 		f, err := os.Open(input.Opt_SchemaPath)

@@ -2,11 +2,12 @@ package description_test
 
 import (
 	"bytes"
-	"cliautor/description"
-	"cliautor/name"
-	"cliautor/schema"
-	"cliautor/test/testdata"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/description"
+	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cliautor/test/testdata"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,14 +1,12 @@
 package data
 
 import (
-	"cliautor/name"
-	"fmt"
+	"github.com/Jumpaku/cliautor/name"
 )
 
 type Program struct {
 	Name        name.Path
 	Version     string
-	Description string
 	Options     []Option
 	Arguments   []Argument
 	Subcommands []Subcommand
@@ -28,8 +26,4 @@ func (d Program) CLIFuncMethodChain() string {
 
 func (d Program) CLIInputStructName() string {
 	return "CLI_Input"
-}
-
-func (d Program) DescriptionLiteral() string {
-	return fmt.Sprintf("%q", d.Description)
 }

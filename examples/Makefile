@@ -5,10 +5,10 @@ help: ## Show help
 		awk 'BEGIN {FS = ":.*?##"}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 
-.PHONY: gen
+.PHONY: gen-example
 gen: ## Generates Go CLI for cliautor command.
 	mkdir -p "cmd/example" && go run "github.com/Jumpaku/cliautor/cmd/cliautor" < cli.yaml > cmd/cliautor/cli.gen.go
 
-.PHONY: run
+.PHONY: run-example
 run: gen ## Run example app with ARGS.
 	go run cmd/exammple $(ARGS)

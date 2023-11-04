@@ -1,7 +1,7 @@
 package data
 
 import (
-	"cliautor/schema"
+	"github.com/Jumpaku/cliautor/schema"
 
 	"github.com/Jumpaku/go-assert"
 )

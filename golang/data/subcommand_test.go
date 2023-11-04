@@ -1,10 +1,11 @@
 package data_test
 
 import (
-	"cliautor/golang/data"
-	"cliautor/name"
 	"fmt"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/golang/data"
+	"github.com/Jumpaku/cliautor/name"
 
 	"github.com/stretchr/testify/assert"
 )

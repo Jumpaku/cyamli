@@ -2,11 +2,12 @@ package data
 
 import (
 	"bytes"
-	"cliautor"
-	"cliautor/name"
-	"cliautor/schema"
 	"fmt"
 	"slices"
+
+	"github.com/Jumpaku/cliautor"
+	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cliautor/schema"
 )
 
 type Data struct {
@@ -36,27 +37,23 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 	data.SchemaYAML = buffer.String()
 
 	err := s.Walk(func(path name.Path, cmd *schema.Command) error {
-		cmdData := Command{
-			Name:        path,
-			Description: cmd.Description,
-		}
+		cmdData := Command{Name: path}
+
 		for optName, opt := range cmd.Options {
 			cmdData.Options = append(cmdData.Options, Option{
-				Name:        name.MakePath(optName),
-				Short:       name.MakePath(opt.Short),
-				Description: opt.Description,
-				Default:     opt.Default,
-				Type:        opt.Type,
+				Name:    name.MakePath(optName),
+				Short:   name.MakePath(opt.Short),
+				Default: opt.Default,
+				Type:    opt.Type,
 			})
 		}
 		sortOptions(cmdData.Options)
 
 		for _, arg := range cmd.Arguments {
 			cmdData.Arguments = append(cmdData.Arguments, Argument{
-				Name:        name.MakePath(arg.Name),
-				Description: arg.Description,
-				Type:        arg.Type,
-				Variadic:    arg.Variadic,
+				Name:     name.MakePath(arg.Name),
+				Type:     arg.Type,
+				Variadic: arg.Variadic,
 			})
 		}
 		sortArguments(cmdData.Arguments)
@@ -76,7 +73,6 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 			data.Program = Program{
 				Name:        programName,
 				Version:     s.Program.Version,
-				Description: cmd.Description,
 				Options:     cmdData.Options,
 				Arguments:   cmdData.Arguments,
 				Subcommands: cmdData.Subcommands,

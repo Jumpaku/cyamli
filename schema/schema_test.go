@@ -2,11 +2,12 @@ package schema_test
 
 import (
 	"bytes"
-	"cliautor/schema"
-	"cliautor/test"
-	"cliautor/test/testdata"
 	_ "embed"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cliautor/test"
+	"github.com/Jumpaku/cliautor/test/testdata"
 
 	"github.com/stretchr/testify/assert"
 )

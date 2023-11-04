@@ -1,9 +1,10 @@
 package data
 
 import (
-	"cliautor/schema"
 	"fmt"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/schema"
 
 	"github.com/stretchr/testify/assert"
 )

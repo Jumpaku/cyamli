@@ -1,10 +1,11 @@
 package data_test
 
 import (
-	"cliautor/golang/data"
-	"cliautor/name"
 	"fmt"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/golang/data"
+	"github.com/Jumpaku/cliautor/name"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -16,8 +17,7 @@ func TestProgram_CLIStructName(t *testing.T) {
 	}{
 		{
 			sut: data.Program{
-				Name:        name.Path{"program"},
-				Description: "program description",
+				Name: name.Path{"program"},
 			},
 			want: `CLI`,
 		},
@@ -38,8 +38,7 @@ func TestProgram_CLIInputStructName(t *testing.T) {
 	}{
 		{
 			sut: data.Program{
-				Name:        name.Path{"program"},
-				Description: "program description",
+				Name: name.Path{"program"},
 			},
 			want: `CLI_Input`,
 		},
@@ -53,28 +52,6 @@ func TestProgram_CLIInputStructName(t *testing.T) {
 	}
 }
 
-func TestProgram_DescriptionLiteral(t *testing.T) {
-	testcases := []struct {
-		sut  data.Program
-		want string
-	}{
-		{
-			sut: data.Program{
-				Name:        name.Path{"program"},
-				Description: "program description",
-			},
-			want: `"program description"`,
-		},
-	}
-
-	for number, testcase := range testcases {
-		t.Run(fmt.Sprintf("%03d: %#v", number, testcase.sut.Name), func(t *testing.T) {
-			got := testcase.sut.DescriptionLiteral()
-			assert.Equal(t, testcase.want, got)
-		})
-	}
-}
-
 func TestProgram_NameLiteral(t *testing.T) {
 	testcases := []struct {
 		sut  data.Program
@@ -82,8 +59,7 @@ func TestProgram_NameLiteral(t *testing.T) {
 	}{
 		{
 			sut: data.Program{
-				Name:        name.Path{"program"},
-				Description: "program description",
+				Name: name.Path{"program"},
 			},
 			want: `""`,
 		},
@@ -104,8 +80,7 @@ func TestProgram_FuncMethodChain(t *testing.T) {
 	}{
 		{
 			sut: data.Program{
-				Name:        name.Path{"program"},
-				Description: "program description",
+				Name: name.Path{"program"},
 			},
 			want: `Func`,
 		},

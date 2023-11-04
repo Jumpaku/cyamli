@@ -1,9 +1,10 @@
 package schema
 
 import (
-	"cliautor/name"
 	"fmt"
 	"io"
+
+	"github.com/Jumpaku/cliautor/name"
 
 	"github.com/goccy/go-yaml"
 )

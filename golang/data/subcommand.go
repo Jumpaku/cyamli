@@ -1,7 +1,7 @@
 package data
 
 import (
-	"cliautor/name"
+	"github.com/Jumpaku/cliautor/name"
 )
 
 type Subcommand struct {

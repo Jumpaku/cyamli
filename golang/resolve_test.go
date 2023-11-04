@@ -1,13 +1,14 @@
 package golang_test
 
 import (
-	"cliautor/golang"
-	"cliautor/schema"
-	"cliautor/test"
 	_ "embed"
 	"fmt"
 	"math"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/golang"
+	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cliautor/test"
 
 	"github.com/stretchr/testify/assert"
 )

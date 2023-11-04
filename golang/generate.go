@@ -1,12 +1,13 @@
 package golang
 
 import (
-	"cliautor/golang/data"
-	"cliautor/schema"
 	_ "embed"
 	"fmt"
 	"io"
 	"text/template"
+
+	"github.com/Jumpaku/cliautor/golang/data"
+	"github.com/Jumpaku/cliautor/schema"
 )
 
 //go:embed cli.gen.go.tpl

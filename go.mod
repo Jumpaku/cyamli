@@ -1,4 +1,4 @@
-module cliautor
+module github.com/Jumpaku/cliautor
 
 go 1.21.0
 

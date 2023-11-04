@@ -1,8 +1,9 @@
 package test
 
 import (
-	"cliautor/schema"
 	"testing"
+
+	"github.com/Jumpaku/cliautor/schema"
 
 	"github.com/stretchr/testify/assert"
 )
