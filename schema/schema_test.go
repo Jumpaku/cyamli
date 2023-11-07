@@ -5,9 +5,9 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/Jumpaku/cliautor/schema"
-	"github.com/Jumpaku/cliautor/test"
-	"github.com/Jumpaku/cliautor/test/testdata"
+	"github.com/Jumpaku/cyamli/schema"
+	"github.com/Jumpaku/cyamli/test"
+	"github.com/Jumpaku/cyamli/test/testdata"
 
 	"github.com/stretchr/testify/assert"
 )

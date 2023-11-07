@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/Jumpaku/cliautor"
-	"github.com/Jumpaku/cliautor/name"
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli"
+	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/schema"
 )
 
 type Data struct {
@@ -26,8 +26,8 @@ func (d Data) SchemaYAMLLiteral() string {
 func Construct(packageName string, s *schema.Schema) (Data, error) {
 	data := Data{
 		Package:          packageName,
-		Generator:        cliautor.Name,
-		GeneratorVersion: cliautor.Version,
+		Generator:        cyamli.Name,
+		GeneratorVersion: cyamli.Version,
 	}
 
 	buffer := bytes.NewBuffer(nil)

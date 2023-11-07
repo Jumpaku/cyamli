@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli/schema"
 
 	"github.com/stretchr/testify/assert"
 )

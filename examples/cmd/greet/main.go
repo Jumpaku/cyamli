@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli/schema"
 )
 
 func main() {

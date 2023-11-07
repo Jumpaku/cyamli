@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Jumpaku/cliautor/name"
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/schema"
 
 	"github.com/Jumpaku/go-assert"
 )

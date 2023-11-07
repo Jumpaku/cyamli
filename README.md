@@ -1,4 +1,4 @@
-# cliautor
+# cyamli
 
 A command line tool to generate command line interfaces for your command line tools from the YAML-based CLI schemas.
 
@@ -9,24 +9,24 @@ A command line tool to generate command line interfaces for your command line to
 
 ## CLI schema
 
-The CLI schema definition is provided in [`cli-schema-definition.ts`](https://github.com/Jumpaku/cliautor/blob/main/cli-schema-definition.ts).
+The CLI schema definition is provided in [`cli-schema-definition.ts`](https://github.com/Jumpaku/cyamli/blob/main/cli-schema-definition.ts).
 
 ## CLI code generator
 
-From a YAML file written according to the CLI schema definition, `cliautor` generates a typed code for handling command line arguments.
+From a YAML file written according to the CLI schema definition, `cyamli` generates a typed code for handling command line arguments.
 
 ### Installation
 
-`cliautor` can be installed as follows:
+`cyamli` can be installed as follows:
 
 ```sh
-go install "github.com/Jumpaku/cliautor/cmd/cliautor"
+go install "github.com/Jumpaku/cyamli/cmd/cyamli"
 ```
 
 The generated code requires:
 
 ```sh
-go get "github.com/Jumpaku/cliautor"
+go get "github.com/Jumpaku/cyamli"
 ```
 
 ### Usage
@@ -59,10 +59,10 @@ subcommands:
         description: The name of the person who says hello.
 ```
 
-Run `cliautor` as follows:
+Run `cyamli` as follows:
 
 ```sh
-cliautor golang < path/to/cli-schema.yaml > path/to/generated/code.go
+cyamli golang < path/to/cli-schema.yaml > path/to/generated/code.go
 ```
 
 The above generates a Go code which includes:

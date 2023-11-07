@@ -5,12 +5,12 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/Jumpaku/cliautor"
-	"github.com/Jumpaku/cliautor/golang/data"
-	"github.com/Jumpaku/cliautor/name"
-	"github.com/Jumpaku/cliautor/schema"
-	"github.com/Jumpaku/cliautor/test"
-	"github.com/Jumpaku/cliautor/test/testdata"
+	"github.com/Jumpaku/cyamli"
+	"github.com/Jumpaku/cyamli/golang/data"
+	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/schema"
+	"github.com/Jumpaku/cyamli/test"
+	"github.com/Jumpaku/cyamli/test/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -26,8 +26,8 @@ func TestData_Construct(t *testing.T) {
 			schemaYAML:  testdata.EmptyYAML,
 			want: data.Data{
 				Package:          "empty",
-				Generator:        cliautor.Name,
-				GeneratorVersion: cliautor.Version,
+				Generator:        cyamli.Name,
+				GeneratorVersion: cyamli.Version,
 				SchemaYAML:       testdata.EmptyYAML,
 				Program:          data.Program{},
 				Commands:         []data.Command{},
@@ -38,8 +38,8 @@ func TestData_Construct(t *testing.T) {
 			schemaYAML:  testdata.ExampleYAML,
 			want: data.Data{
 				Package:          "example",
-				Generator:        cliautor.Name,
-				GeneratorVersion: cliautor.Version,
+				Generator:        cyamli.Name,
+				GeneratorVersion: cyamli.Version,
 				SchemaYAML:       testdata.ExampleYAML,
 				Program: data.Program{
 					Name:    name.Path{"example"},

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cyamli/name"
 
 	"github.com/goccy/go-yaml"
 )

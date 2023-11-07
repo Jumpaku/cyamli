@@ -6,9 +6,9 @@ help: ## Show help
 
 
 .PHONY: gen-cli
-gen-cli: ## Generates Go CLI for cliautor command.
+gen-cli: ## Generates Go CLI for cyamli command.
 	rm -rf cmd/tmp
-	mkdir -p cmd/tmp && cp -r cmd/cliautor/* cmd/tmp/
-	go run ./cmd/tmp golang < cmd/tmp/cli.yaml > cmd/cliautor/cli.gen.go
-	cp cmd/tmp/main.go cmd/cliautor/main.go 
-	cp cmd/tmp/cli.yaml cmd/cliautor/cli.yaml
+	mkdir -p cmd/tmp && cp -r cmd/cyamli/* cmd/tmp/
+	go run ./cmd/tmp golang < cmd/tmp/cli.yaml > cmd/cyamli/cli.gen.go
+	cp cmd/tmp/main.go cmd/cyamli/main.go 
+	cp cmd/tmp/cli.yaml cmd/cyamli/cli.yaml

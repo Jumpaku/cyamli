@@ -6,9 +6,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/Jumpaku/cliautor/golang"
-	"github.com/Jumpaku/cliautor/schema"
-	"github.com/Jumpaku/cliautor/test"
+	"github.com/Jumpaku/cyamli/golang"
+	"github.com/Jumpaku/cyamli/schema"
+	"github.com/Jumpaku/cyamli/test"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -7,8 +7,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/Jumpaku/cliautor/name"
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/schema"
 )
 
 type CommandData struct {

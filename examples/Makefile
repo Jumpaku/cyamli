@@ -6,7 +6,7 @@ help: ## Show help
 
 
 .PHONY: gen
-gen: ## Generates Go CLI for cliautor command. Example: make gen TARGET=greet
+gen: ## Generates Go CLI for cyamli command. Example: make gen TARGET=greet
 	@mkdir -p "cmd/$(TARGET)" && ./../main golang < cmd/$(TARGET)/cli.yaml > cmd/$(TARGET)/cli.gen.go
 
 .PHONY: run

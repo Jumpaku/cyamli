@@ -6,8 +6,8 @@ import (
 	"io"
 	"text/template"
 
-	"github.com/Jumpaku/cliautor/golang/data"
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli/golang/data"
+	"github.com/Jumpaku/cyamli/schema"
 )
 
 //go:embed cli.gen.go.tpl

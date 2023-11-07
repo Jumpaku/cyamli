@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/Jumpaku/cliautor/description"
-	"github.com/Jumpaku/cliautor/name"
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli/description"
+	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/schema"
 )
 
 func main() {

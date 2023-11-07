@@ -1,0 +1,27 @@
+name: cyamli
+version: "v1.0.0"
+description: A command line tool to generate CLI for your app from YAML-based schema.
+options:
+  -help:
+    description: shows description of this app
+    short: -h
+    type: boolean
+  -version:
+    description: shows version of this app
+    short: -v
+    type: boolean
+subcommands:
+  golang:
+    description: generates CLI for your app written in Go.
+    options: 
+      -package:
+        description: package name where the generated file will be placed.
+        default: main
+      -schema-path:
+        description: if specified then reads schema file from the path, otherwise reads from stdin.
+      -out-path:
+        description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+      -help:
+        description: shows description of golang subcommand
+        short: -h
+        type: boolean

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Jumpaku/cliautor/golang/data"
-	"github.com/Jumpaku/cliautor/name"
-	"github.com/Jumpaku/cliautor/schema"
+	"github.com/Jumpaku/cyamli/golang/data"
+	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/schema"
 
 	"github.com/stretchr/testify/assert"
 )

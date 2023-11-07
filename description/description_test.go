@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/Jumpaku/cliautor/description"
-	"github.com/Jumpaku/cliautor/name"
-	"github.com/Jumpaku/cliautor/schema"
-	"github.com/Jumpaku/cliautor/test/testdata"
+	"github.com/Jumpaku/cyamli/description"
+	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/schema"
+	"github.com/Jumpaku/cyamli/test/testdata"
 
 	"github.com/stretchr/testify/assert"
 )

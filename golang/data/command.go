@@ -3,7 +3,7 @@ package data
 import (
 	"fmt"
 
-	"github.com/Jumpaku/cliautor/name"
+	"github.com/Jumpaku/cyamli/name"
 )
 
 type Command struct {
