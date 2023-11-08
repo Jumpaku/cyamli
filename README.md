@@ -20,7 +20,7 @@ From a YAML file written according to the CLI schema definition, `cyamli` genera
 `cyamli` can be installed as follows:
 
 ```sh
-go install "github.com/Jumpaku/cyamli/cmd/cyamli"
+go install "github.com/Jumpaku/cyamli/cmd/cyamli@latest"
 ```
 
 The generated code requires:
