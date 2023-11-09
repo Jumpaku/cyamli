@@ -15,9 +15,6 @@ type Program struct {
 }
 
 func (p *Program) Validate() error {
-	if err := validateProgramName(p.Name); err != nil {
-		return fmt.Errorf("invalid program name: %w", err)
-	}
 	if err := p.Command().Validate(); err != nil {
 		return fmt.Errorf("invalid program: %w", err)
 	}
@@ -25,10 +22,10 @@ func (p *Program) Validate() error {
 }
 
 func validateProgramName(name string) error {
-	r := regexp.MustCompile(`(^$)|^([a-z][a-z0-9]*)$`)
+	r := regexp.MustCompile(`(^$)|^([a-z][a-zA-Z0-9_-]*)$`)
 	match := r.MatchString(name)
 	if !match {
-		return fmt.Errorf("option short name %s must match %v", name, r.String())
+		return fmt.Errorf("program name %q must match %v", name, r.String())
 	}
 
 	return nil
