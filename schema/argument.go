@@ -23,7 +23,7 @@ func (a *Argument) Validate() error {
 }
 
 func validateArgumentName(name string) error {
-	r := regexp.MustCompile(`^[a-z][a-z0-9]*(_[a-z0-9])*$`)
+	r := regexp.MustCompile(`^[a-z][a-z0-9]*(_[a-z0-9]+)*$`)
 	match := r.MatchString(name)
 	if !match {
 		return fmt.Errorf("arg name %q must match %v", name, r.String())
