@@ -31,6 +31,7 @@ func TestDescribeCommand_Simple_Empty(t *testing.T) {
 
 Usage:
     $ main
+
 `,
 		},
 	}
@@ -69,6 +70,7 @@ func TestDescribeCommand_Detail_Empty(t *testing.T) {
 
 Usage:
     $ main
+
 `,
 		},
 	}
@@ -117,6 +119,7 @@ Arguments:
 
 Subcommands:
     sub1, sub2, sub3
+
 `,
 		},
 		{
@@ -127,6 +130,7 @@ Subcommands:
 
 Usage:
     $ main sub1
+
 `,
 		},
 		{
@@ -137,6 +141,7 @@ Usage:
 
 Usage:
     $ main sub2
+
 `,
 		},
 		{
@@ -156,6 +161,7 @@ Arguments:
 
 Subcommands:
     subx, suby
+
 `,
 		},
 		{
@@ -165,6 +171,7 @@ Subcommands:
 
 Usage:
     $ main sub3 subx
+
 `,
 		},
 		{
@@ -174,6 +181,7 @@ Usage:
 
 Usage:
     $ main sub3 suby
+
 `,
 		},
 	}
@@ -214,6 +222,7 @@ this is an example command
 Usage:
     $ main [<option>|<argument>]... [-- [<argument>]...]
 
+
 Options:
     -option-a=<string>, -a=<string>  (default="abc"):
         a - this is an option for root command
@@ -228,6 +237,7 @@ Options:
         d - this is an option for root command
 
     -option-e=<string>  (default=""):
+
 
 Arguments:
     [0]  <arg_a:string>
@@ -247,6 +257,7 @@ Arguments:
     [5:] [<arg_v:string>]...
         v - this is an argument for root command
 
+
 Subcommands:
     sub1:
         1 - this is a sub command
@@ -256,6 +267,7 @@ Subcommands:
 
     sub3:
         3 - this is a sub command
+
 `,
 		},
 		{
@@ -266,6 +278,7 @@ Subcommands:
 
 Usage:
     $ main sub1
+
 `,
 		},
 		{
@@ -276,6 +289,7 @@ Usage:
 
 Usage:
     $ main sub2
+
 `,
 		},
 		{
@@ -286,6 +300,7 @@ Usage:
 
 Usage:
     $ main sub3 [<option>|<argument>]... [-- [<argument>]...]
+
 
 Options:
     -option-a=<string>, -a=<string>  (default="abc"):
@@ -301,6 +316,7 @@ Options:
         3 - d - this is an option for root command
 
     -option-e=<string>  (default=""):
+
 
 Arguments:
     [0]  <arg_a:string>
@@ -320,10 +336,12 @@ Arguments:
     [5:] [<arg_v:string>]...
         3 - v - this is an argument for root command
 
+
 Subcommands:
     subx:
 
     suby:
+
 `,
 		},
 		{
@@ -333,6 +351,7 @@ Subcommands:
 
 Usage:
     $ main sub3 subx
+
 `,
 		},
 		{
@@ -342,6 +361,7 @@ Usage:
 
 Usage:
     $ main sub3 suby
+
 `,
 		},
 	}

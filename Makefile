@@ -5,11 +5,44 @@ help: ## Show help
 		awk 'BEGIN {FS = ":.*?##"}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 
+.PHONY: release
+release: ## Creates new release draft.
+	make version-apply
+	go test ./...
+	$(eval VERSION := $(shell head -n 1 version.txt))
+	gh release create $(VERSION) --draft --generate-notes
+
+
+.PHONY: check
+check: ## Generates Go CLI for cyamli command.
+	$(eval VERSION := $(shell git tag | tail -n 1))
+	grep -E '^$(VERSION)$$' < version.txt
+	grep -E '^version: $(VERSION)$$' < cmd/cyamli/cli.yaml
+	go test ./...
+
 .PHONY: gen-cli
 gen-cli: ## Generates Go CLI for cyamli command.
-	go run ./internal/tools/build/main.go < cmd/cyamli/cli.yaml > cmd/cyamli/cli.gen.go
+	go run ./internal/tools/gen-cli/main.go < cmd/cyamli/cli.yaml > cmd/cyamli/cli.gen.go
+
+
+
+.PHONY: version-patch
+version-patch: ## Generates Go CLI for cyamli command.
+	grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$$' < version.txt
+	$(eval VERSION := $(shell go run ./internal/tools/version/main.go < version.txt))
+	printf $(VERSION) > version.txt
+
+.PHONY: version-apply
+version-apply: ## Generates Go CLI for cyamli command.
+	grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$$' < version.txt
+	grep -E '^version: v[0-9]+\.[0-9]+\.[0-9]+$$' < cmd/cyamli/cli.yaml
+	$(eval VERSION := $(shell head -n 1 version.txt))
+	sed -E -i.backup "s/^version: v[0-9]+\.[0-9]+\.[0-9]+$$/version: $(VERSION)/g" cmd/cyamli/cli.yaml
+	rm cmd/cyamli/cli.yaml.backup
+	make gen-cli
+	make examples
 
 .PHONY: examples
 examples: ## Generates Go CLI for cyamli command.
-	go run ./internal/tools/build/main.go < examples/cmd/example/cli.yaml > examples/cmd/example/cli.gen.go
-	go run ./internal/tools/build/main.go < examples/cmd/greet/cli.yaml > examples/cmd/greet/cli.gen.go
+	go run ./internal/tools/gen-cli/main.go < examples/cmd/example/cli.yaml > examples/cmd/example/cli.gen.go
+	go run ./internal/tools/gen-cli/main.go < examples/cmd/greet/cli.yaml > examples/cmd/greet/cli.gen.go
