@@ -4,33 +4,16 @@ help: ## Show help
 	@grep -E '^[a-zA-Z_-]+:.*?##.*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?##"}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-
-.PHONY: release
-release: ## Creates new release draft.
-	make version-apply
-	go test ./...
-	$(eval VERSION := $(shell head -n 1 version.txt))
-	gh release create $(VERSION) --draft --generate-notes
-
-
 .PHONY: check
 check: ## Generates Go CLI for cyamli command.
-	$(eval VERSION := $(shell git tag | tail -n 1))
-	grep -E '^$(VERSION)$$' < version.txt
+	grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$$' < version.txt
+	$(eval VERSION := $(shell head -n 1 version.txt))
 	grep -E '^version: $(VERSION)$$' < cmd/cyamli/cli.yaml
 	go test ./...
 
 .PHONY: gen-cli
 gen-cli: ## Generates Go CLI for cyamli command.
 	go run ./internal/tools/gen-cli/main.go < cmd/cyamli/cli.yaml > cmd/cyamli/cli.gen.go
-
-
-
-.PHONY: version-patch
-version-patch: ## Generates Go CLI for cyamli command.
-	grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$$' < version.txt
-	$(eval VERSION := $(shell go run ./internal/tools/version/main.go < version.txt))
-	printf $(VERSION) > version.txt
 
 .PHONY: version-apply
 version-apply: ## Generates Go CLI for cyamli command.
