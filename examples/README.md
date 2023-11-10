@@ -9,7 +9,7 @@ cd examples
 # Customize example/cli.yaml.
 
 # Generate the CLI types.
-
+go generate ./example/main.go
 
 # Run the CLI application.
 go run ./cmd/example
@@ -24,7 +24,7 @@ cd greet
 # Customize greet/cli.yaml.
 
 # Generate the CLI types.
-
+go generate ./example/main.go
 
 # Run the CLI application.
 go run ./cmd/greet
