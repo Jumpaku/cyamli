@@ -1,6 +1,6 @@
 {{- /* Go Template */ -}}
 {{- if .Program -}}
-    {{.Program}}
+    {{.Program}}{{- if .Version -}}{{" "}}({{.Version}}){{- end -}}
     {{- range .Path -}}{{" "}}{{.}}{{- end -}}:{{"\n"}}
 {{- end -}}
 {{- if .Description -}}
@@ -46,3 +46,4 @@
     {{- end -}}
 {{"\n"}}
 {{- end -}}
+{{"\n"}}

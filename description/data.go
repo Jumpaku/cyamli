@@ -13,6 +13,7 @@ import (
 
 type CommandData struct {
 	Program     string
+	Version     string
 	Path        name.Path
 	Syntax      string
 	Description []string
@@ -50,8 +51,8 @@ type SubcommandData struct {
 	Description []string
 }
 
-func CreateCommandData(program string, subcommand name.Path, cmd *schema.Command) CommandData {
-	data := CommandData{Program: program, Path: subcommand, Description: splitLines(cmd.Description)}
+func CreateCommandData(program string, version string, subcommand name.Path, cmd *schema.Command) CommandData {
+	data := CommandData{Program: program, Version: version, Path: subcommand, Description: splitLines(cmd.Description)}
 	{
 		if program == "" {
 			program = "<program>"

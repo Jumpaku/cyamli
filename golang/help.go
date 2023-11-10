@@ -13,7 +13,7 @@ func HelpFunc[Input any](schema *schema.Schema) func(subcommand []string, input 
 		cmd := schema.Find(subcommand)
 		err := description.DescribeCommand(
 			description.DetailExecutor(),
-			description.CreateCommandData(schema.Program.Name, subcommand, cmd),
+			description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, cmd),
 			os.Stderr)
 		if err != nil {
 			return fmt.Errorf("fail to generate help")

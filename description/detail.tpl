@@ -1,6 +1,6 @@
 {{- /* Go Template */ -}}
 {{- if .Program -}}
-    {{.Program}}
+    {{.Program}}{{- if .Version -}}{{" "}}({{.Version}}){{- end -}}
     {{- range .Path -}}{{" "}}{{.}}{{- end -}}:{{"\n"}}
 {{- end -}}
 {{- if .Description -}}
@@ -15,7 +15,7 @@
 
 
 {{- if .HasOptions -}}
-{{"\n"}}Options:
+{{"\n\n"}}Options:
     {{- range $Index, $Option := .Options -}}
         {{"\n    "}}
         {{- range $Index, $Name := $Option.Names -}}
@@ -34,7 +34,7 @@
 
 
 {{- if .HasArguments -}}
-{{"\n"}}Arguments:
+{{"\n\n"}}Arguments:
     {{- range $Index, $Argument := .Arguments -}}
         {{"\n    "}}
         {{- if $Argument.Variadic -}}[{{$Index}}:] [<{{$Argument.Name}}:{{$Argument.Type}}>]...
@@ -49,7 +49,7 @@
 
 
 {{- if .HasSubcommands -}}
-{{"\n"}}Subcommands:
+{{"\n\n"}}Subcommands:
     {{- range $Index, $Subcommand := .Subcommands -}}
         {{"\n    "}}{{$Subcommand.Name}}:
         {{- range $Index, $Line := $Subcommand.Description -}}
@@ -58,3 +58,4 @@
         {{"\n"}}
     {{- end -}}
 {{- end -}}
+{{"\n"}}

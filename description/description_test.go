@@ -38,7 +38,7 @@ Usage:
 	for _, testcase := range testcases {
 		t.Run(testcase.path.Join(" ", "", ""), func(t *testing.T) {
 			buffer := bytes.NewBuffer(nil)
-			data := description.CreateCommandData("main", testcase.path, testcase.cmd)
+			data := description.CreateCommandData("main", "", testcase.path, testcase.cmd)
 
 			err := description.DescribeCommand(executor, data, buffer)
 			if err != nil {
@@ -76,7 +76,7 @@ Usage:
 	for _, testcase := range testcases {
 		t.Run(testcase.path.Join(" ", "", ""), func(t *testing.T) {
 			buffer := bytes.NewBuffer(nil)
-			data := description.CreateCommandData("main", testcase.path, testcase.cmd)
+			data := description.CreateCommandData("main", "", testcase.path, testcase.cmd)
 
 			err := description.DescribeCommand(executor, data, buffer)
 			if err != nil {
@@ -181,7 +181,7 @@ Usage:
 	for _, testcase := range testcases {
 		t.Run(testcase.path.Join(" ", "", ""), func(t *testing.T) {
 			buffer := bytes.NewBuffer(nil)
-			data := description.CreateCommandData("main", testcase.path, testcase.cmd)
+			data := description.CreateCommandData("main", "", testcase.path, testcase.cmd)
 
 			err := description.DescribeCommand(executor, data, buffer)
 			if err != nil {
@@ -349,7 +349,7 @@ Usage:
 	for _, testcase := range testcases {
 		t.Run(testcase.path.Join(" ", "", ""), func(t *testing.T) {
 			buffer := bytes.NewBuffer(nil)
-			data := description.CreateCommandData("main", testcase.path, testcase.cmd)
+			data := description.CreateCommandData("main", "", testcase.path, testcase.cmd)
 
 			err := description.DescribeCommand(executor, data, buffer)
 			if err != nil {
