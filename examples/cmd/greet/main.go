@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+//go:generate go run "github.com/Jumpaku/cyamli/cmd/cyamli@latest" golang -schema-path=cli.yaml -out-path=cli.gen.go
 func main() {
 	// Create the CLI object
 	cli := NewCLI()

@@ -98,7 +98,7 @@ func main() {
 Example implementations for `showHelp` and `sayHello` are as follows:
 
 ```go
-func showHelp(cmd *schema.Command, subcommand []string, input CLI_Input) (err error) {
+func showHelp(subcommand []string, input CLI_Input, inputErr error) (err error) {
 	if input.Opt_Help {
 		fmt.Println("This is an example program.")
 	} else {
@@ -106,7 +106,7 @@ func showHelp(cmd *schema.Command, subcommand []string, input CLI_Input) (err er
 	}
 	return nil
 }
-func sayHello(cmd *schema.Command, subcommand []string, input CLI_Hello_Input) (err error) {
+func sayHello(subcommand []string, input CLI_Hello_Input, inputErr error) (err error) {
 	hello := "Hello"
 	if input.Opt_TargetName != "" {
 		hello += ", " + input.Opt_TargetName
@@ -136,7 +136,7 @@ go run main.go hello -target-name=Bob Alice
 
 Only Go is supported currently.
 
-### handling command line arguments
+### Handling command line arguments
 
 ```
 <program> <subcommand> [<option>|<argument>]... [-- [<argument>]...]
