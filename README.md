@@ -130,6 +130,10 @@ go run main.go hello -target-name=Bob Alice
 # => Hello, Bob! My name is Alice!
 ```
 
+## Examples
+
+The example CLI applications are found in https://github.com/Jumpaku/cyamli/tree/main/examples .
+
 ## Details
 
 ### Supported programming languages
