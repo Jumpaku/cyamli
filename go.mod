@@ -1,6 +1,6 @@
 module github.com/Jumpaku/cyamli
 
-go 1.21
+go 1.21.4
 
 require (
 	github.com/Jumpaku/go-assert v1.0.0
