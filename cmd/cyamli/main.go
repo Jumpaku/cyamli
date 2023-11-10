@@ -18,7 +18,7 @@ func main() {
 	}
 }
 
-func funcGolang(cmd *schema.Command, subcommand []string, input CLI_Golang_Input) (err error) {
+func funcGolang(subcommand []string, input CLI_Golang_Input, inputErr error) (err error) {
 	var reader io.Reader = os.Stdin
 	if input.Opt_SchemaPath != "" {
 		f, err := os.Open(input.Opt_SchemaPath)

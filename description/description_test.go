@@ -215,19 +215,19 @@ Usage:
     $ main [<option>|<argument>]... [-- [<argument>]...]
 
 Options:
-    -option-a=<string>, -a=<string>  [default="abc"]:
+    -option-a=<string>, -a=<string>  (default="abc"):
         a - this is an option for root command
 
-    -option-b=<integer>, -b=<integer>  [default=-123]:
+    -option-b=<integer>, -b=<integer>  (default=-123):
         b - this is an option for root command
 
-    -option-c[=<boolean>], -c[=<boolean>]  [default=true]:
+    -option-c[=<boolean>], -c[=<boolean>]  (default=true):
         c - this is an option for root command
 
-    -option-d=<float>, -d=<float>  [default=-123.456]:
+    -option-d=<float>, -d=<float>  (default=-123.456):
         d - this is an option for root command
 
-    -option-e=<string>  [default=""]:
+    -option-e=<string>  (default=""):
 
 Arguments:
     [0]  <arg_a:string>
@@ -288,19 +288,19 @@ Usage:
     $ main sub3 [<option>|<argument>]... [-- [<argument>]...]
 
 Options:
-    -option-a=<string>, -a=<string>  [default="abc"]:
+    -option-a=<string>, -a=<string>  (default="abc"):
         3 - a - this is an option for root command
 
-    -option-b=<integer>, -b=<integer>  [default=-123]:
+    -option-b=<integer>, -b=<integer>  (default=-123):
         3 - b - this is an option for root command
 
-    -option-c[=<boolean>], -c[=<boolean>]  [default=true]:
+    -option-c[=<boolean>], -c[=<boolean>]  (default=true):
         3 - c - this is an option for root command
 
-    -option-d=<float>, -d=<float>  [default=-123.456]:
+    -option-d=<float>, -d=<float>  (default=-123.456):
         3 - d - this is an option for root command
 
-    -option-e=<string>  [default=""]:
+    -option-e=<string>  (default=""):
 
 Arguments:
     [0]  <arg_a:string>

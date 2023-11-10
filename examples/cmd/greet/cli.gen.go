@@ -5,20 +5,18 @@ import (
 	"fmt"
 	"bytes"
 	"strings"
-	"os"
 
 	cyamli_schema "github.com/Jumpaku/cyamli/schema"
 	cyamli_golang "github.com/Jumpaku/cyamli/golang"
-	cyamli_description "github.com/Jumpaku/cyamli/description"
 )
 
-func newSchema() *cyamli_schema.Schema {
+func LoadSchema() *cyamli_schema.Schema {
 	var schema, _ = cyamli_schema.Load(bytes.NewBufferString("name: greet\nversion: \"\"\ndescription: this is an example program\noptions:\n  -help:\n    short: -h\n    description: Show help information.\n    type: boolean\n    default: \"\"\narguments: []\nsubcommands:\n  hello:\n    description: Prints \"Hello, <target name>! My name is <greeter>!\"\n    options:\n      -target-name:\n        short: -t\n        description: The name of the person to be said hello.\n        type: \"\"\n        default: \"\"\n    arguments:\n    - name: greeter\n      description: The name of the person who says hello.\n      type: \"\"\n      variadic: false\n    subcommands: {}\n"))
 	return schema
 }
 
 
-type Func[Input any] func(cmdSchema *cyamli_schema.Command, subcommand []string, input Input) (err error)
+type Func[Input any] func(subcommand []string, input Input, inputErr error) (err error)
 
 
 
@@ -57,20 +55,12 @@ type CLI_Hello_Input struct {
 
 
 func NewCLI() CLI {
-	cli := CLI{}
-	s := newSchema()
-
-	cli.Func = cyamli_golang.NewDefaultFunc[CLI_Input](s.Program.Name)
-
-
-	cli.Sub_Hello.Func = cyamli_golang.NewDefaultFunc[CLI_Hello_Input](s.Program.Name)
-
-	return cli
+	return CLI{}
 }
 
 
 func Run(cli CLI, args []string) error {
-	s := newSchema()
+	s := LoadSchema()
 	cmd, subcommand, restArgs := cyamli_golang.ResolveSubcommand(s, args)
 	switch strings.Join(subcommand, " ") {
 
@@ -79,21 +69,12 @@ func Run(cli CLI, args []string) error {
 			Opt_Help: false,
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Func not assigned", "")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 
 	case "hello":
@@ -101,21 +82,12 @@ func Run(cli CLI, args []string) error {
 			Opt_TargetName: "",
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Sub_Hello.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Hello.Func not assigned", "hello")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Sub_Hello.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 	}
 	return nil

@@ -5,20 +5,18 @@ import (
 	"fmt"
 	"bytes"
 	"strings"
-	"os"
 
 	cyamli_schema "github.com/Jumpaku/cyamli/schema"
 	cyamli_golang "github.com/Jumpaku/cyamli/golang"
-	cyamli_description "github.com/Jumpaku/cyamli/description"
 )
 
-func newSchema() *cyamli_schema.Schema {
+func LoadSchema() *cyamli_schema.Schema {
 	var schema, _ = cyamli_schema.Load(bytes.NewBufferString("name: cyamli\nversion: v1.0.0\ndescription: A command line tool to generate CLI for your app from YAML-based schema.\noptions:\n  -help:\n    short: -h\n    description: shows description of this app\n    type: boolean\n    default: \"\"\n  -version:\n    short: -v\n    description: shows version of this app\n    type: boolean\n    default: \"\"\narguments: []\nsubcommands:\n  golang:\n    description: generates CLI for your app written in Go.\n    options:\n      -help:\n        short: -h\n        description: shows description of golang subcommand\n        type: boolean\n        default: \"\"\n      -out-path:\n        short: \"\"\n        description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n        type: \"\"\n        default: \"\"\n      -package:\n        short: \"\"\n        description: package name where the generated file will be placed.\n        type: \"\"\n        default: main\n      -schema-path:\n        short: \"\"\n        description: if specified then reads schema file from the path, otherwise reads from stdin.\n        type: \"\"\n        default: \"\"\n    arguments: []\n    subcommands: {}\n"))
 	return schema
 }
 
 
-type Func[Input any] func(cmdSchema *cyamli_schema.Command, subcommand []string, input Input) (err error)
+type Func[Input any] func(subcommand []string, input Input, inputErr error) (err error)
 
 
 
@@ -60,20 +58,12 @@ type CLI_Golang_Input struct {
 
 
 func NewCLI() CLI {
-	cli := CLI{}
-	s := newSchema()
-
-	cli.Func = cyamli_golang.NewDefaultFunc[CLI_Input](s.Program.Name)
-
-
-	cli.Sub_Golang.Func = cyamli_golang.NewDefaultFunc[CLI_Golang_Input](s.Program.Name)
-
-	return cli
+	return CLI{}
 }
 
 
 func Run(cli CLI, args []string) error {
-	s := newSchema()
+	s := LoadSchema()
 	cmd, subcommand, restArgs := cyamli_golang.ResolveSubcommand(s, args)
 	switch strings.Join(subcommand, " ") {
 
@@ -83,21 +73,12 @@ func Run(cli CLI, args []string) error {
 			Opt_Version: false,
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Func not assigned", "")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 
 	case "golang":
@@ -108,21 +89,12 @@ func Run(cli CLI, args []string) error {
 			Opt_SchemaPath: "",
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Sub_Golang.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Golang.Func not assigned", "golang")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Sub_Golang.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 	}
 	return nil

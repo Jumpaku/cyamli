@@ -38,6 +38,19 @@ func (s *Schema) Validate() error {
 	return s.Program.Validate()
 }
 
+func (s *Schema) Find(subcommandPath []string) *Command {
+	cmd := s.Program.Command()
+	for _, subcommand := range subcommandPath {
+		found, ok := cmd.Subcommands[subcommand]
+		if !ok {
+			return nil
+		}
+
+		cmd = found
+	}
+	return cmd
+}
+
 func (s *Schema) Walk(f func(path name.Path, cmd *Command) error) error {
 	return walkImpl(nil, s.Program.Command(), f)
 }

@@ -2,30 +2,17 @@ package golang
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 	"strconv"
 	"strings"
 
 	"github.com/Jumpaku/cyamli/schema"
 
-	"github.com/Jumpaku/cyamli/description"
 	"github.com/Jumpaku/cyamli/golang/data"
 	"github.com/Jumpaku/cyamli/name"
 
 	"github.com/Jumpaku/go-assert"
 )
-
-func NewDefaultFunc[Input any](programName string) func(cmd *schema.Command, subcommand []string, input Input) (err error) {
-	return func(cmd *schema.Command, subcommand []string, input Input) (err error) {
-		descData := description.CreateCommandData(programName, subcommand, cmd)
-		err = description.DescribeCommand(description.DetailExecutor(), descData, os.Stdout)
-		if err != nil {
-			return fmt.Errorf("fail to create command description: %w", err)
-		}
-		return nil
-	}
-}
 
 func ResolveSubcommand(s *schema.Schema, args []string) (cmd *schema.Command, subcommand []string, restArgs []string) {
 	assert.Params(len(args) >= 1, "first element of args must be a path of the executable file")

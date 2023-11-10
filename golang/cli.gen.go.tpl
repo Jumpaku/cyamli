@@ -5,20 +5,18 @@ import (
 	"fmt"
 	"bytes"
 	"strings"
-	"os"
 
 	cyamli_schema "github.com/Jumpaku/cyamli/schema"
 	cyamli_golang "github.com/Jumpaku/cyamli/golang"
-	cyamli_description "github.com/Jumpaku/cyamli/description"
 )
 
-func newSchema() *cyamli_schema.Schema {
+func LoadSchema() *cyamli_schema.Schema {
 	var schema, _ = cyamli_schema.Load(bytes.NewBufferString({{.SchemaYAMLLiteral}}))
 	return schema
 }
 
 
-type Func[Input any] func(cmdSchema *cyamli_schema.Command, subcommand []string, input Input) (err error)
+type Func[Input any] func(subcommand []string, input Input, inputErr error) (err error)
 
 {{/* Root command */}}
 {{with .Program}}
@@ -59,20 +57,12 @@ type {{.CLIInputStructName}} struct {
 
 {{/* CLI Constructor */}}
 func NewCLI() {{.Program.CLIStructName}} {
-	cli := CLI{}
-	s := newSchema()
-{{with .Program}}
-	cli.{{.CLIFuncMethodChain}} = cyamli_golang.NewDefaultFunc[{{.CLIInputStructName}}](s.Program.Name)
-{{end}}
-{{range .Commands}}
-	cli.{{.CLIFuncMethodChain}} = cyamli_golang.NewDefaultFunc[{{.CLIInputStructName}}](s.Program.Name)
-{{end}}
-	return cli
+	return CLI{}
 }
 
 {{/* Entry point */}}
 func Run(cli CLI, args []string) error {
-	s := newSchema()
+	s := LoadSchema()
 	cmd, subcommand, restArgs := cyamli_golang.ResolveSubcommand(s, args)
 	switch strings.Join(subcommand, " ") {
 {{with .Program}}
@@ -81,21 +71,12 @@ func Run(cli CLI, args []string) error {
 {{range $Index, $Option := .Options}}			{{$Option.InputFieldName}}: {{$Option.DefaultLiteral}},
 {{end}}
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.{{.CLIFuncMethodChain}}
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.NameLiteral}})
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.{{.CLIFuncMethodChain}}(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 {{end}}
 {{range .Commands}}
 	case {{.NameLiteral}}:
@@ -103,21 +84,12 @@ func Run(cli CLI, args []string) error {
 {{range $Index, $Option := .Options}}			{{$Option.InputFieldName}}: {{$Option.DefaultLiteral}},
 {{end}}
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.{{.CLIFuncMethodChain}}
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.NameLiteral}})
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.{{.CLIFuncMethodChain}}(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 {{end}}
 	}
 	return nil

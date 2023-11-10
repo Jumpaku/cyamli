@@ -24,7 +24,7 @@
             {{- if (eq $Option.Type "boolean") -}}[=<{{$Option.Type}}>]
             {{- else -}}=<{{$Option.Type}}>
             {{- end -}}
-        {{- end -}}{{"  "}}[default={{$Option.Default}}]:
+        {{- end -}}{{"  "}}(default={{$Option.Default}}):
         {{- range $Index, $Line := $Option.Description -}}
             {{"\n        "}}{{$Line}}
         {{- end -}}

@@ -5,20 +5,18 @@ import (
 	"fmt"
 	"bytes"
 	"strings"
-	"os"
 
 	cyamli_schema "github.com/Jumpaku/cyamli/schema"
 	cyamli_golang "github.com/Jumpaku/cyamli/golang"
-	cyamli_description "github.com/Jumpaku/cyamli/description"
 )
 
-func newSchema() *cyamli_schema.Schema {
+func LoadSchema() *cyamli_schema.Schema {
 	var schema, _ = cyamli_schema.Load(bytes.NewBufferString("name: example\nversion: v1.0.0\ndescription: this is an example command\noptions:\n  -option-a:\n    short: -a\n    description: a - this is an option for root command\n    type: string\n    default: abc\n  -option-b:\n    short: -b\n    description: b - this is an option for root command\n    type: integer\n    default: \"-123\"\n  -option-c:\n    short: -c\n    description: c - this is an option for root command\n    type: boolean\n    default: \"true\"\n  -option-d:\n    short: -d\n    description: d - this is an option for root command\n    type: float\n    default: \"-123.456\"\n  -option-e:\n    short: \"\"\n    description: \"\"\n    type: \"\"\n    default: \"\"\narguments:\n- name: arg_a\n  description: a - this is an argument for root command\n  type: string\n  variadic: false\n- name: arg_b\n  description: b - this is an argument for root command\n  type: integer\n  variadic: false\n- name: arg_c\n  description: c - this is an argument for root command\n  type: boolean\n  variadic: false\n- name: arg_d\n  description: d - this is an argument for root command\n  type: float\n  variadic: false\n- name: arg_e\n  description: \"\"\n  type: \"\"\n  variadic: false\n- name: arg_v\n  description: v - this is an argument for root command\n  type: \"\"\n  variadic: true\nsubcommands:\n  sub1:\n    description: 1 - this is a sub command\n    options: {}\n    arguments: []\n    subcommands: {}\n  sub2:\n    description: 2 - this is a sub command\n    options: {}\n    arguments: []\n    subcommands: {}\n  sub3:\n    description: 3 - this is a sub command\n    options:\n      -option-a:\n        short: -a\n        description: 3 - a - this is an option for root command\n        type: string\n        default: abc\n      -option-b:\n        short: -b\n        description: 3 - b - this is an option for root command\n        type: integer\n        default: \"-123\"\n      -option-c:\n        short: -c\n        description: 3 - c - this is an option for root command\n        type: boolean\n        default: \"true\"\n      -option-d:\n        short: -d\n        description: 3 - d - this is an option for root command\n        type: float\n        default: \"-123.456\"\n      -option-e:\n        short: \"\"\n        description: \"\"\n        type: \"\"\n        default: \"\"\n    arguments:\n    - name: arg_a\n      description: 3 - a - this is an argument for root command\n      type: string\n      variadic: false\n    - name: arg_b\n      description: 3 - b - this is an argument for root command\n      type: integer\n      variadic: false\n    - name: arg_c\n      description: 3 - c - this is an argument for root command\n      type: boolean\n      variadic: false\n    - name: arg_d\n      description: 3 - d - this is an argument for root command\n      type: float\n      variadic: false\n    - name: arg_e\n      description: \"\"\n      type: \"\"\n      variadic: false\n    - name: arg_v\n      description: 3 - v - this is an argument for root command\n      type: \"\"\n      variadic: true\n    subcommands:\n      subx:\n        description: \"\"\n        options: {}\n        arguments: []\n        subcommands: {}\n      suby:\n        description: \"\"\n        options: {}\n        arguments: []\n        subcommands: {}\n"))
 	return schema
 }
 
 
-type Func[Input any] func(cmdSchema *cyamli_schema.Command, subcommand []string, input Input) (err error)
+type Func[Input any] func(subcommand []string, input Input, inputErr error) (err error)
 
 
 
@@ -128,28 +126,12 @@ type CLI_Sub3Suby_Input struct {
 
 
 func NewCLI() CLI {
-	cli := CLI{}
-	s := newSchema()
-
-	cli.Func = cyamli_golang.NewDefaultFunc[CLI_Input](s.Program.Name)
-
-
-	cli.Sub_Sub1.Func = cyamli_golang.NewDefaultFunc[CLI_Sub1_Input](s.Program.Name)
-
-	cli.Sub_Sub2.Func = cyamli_golang.NewDefaultFunc[CLI_Sub2_Input](s.Program.Name)
-
-	cli.Sub_Sub3.Func = cyamli_golang.NewDefaultFunc[CLI_Sub3_Input](s.Program.Name)
-
-	cli.Sub_Sub3.Sub_Subx.Func = cyamli_golang.NewDefaultFunc[CLI_Sub3Subx_Input](s.Program.Name)
-
-	cli.Sub_Sub3.Sub_Suby.Func = cyamli_golang.NewDefaultFunc[CLI_Sub3Suby_Input](s.Program.Name)
-
-	return cli
+	return CLI{}
 }
 
 
 func Run(cli CLI, args []string) error {
-	s := newSchema()
+	s := LoadSchema()
 	cmd, subcommand, restArgs := cyamli_golang.ResolveSubcommand(s, args)
 	switch strings.Join(subcommand, " ") {
 
@@ -162,62 +144,35 @@ func Run(cli CLI, args []string) error {
 			Opt_OptionE: "",
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Func not assigned", "")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 
 	case "sub1":
 		input := CLI_Sub1_Input{
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Sub_Sub1.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Sub1.Func not assigned", "sub1")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Sub_Sub1.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 	case "sub2":
 		input := CLI_Sub2_Input{
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Sub_Sub2.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Sub2.Func not assigned", "sub2")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Sub_Sub2.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 	case "sub3":
 		input := CLI_Sub3_Input{
@@ -228,61 +183,34 @@ func Run(cli CLI, args []string) error {
 			Opt_OptionE: "",
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Sub_Sub3.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Sub3.Func not assigned", "sub3")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Sub_Sub3.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 	case "sub3 subx":
 		input := CLI_Sub3Subx_Input{
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Sub_Sub3.Sub_Subx.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Sub3.Sub_Subx.Func not assigned", "sub3 subx")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Sub_Sub3.Sub_Subx.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 	case "sub3 suby":
 		input := CLI_Sub3Suby_Input{
 
 		}
-		if err := cyamli_golang.ResolveInput(cmd, restArgs, &input); err != nil {
-			descData := cyamli_description.CreateCommandData(s.Program.Name, subcommand, cmd)
-			if err := cyamli_description.DescribeCommand(cyamli_description.SimpleExecutor(), descData, os.Stderr); err != nil {
-				panic(fmt.Errorf("fail to create command description: %w", err))
-			}
-			fmt.Fprintln(os.Stderr, "")
-			return fmt.Errorf("fail to resolve input: %w", err)
-		}
 		funcMethod := cli.Sub_Sub3.Sub_Suby.Func
 		if funcMethod == nil {
 			return fmt.Errorf("%q is unsupported: cli.Sub_Sub3.Sub_Suby.Func not assigned", "sub3 suby")
 		}
-		if err := funcMethod(cmd, subcommand, input); err != nil {
-			return fmt.Errorf("cli.Sub_Sub3.Sub_Suby.Func(input) failed: %w", err)
-		}
+		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
+		return funcMethod(subcommand, input, err)
 
 	}
 	return nil

@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/Jumpaku/cyamli/schema"
 )
 
 func main() {
@@ -19,7 +17,7 @@ func main() {
 	}
 }
 
-func showHelp(cmd *schema.Command, subcommand []string, input CLI_Input) (err error) {
+func showHelp(subcommand []string, input CLI_Input, inputErr error) (err error) {
 	if input.Opt_Help {
 		fmt.Println("This is an example program.")
 	} else {
@@ -27,7 +25,7 @@ func showHelp(cmd *schema.Command, subcommand []string, input CLI_Input) (err er
 	}
 	return nil
 }
-func sayHello(cmd *schema.Command, subcommand []string, input CLI_Hello_Input) (err error) {
+func sayHello(subcommand []string, input CLI_Hello_Input, inputErr error) (err error) {
 	hello := "Hello"
 	if input.Opt_TargetName != "" {
 		hello += ", " + input.Opt_TargetName

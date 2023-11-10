@@ -1,21 +1,20 @@
 {
-    "name": "work",
-    "dockerComposeFile": "./docker-compose.yml",
-    "service": "work",
-    "workspaceFolder": "/work/",
-    "customizations": {
-      "vscode": {
-        "extensions": [
-          "donjayamanne.githistory",
-          "streetsidesoftware.code-spell-checker",
-          "golang.go",
-          "bufbuild.vscode-buf",
-          "pbkit.vscode-pbkit"
-        ]
-      }
-    },
-    "settings": {
-      "editor.wordWrap": "on",
-      "editor.formatOnSave": true
+  "name": "work",
+  "dockerComposeFile": "./docker-compose.yml",
+  "service": "work",
+  "workspaceFolder": "/work/",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "donjayamanne.githistory",
+        "streetsidesoftware.code-spell-checker",
+        "golang.go",
+        "jinliming2.vscode-go-template"
+      ]
     }
+  },
+  "settings": {
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": true
   }
+}
