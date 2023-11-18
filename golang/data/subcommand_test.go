@@ -19,13 +19,13 @@ func TestSubcommand_SubcommandFieldName(t *testing.T) {
 			sut: data.Subcommand{
 				Name: name.Path{"sub", "cmd", "name"},
 			},
-			want: `Sub_Name`,
+			want: `Name`,
 		},
 		{
 			sut: data.Subcommand{
 				Name: name.Path{"subcmdname"},
 			},
-			want: `Sub_Subcmdname`,
+			want: `Subcmdname`,
 		},
 	}
 

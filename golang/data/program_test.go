@@ -82,7 +82,7 @@ func TestProgram_FuncMethodChain(t *testing.T) {
 			sut: data.Program{
 				Name: name.Path{"program"},
 			},
-			want: `Func`,
+			want: `FUNC`,
 		},
 	}
 

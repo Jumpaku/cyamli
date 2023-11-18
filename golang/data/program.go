@@ -21,7 +21,7 @@ func (d Program) CLIStructName() string {
 }
 
 func (d Program) CLIFuncMethodChain() string {
-	return "Func"
+	return "FUNC"
 }
 
 func (d Program) CLIInputStructName() string {

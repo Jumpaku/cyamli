@@ -24,7 +24,7 @@ type Func[Input any] func(subcommand []string, input Input, inputErr error) (err
 type {{.CLIStructName}} struct {
 {{range $Index, $Subcommand := .Subcommands}}	{{$Subcommand.SubcommandFieldName}} {{$Subcommand.SubcommandFieldType}}
 {{end}}
-	Func Func[{{.CLIInputStructName}}]
+	FUNC Func[{{.CLIInputStructName}}]
 }
 
 type {{.CLIInputStructName}} struct {
@@ -43,7 +43,7 @@ type {{.CLIInputStructName}} struct {
 type {{.CLIStructName}} struct {
 {{range $Index, $Subcommand := .Subcommands}}	{{$Subcommand.SubcommandFieldName}} {{$Subcommand.SubcommandFieldType}}
 {{end}}
-	Func Func[{{.CLIInputStructName}}]
+	FUNC Func[{{.CLIInputStructName}}]
 }
 
 type {{.CLIInputStructName}} struct {

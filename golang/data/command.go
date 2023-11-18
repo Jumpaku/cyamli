@@ -27,6 +27,6 @@ func (d Command) CLIInputStructName() string {
 
 func (d Command) CLIFuncMethodChain() string {
 	return d.Name.Map(func(s string) string {
-		return "Sub_" + name.Title(s)
-	}).Join(".", "", ".Func")
+		return name.Title(s)
+	}).Join(".", "", ".FUNC")
 }
