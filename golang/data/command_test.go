@@ -100,13 +100,13 @@ func TestCommand_FuncMethodChain(t *testing.T) {
 			sut: data.Command{
 				Name: name.Path{"cmd", "name", "abc"},
 			},
-			want: `Sub_Cmd.Sub_Name.Sub_Abc.Func`,
+			want: `Cmd.Name.Abc.FUNC`,
 		},
 		{
 			sut: data.Command{
 				Name: name.Path{"cmdname"},
 			},
-			want: `Sub_Cmdname.Func`,
+			want: `Cmdname.FUNC`,
 		},
 	}
 

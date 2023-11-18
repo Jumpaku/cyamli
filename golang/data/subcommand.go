@@ -9,7 +9,7 @@ type Subcommand struct {
 }
 
 func (d Subcommand) SubcommandFieldName() string {
-	return "Sub_" + name.Title(d.Name[len(d.Name)-1])
+	return name.Title(d.Name[len(d.Name)-1])
 }
 
 func (d Subcommand) SubcommandFieldType() string {

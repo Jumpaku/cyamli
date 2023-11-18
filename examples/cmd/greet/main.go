@@ -10,8 +10,8 @@ func main() {
 	// Create the CLI object
 	cli := NewCLI()
 	// Overwrite behaviors
-	cli.Func = showHelp
-	cli.Sub_Hello.Func = sayHello
+	cli.FUNC = showHelp
+	cli.Hello.FUNC = sayHello
 	// Run with command line arguments
 	if err := Run(cli, os.Args); err != nil {
 		panic(err)

@@ -12,7 +12,7 @@ import (
 
 func main() {
 	cli := NewCLI()
-	cli.Func = func(subcommand []string, input CLI_Input, inputErr error) (err error) {
+	cli.FUNC = func(subcommand []string, input CLI_Input, inputErr error) (err error) {
 		if input.Opt_Version {
 			fmt.Printf("version: %s\n", LoadSchema().Program.Version)
 			return nil
@@ -20,7 +20,7 @@ func main() {
 		showDetailDescription(subcommand, os.Stdout)
 		return nil
 	}
-	cli.Sub_Golang.Func = funcGolang
+	cli.Golang.FUNC = funcGolang
 
 	if err := Run(cli, os.Args); err != nil {
 		panic(err)
@@ -28,9 +28,6 @@ func main() {
 }
 
 func showSimpleDescription(subcommand []string, writer io.Writer, inputErr error) {
-	if inputErr == nil {
-		return
-	}
 	schema := LoadSchema()
 	_ = description.DescribeCommand(
 		description.SimpleExecutor(),
@@ -44,7 +41,7 @@ func showDetailDescription(subcommand []string, writer io.Writer) {
 	_ = description.DescribeCommand(
 		description.DetailExecutor(),
 		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
-		os.Stdout,
+		writer,
 	)
 }
 
