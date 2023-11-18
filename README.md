@@ -140,6 +140,64 @@ The example CLI applications are found in https://github.com/Jumpaku/cyamli/tree
 
 Only Go is supported currently.
 
+### Auto-generated help descriptions
+
+`cyamli` can provide auto-generated simple or detail help descriptions for commands defined by the CLI schema.
+The following functions generate help descriptions using `cyamli` as a Go library.
+
+```go
+func showSimpleDescription(subcommand []string, writer io.Writer, inputErr error) {
+	schema := LoadSchema()
+	_ = description.DescribeCommand(
+		description.SimpleExecutor(),
+		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
+		writer,
+	)
+}
+func showDetailDescription(subcommand []string, writer io.Writer) {
+	schema := LoadSchema()
+	_ = description.DescribeCommand(
+		description.DetailExecutor(),
+		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
+		writer,
+	)
+}
+```
+
+An example output for `showSimpleDescription`:
+```
+greet hello:
+Prints "Hello, <target name>! My name is <greeter>!"
+
+Usage:
+    $ greet hello [<option>|<argument>]... [-- [<argument>]...]
+
+Options:
+    -target-name
+
+Arguments:
+    <greeter>
+```
+
+An example output for `showDetailDescription`:
+```
+greet hello:
+Prints "Hello, <target name>! My name is <greeter>!"
+
+Usage:
+    $ greet hello [<option>|<argument>]... [-- [<argument>]...]
+
+
+Options:
+    -target-name=<string>, -t=<string>  (default=""):
+        The name of the person to be said hello.
+
+
+Arguments:
+    [0]  <greeter:string>
+        The name of the person who says hello.
+```
+
 ### Handling command line arguments
 
 ```
@@ -148,9 +206,10 @@ Only Go is supported currently.
 
 - `<program>` is the path to your executable file.
 - `<subcommand>` is a sequence of tokens, which represents a path in the command tree illustrated in your CLI schema.
-    - `<subcommand>` may be empty.
+	- Each element of `<subcommand>` must match the regular expression `^[a-z][a-z0-9]*$`.
+    - `<subcommand>` may be empty, which means the execution of the root command.
 - `<option>` represents an option, which is a token in form of `<option_name>[=<option_value>]`.
-    - `<option_name>` must match regular expression `^(-[a-z][a-z0-9]*)+$` (or `^-[a-z]$` in short version).
+    - `<option_name>` must match the regular expression `^(-[a-z][a-z0-9]*)+$` (or `^-[a-z]$` in short version).
     - `<option_value>` must be a string that can be parsed as a value of the type of the option.
     - `=<option_value>` can be omitted if the type of the option is boolean.
 - `<argument>` represents an argument, which must be a string that can be parsed as a value of the type of the argument.
