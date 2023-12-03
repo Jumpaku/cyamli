@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"go/format"
 	"log"
 	"os"
 
@@ -14,7 +16,19 @@ func main() {
 		log.Panicln(err)
 	}
 
-	err = golang.Generate("main", s, os.Stdout)
+	buf := bytes.NewBuffer(nil)
+
+	err = golang.Generate("main", s, buf)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	b, err := format.Source(buf.Bytes())
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	_, err = os.Stdout.Write(b)
 	if err != nil {
 		log.Panicln(err)
 	}

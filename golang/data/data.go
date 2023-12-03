@@ -56,7 +56,6 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 				Variadic: arg.Variadic,
 			})
 		}
-		sortArguments(cmdData.Arguments)
 
 		for subName := range cmd.Subcommands {
 			cmdData.Subcommands = append(cmdData.Subcommands, Subcommand{
@@ -98,13 +97,6 @@ func sortOptions(options []Option) []Option {
 		return slices.Compare(a.Name, b.Name)
 	})
 	return options
-}
-
-func sortArguments(arguments []Argument) []Argument {
-	slices.SortFunc(arguments, func(a, b Argument) int {
-		return slices.Compare(a.Name, b.Name)
-	})
-	return arguments
 }
 
 func sortCommands(commands []Command) []Command {

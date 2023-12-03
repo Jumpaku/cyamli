@@ -52,7 +52,7 @@ func TestProgram_CLIInputStructName(t *testing.T) {
 	}
 }
 
-func TestProgram_NameLiteral(t *testing.T) {
+func TestProgram_FullPathLiteral(t *testing.T) {
 	testcases := []struct {
 		sut  data.Program
 		want string
@@ -67,7 +67,7 @@ func TestProgram_NameLiteral(t *testing.T) {
 
 	for number, testcase := range testcases {
 		t.Run(fmt.Sprintf("%03d: %#v", number, testcase.sut.Name), func(t *testing.T) {
-			got := testcase.sut.NameLiteral()
+			got := testcase.sut.FullPathLiteral()
 			assert.Equal(t, testcase.want, got)
 		})
 	}

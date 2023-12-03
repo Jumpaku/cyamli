@@ -1,15 +1,25 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
+
+	_ "embed"
 
 	"github.com/Jumpaku/cyamli/description"
 	"github.com/Jumpaku/cyamli/golang"
 	"github.com/Jumpaku/cyamli/schema"
 )
 
+//go:embed cli.yaml
+var schemaData []byte
+
+func LoadSchema() *schema.Schema {
+	s, _ := schema.Load(bytes.NewBuffer(schemaData))
+	return s
+}
 func main() {
 	cli := NewCLI()
 	cli.FUNC = func(subcommand []string, input CLI_Input, inputErr error) (err error) {
@@ -81,8 +91,12 @@ func funcGolang(subcommand []string, input CLI_Golang_Input, inputErr error) (er
 		writer = f
 	}
 
-	err = golang.Generate(input.Opt_Package, schema, writer)
-	if err != nil {
+	buf := bytes.NewBuffer(nil)
+	if err := golang.Generate(input.Opt_Package, schema, buf); err != nil {
+		return fmt.Errorf("fail to generate cli %q: %w", input.Opt_SchemaPath, err)
+	}
+
+	if _, err := writer.Write(buf.Bytes()); err != nil {
 		return fmt.Errorf("fail to generate cli %q: %w", input.Opt_SchemaPath, err)
 	}
 

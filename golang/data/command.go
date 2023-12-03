@@ -13,7 +13,7 @@ type Command struct {
 	Subcommands []Subcommand
 }
 
-func (d Command) NameLiteral() string {
+func (d Command) FullPathLiteral() string {
 	return fmt.Sprintf("%q", d.Name.Join(" ", "", ""))
 }
 
