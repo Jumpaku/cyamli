@@ -12,7 +12,7 @@ type Program struct {
 	Subcommands []Subcommand
 }
 
-func (d Program) NameLiteral() string {
+func (d Program) FullPathLiteral() string {
 	return `""`
 }
 

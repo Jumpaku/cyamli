@@ -52,6 +52,9 @@ func (d Option) NameLiteral() string {
 }
 
 func (d Option) ShortNameLiteral() string {
+	if len(d.Short) == 0 {
+		return ""
+	}
 	return fmt.Sprintf("%q", d.Short.Join("", "-", ""))
 }
 

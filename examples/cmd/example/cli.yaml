@@ -91,5 +91,23 @@ subcommands:
         description: 3 - v - this is an argument for root command
         variadic: true
     subcommands:
-      subx: {}
-      suby: {}
+      suba:
+        arguments:
+        - name: arg_v
+          type: boolean
+          variadic: true
+      subb:
+        arguments:
+        - name: arg_v
+          type: integer
+          variadic: true
+      subc:
+        arguments:
+        - name: arg_v
+          type: float
+          variadic: true
+      subd:
+        arguments:
+        - name: arg_v
+          type: string
+          variadic: true

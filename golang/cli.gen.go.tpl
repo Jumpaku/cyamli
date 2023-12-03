@@ -3,54 +3,163 @@ package {{.Package}}
 
 import (
 	"fmt"
-	"bytes"
 	"strings"
-
-	cyamli_schema "github.com/Jumpaku/cyamli/schema"
-	cyamli_golang "github.com/Jumpaku/cyamli/golang"
+	"strconv"
 )
 
-func LoadSchema() *cyamli_schema.Schema {
-	var schema, _ = cyamli_schema.Load(bytes.NewBufferString({{.SchemaYAMLLiteral}}))
-	return schema
-}
-
-
 type Func[Input any] func(subcommand []string, input Input, inputErr error) (err error)
+
 
 {{/* Root command */}}
 {{with .Program}}
 
 type {{.CLIStructName}} struct {
-{{range $Index, $Subcommand := .Subcommands}}	{{$Subcommand.SubcommandFieldName}} {{$Subcommand.SubcommandFieldType}}
+{{range $Index, $Subcommand := .Subcommands}}
+	{{$Subcommand.SubcommandFieldName}} {{$Subcommand.SubcommandFieldType}}
 {{end}}
 	FUNC Func[{{.CLIInputStructName}}]
 }
-
 type {{.CLIInputStructName}} struct {
-{{range $Index, $Option := .Options}}	{{$Option.InputFieldName}} {{$Option.InputFieldType}}
+{{range $Index, $Option := .Options}}
+	{{$Option.InputFieldName}} {{$Option.InputFieldType}}
 {{end}}
-{{range $Index, $Argument := .Arguments}}	{{$Argument.InputFieldName}} {{$Argument.InputFieldType}}
+{{range $Index, $Argument := .Arguments}}
+	{{$Argument.InputFieldName}} {{$Argument.InputFieldType}}
 {{end}}
+}
+func resolve_{{.CLIInputStructName}}(input *{{.CLIInputStructName}}, restArgs []string) error {
+	*input = {{.CLIInputStructName}}{
+	{{range $Index, $Option := .Options}}
+		{{$Option.InputFieldName}}: {{$Option.DefaultLiteral}},
+	{{end}}
+	}
+
+	var arguments []string
+	for idx, arg := range restArgs {
+		if arg == "--" {
+			arguments = append(arguments, restArgs[idx+1:]...)
+			break
+		}
+		if !strings.HasPrefix(arg, "-") {
+			arguments = append(arguments, arg)
+			continue
+		}
+		optName, lit, cut := strings.Cut(arg, "=")
+		consumeVariables(optName, lit, cut)
+
+		switch optName {
+		default:
+			return fmt.Errorf("unknown option %q", optName)
+		{{range $Index, $Option := .Options}}
+		case {{$Option.NameLiteral}}{{if $Option.ShortNameLiteral}}, {{$Option.ShortNameLiteral}}{{end}}:
+			if !cut {
+				{{if eq $Option.InputFieldType "bool"}}lit = "true"
+				{{else}}return fmt.Errorf("value is not specified to option %q", optName)
+				{{end}}
+			}
+			if err := parseValue(&input.{{$Option.InputFieldName}}, lit); err != nil {
+				return fmt.Errorf("value %q is not assignable to option %q", lit, optName)
+			}
+		{{end}}
+		}
+	}
+
+	{{range $Index, $Argument := .Arguments}}
+		{{if $Argument.Variadic}}
+		if len(arguments) <= {{$Index}} - 1 {
+			return fmt.Errorf("too few arguments")
+		}
+		if err := parseValue(&input.{{$Argument.InputFieldName}}, arguments[{{$Index}}:]...); err != nil {
+			return fmt.Errorf("values [%s] are not assignable to arguments at [%d:]", strings.Join(arguments[{{$Index}}:], " "), {{$Index}})
+		}
+		{{else}}
+		if len(arguments) <= {{$Index}} {
+			return fmt.Errorf("too few arguments")
+		}
+		if err := parseValue(&input.{{$Argument.InputFieldName}}, arguments[{{$Index}}]); err != nil {
+			return fmt.Errorf("value is not assignable to argument at [%d]", {{$Index}})
+		}
+		{{end}}
+	{{end}}
+
+	return nil
 }
 
 {{end}}
-
 
 {{/* Child commands */}}
 {{range .Commands}}
 
 type {{.CLIStructName}} struct {
-{{range $Index, $Subcommand := .Subcommands}}	{{$Subcommand.SubcommandFieldName}} {{$Subcommand.SubcommandFieldType}}
+{{range $Index, $Subcommand := .Subcommands}}
+	{{$Subcommand.SubcommandFieldName}} {{$Subcommand.SubcommandFieldType}}
 {{end}}
 	FUNC Func[{{.CLIInputStructName}}]
 }
-
 type {{.CLIInputStructName}} struct {
-{{range $Index, $Option := .Options}}	{{$Option.InputFieldName}} {{$Option.InputFieldType}}
+{{range $Index, $Option := .Options}}
+	{{$Option.InputFieldName}} {{$Option.InputFieldType}}
 {{end}}
-{{range $Index, $Argument := .Arguments}}	{{$Argument.InputFieldName}} {{$Argument.InputFieldType}}
+{{range $Index, $Argument := .Arguments}}
+	{{$Argument.InputFieldName}} {{$Argument.InputFieldType}}
 {{end}}
+}
+func resolve_{{.CLIInputStructName}}(input *{{.CLIInputStructName}}, restArgs []string) error {
+	*input = {{.CLIInputStructName}}{
+	{{range $Index, $Option := .Options}}
+		{{$Option.InputFieldName}}: {{$Option.DefaultLiteral}},
+	{{end}}
+	}
+
+	var arguments []string
+	for idx, arg := range restArgs {
+		if arg == "--" {
+			arguments = append(arguments, restArgs[idx+1:]...)
+			break
+		}
+		if !strings.HasPrefix(arg, "-") {
+			arguments = append(arguments, arg)
+			continue
+		}
+		optName, lit, cut := strings.Cut(arg, "=")
+		consumeVariables(optName, lit, cut)
+		
+		switch optName {
+		default:
+			return fmt.Errorf("unknown option %q", optName)
+		{{range $Index, $Option := .Options}}
+		case {{$Option.NameLiteral}}{{if $Option.ShortNameLiteral}}, {{$Option.ShortNameLiteral}}{{end}}:
+			if !cut {
+				{{if (eq $Option.InputFieldType "bool")}}lit = "true"
+				{{else}}return fmt.Errorf("value is not specified to option %q", optName)
+				{{end}}
+			}
+			if err := parseValue(&input.{{$Option.InputFieldName}}, lit); err != nil {
+				return fmt.Errorf("value %q is not assignable to option %q", lit, optName)
+			}
+		{{end}}
+		}
+	}
+
+	{{range $Index, $Argument := .Arguments}}
+		{{if $Argument.Variadic}}
+		if len(arguments) <= {{$Index}} - 1 {
+			return fmt.Errorf("too few arguments")
+		}
+		if err := parseValue(&input.{{$Argument.InputFieldName}}, arguments[{{$Index}}:]...); err != nil {
+			return fmt.Errorf("values [%s] are not assignable to arguments at [%d:]", strings.Join(arguments[{{$Index}}:], " "), {{$Index}})
+		}
+		{{else}}
+		if len(arguments) <= {{$Index}} {
+			return fmt.Errorf("too few arguments")
+		}
+		if err := parseValue(&input.{{$Argument.InputFieldName}}, arguments[{{$Index}}]); err != nil {
+			return fmt.Errorf("value is not assignable to argument at [%d]", {{$Index}})
+		}
+		{{end}}
+	{{end}}
+
+	return nil
 }
 
 {{end}}
@@ -62,35 +171,113 @@ func NewCLI() {{.Program.CLIStructName}} {
 
 {{/* Entry point */}}
 func Run(cli CLI, args []string) error {
-	s := LoadSchema()
-	cmd, subcommand, restArgs := cyamli_golang.ResolveSubcommand(s, args)
-	switch strings.Join(subcommand, " ") {
+	subcommandPath, restArgs := resolveSubcommand(args)
+	switch strings.Join(subcommandPath, " ") {
 {{with .Program}}
-	case {{.NameLiteral}}:
-		input := {{.CLIInputStructName}}{
-{{range $Index, $Option := .Options}}			{{$Option.InputFieldName}}: {{$Option.DefaultLiteral}},
-{{end}}
-		}
+	case {{.FullPathLiteral}}:
 		funcMethod := cli.{{.CLIFuncMethodChain}}
 		if funcMethod == nil {
-			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.NameLiteral}})
+			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.FullPathLiteral}})
 		}
-		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
-		return funcMethod(subcommand, input, err)
+		var input {{.CLIInputStructName}}
+		err := resolve_{{.CLIInputStructName}}(&input, restArgs)
+		return funcMethod(subcommandPath, input, err)
 {{end}}
 {{range .Commands}}
-	case {{.NameLiteral}}:
-		input := {{.CLIInputStructName}}{
-{{range $Index, $Option := .Options}}			{{$Option.InputFieldName}}: {{$Option.DefaultLiteral}},
-{{end}}
-		}
+	case {{.FullPathLiteral}}:
 		funcMethod := cli.{{.CLIFuncMethodChain}}
 		if funcMethod == nil {
-			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.NameLiteral}})
+			return fmt.Errorf("%q is unsupported: cli.{{.CLIFuncMethodChain}} not assigned", {{.FullPathLiteral}})
 		}
-		err := cyamli_golang.ResolveInput(cmd, restArgs, &input)
-		return funcMethod(subcommand, input, err)
+		var input {{.CLIInputStructName}}
+		err := resolve_{{.CLIInputStructName}}(&input, restArgs)
+		return funcMethod(subcommandPath, input, err)
 {{end}}
 	}
 	return nil
 }
+
+
+func resolveSubcommand(args []string) (subcommandPath []string, restArgs []string) {
+	if len(args) == 0 {
+		panic("command line arguments are too few")
+	}
+	subcommandSet := map[string]bool{
+	{{with .Program}}{{.FullPathLiteral}}: true,{{end}}
+	{{range .Commands}}{{.FullPathLiteral}}: true,{{end}}
+	}
+
+	for _, arg := range args[1:] {
+		if arg == "--" {
+			break
+		}
+		pathLiteral := strings.Join(append(append([]string{}, subcommandPath...), arg), " ")
+		if !subcommandSet[pathLiteral] {
+			break
+		}
+		subcommandPath = append(subcommandPath, arg)
+	}
+
+	return subcommandPath, args[1+len(subcommandPath):]
+}
+
+func parseValue(dstPtr any, strValue ...string) error {
+	switch dstPtr := dstPtr.(type) {
+	case *[]bool:
+		val := make([]bool, len(strValue))
+		for idx, str := range strValue {
+			if err := parseValue(&val[idx], str); err != nil {
+				return fmt.Errorf("fail to parse %#v as []bool: %w", str, err)
+			}
+		}
+		*dstPtr = val
+	case *[]float64:
+		val := make([]float64, len(strValue))
+		for idx, str := range strValue {
+			if err := parseValue(&val[idx], str); err != nil {
+				return fmt.Errorf("fail to parse %#v as []float64: %w", str, err)
+			}
+		}
+		*dstPtr = val
+	case *[]int64:
+		val := make([]int64, len(strValue))
+		for idx, str := range strValue {
+			if err := parseValue(&val[idx], str); err != nil {
+				return fmt.Errorf("fail to parse %#v as []int64: %w", str, err)
+			}
+		}
+		*dstPtr = val
+	case *[]string:
+		val := make([]string, len(strValue))
+		for idx, str := range strValue {
+			if err := parseValue(&val[idx], str); err != nil {
+				return fmt.Errorf("fail to parse %#v as []string: %w", str, err)
+			}
+		}
+		*dstPtr = val
+	case *bool:
+		val, err := strconv.ParseBool(strValue[0])
+		if err != nil {
+			return fmt.Errorf("fail to parse %q as bool: %w", strValue[0], err)
+		}
+		*dstPtr = val
+	case *float64:
+		val, err := strconv.ParseFloat(strValue[0], 64)
+		if err != nil {
+			return fmt.Errorf("fail to parse %q as float64: %w", strValue[0], err)
+		}
+		*dstPtr = val
+	case *int64:
+		val, err := strconv.ParseInt(strValue[0], 0, 64)
+		if err != nil {
+			return fmt.Errorf("fail to parse %q as int64: %w", strValue[0], err)
+		}
+		*dstPtr = val
+	case *string:
+		*dstPtr = strValue[0]
+	}
+
+	return nil
+}
+
+func consumeVariables(...any){}

@@ -20,13 +20,13 @@ From a YAML file written according to the CLI schema definition, `cyamli` genera
 `cyamli` can be installed as follows:
 
 ```sh
-go install "github.com/Jumpaku/cyamli/cmd/cyamli@latest"
+go install "github.com/Jumpaku/cyamli/cmd/cyamli@latest" 
 ```
 
-The generated code requires:
+Or use go generate as follows:
 
-```sh
-go get "github.com/Jumpaku/cyamli"
+```go
+//go:generate "github.com/Jumpaku/cyamli/cmd/cyamli@latest" -schema-path=path/to/cli.yaml -out-path=path/to/cli.gen.go
 ```
 
 ### Usage
