@@ -18,7 +18,7 @@ func TestGoType(t *testing.T) {
 		{
 			in_type:     schema.TypeBoolean,
 			in_variadic: true,
-			want:        "list[bool]",
+			want:        "tuple[bool,...]",
 		},
 		{
 			in_type:     schema.TypeBoolean,
@@ -28,7 +28,7 @@ func TestGoType(t *testing.T) {
 		{
 			in_type:     schema.TypeInteger,
 			in_variadic: true,
-			want:        "list[int]",
+			want:        "tuple[int,...]",
 		},
 		{
 			in_type:     schema.TypeInteger,
@@ -38,7 +38,7 @@ func TestGoType(t *testing.T) {
 		{
 			in_type:     schema.TypeFloat,
 			in_variadic: true,
-			want:        "list[float]",
+			want:        "tuple[float,...]",
 		},
 		{
 			in_type:     schema.TypeFloat,
@@ -48,7 +48,7 @@ func TestGoType(t *testing.T) {
 		{
 			in_type:     schema.TypeString,
 			in_variadic: true,
-			want:        "list[str]",
+			want:        "tuple[str,...]",
 		},
 		{
 			in_type:     schema.TypeString,
@@ -58,7 +58,7 @@ func TestGoType(t *testing.T) {
 		{
 			in_type:     schema.TypeUnspecified,
 			in_variadic: true,
-			want:        "list[str]",
+			want:        "tuple[str,...]",
 		},
 		{
 			in_type:     schema.TypeUnspecified,
