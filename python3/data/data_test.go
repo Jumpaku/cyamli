@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/Jumpaku/cyamli"
-	"github.com/Jumpaku/cyamli/golang/data"
 	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/python3/data"
 	"github.com/Jumpaku/cyamli/schema"
 	"github.com/Jumpaku/cyamli/test"
 	"github.com/Jumpaku/cyamli/test/testdata"
@@ -25,7 +25,6 @@ func TestData_Construct(t *testing.T) {
 			packageName: "empty",
 			schemaYAML:  testdata.EmptyYAML,
 			want: data.Data{
-				Package:          "empty",
 				Generator:        cyamli.Name,
 				GeneratorVersion: cyamli.Version,
 				SchemaYAML:       testdata.EmptyYAML,
@@ -37,7 +36,6 @@ func TestData_Construct(t *testing.T) {
 			packageName: "example",
 			schemaYAML:  testdata.ExampleYAML,
 			want: data.Data{
-				Package:          "example",
 				Generator:        cyamli.Name,
 				GeneratorVersion: cyamli.Version,
 				SchemaYAML:       testdata.ExampleYAML,
@@ -99,17 +97,17 @@ func TestData_Construct(t *testing.T) {
 						},
 					},
 					Subcommands: []data.Subcommand{
-						{Name: name.Path{"sub1"}},
-						{Name: name.Path{"sub2"}},
 						{Name: name.Path{"sub3"}},
+						{Name: name.Path{"sub2"}},
+						{Name: name.Path{"sub1"}},
 					},
 				},
 				Commands: []data.Command{
 					{
-						Name: name.Path{"sub1"},
+						Name: name.Path{"sub3", "suby"},
 					},
 					{
-						Name: name.Path{"sub2"},
+						Name: name.Path{"sub3", "subx"},
 					},
 					{
 						Name: name.Path{"sub3"},
@@ -168,15 +166,15 @@ func TestData_Construct(t *testing.T) {
 							},
 						},
 						Subcommands: []data.Subcommand{
-							{Name: name.Path{"sub3", "subx"}},
 							{Name: name.Path{"sub3", "suby"}},
+							{Name: name.Path{"sub3", "subx"}},
 						},
 					},
 					{
-						Name: name.Path{"sub3", "subx"},
+						Name: name.Path{"sub2"},
 					},
 					{
-						Name: name.Path{"sub3", "suby"},
+						Name: name.Path{"sub1"},
 					},
 				},
 			},
@@ -189,12 +187,11 @@ func TestData_Construct(t *testing.T) {
 			if err != nil {
 				t.Fatalf("fail to read load schema: %+v", err)
 			}
-			got, err := data.Construct(testcase.packageName, originalSchema)
+			got, err := data.Construct(originalSchema)
 			if err != nil {
 				t.Fatalf("fail to read construct template data: %+v", err)
 			}
 
-			assert.Equal(t, testcase.want.Package, got.Package)
 			assert.Equal(t, testcase.want.Generator, got.Generator)
 			assert.Equal(t, testcase.want.GeneratorVersion, got.GeneratorVersion)
 			{

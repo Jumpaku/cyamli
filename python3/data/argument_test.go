@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Jumpaku/cyamli/golang/data"
 	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/python3/data"
 	"github.com/Jumpaku/cyamli/schema"
 
 	"github.com/stretchr/testify/assert"
@@ -22,7 +22,7 @@ func TestArgument_InputFieldName(t *testing.T) {
 				Type:     schema.TypeInteger,
 				Variadic: true,
 			},
-			want: `Arg_ArgName123`,
+			want: `arg_arg_name_123`,
 		},
 		{
 			sut: data.Argument{
@@ -30,7 +30,7 @@ func TestArgument_InputFieldName(t *testing.T) {
 				Type:     schema.TypeInteger,
 				Variadic: true,
 			},
-			want: `Arg_Argname`,
+			want: `arg_argname`,
 		},
 	}
 
@@ -53,7 +53,7 @@ func TestArgument_InputFieldType(t *testing.T) {
 				Variadic: true,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `[]int64`,
+			want: `tuple[int,...]`,
 		},
 		{
 			sut: data.Argument{
@@ -61,7 +61,7 @@ func TestArgument_InputFieldType(t *testing.T) {
 				Variadic: false,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `int64`,
+			want: `int`,
 		},
 		{
 			sut: data.Argument{
@@ -69,7 +69,7 @@ func TestArgument_InputFieldType(t *testing.T) {
 				Variadic: true,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `[]bool`,
+			want: `tuple[bool,...]`,
 		},
 		{
 			sut: data.Argument{
@@ -85,7 +85,7 @@ func TestArgument_InputFieldType(t *testing.T) {
 				Variadic: true,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `[]float64`,
+			want: `tuple[float,...]`,
 		},
 		{
 			sut: data.Argument{
@@ -93,7 +93,7 @@ func TestArgument_InputFieldType(t *testing.T) {
 				Variadic: false,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `float64`,
+			want: `float`,
 		},
 		{
 			sut: data.Argument{
@@ -101,7 +101,7 @@ func TestArgument_InputFieldType(t *testing.T) {
 				Variadic: true,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `[]string`,
+			want: `tuple[str,...]`,
 		},
 		{
 			sut: data.Argument{
@@ -109,20 +109,20 @@ func TestArgument_InputFieldType(t *testing.T) {
 				Variadic: false,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `string`,
+			want: `str`,
 		},
 		{
 			sut: data.Argument{
 				Variadic: true,
 				Name:     name.Path{"arg", "name", "123"},
 			},
-			want: `[]string`,
+			want: `tuple[str,...]`,
 		},
 		{
 			sut: data.Argument{
 				Name: name.Path{"arg", "name", "123"},
 			},
-			want: `string`,
+			want: `str`,
 		},
 	}
 

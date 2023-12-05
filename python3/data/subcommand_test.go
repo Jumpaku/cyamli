@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Jumpaku/cyamli/golang/data"
 	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/python3/data"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -19,13 +19,13 @@ func TestSubcommand_SubcommandFieldName(t *testing.T) {
 			sut: data.Subcommand{
 				Name: name.Path{"sub", "cmd", "name"},
 			},
-			want: `Name`,
+			want: `name`,
 		},
 		{
 			sut: data.Subcommand{
 				Name: name.Path{"subcmdname"},
 			},
-			want: `Subcmdname`,
+			want: `subcmdname`,
 		},
 	}
 

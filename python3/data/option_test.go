@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Jumpaku/cyamli/golang/data"
 	"github.com/Jumpaku/cyamli/name"
+	"github.com/Jumpaku/cyamli/python3/data"
 	"github.com/Jumpaku/cyamli/schema"
 
 	"github.com/stretchr/testify/assert"
@@ -23,7 +23,7 @@ func TestOption_InputFieldName(t *testing.T) {
 				Short:   name.Path{"o"},
 				Default: "-123",
 			},
-			want: `Opt_OptName123`,
+			want: `opt_opt_name_123`,
 		},
 		{
 			sut: data.Option{
@@ -33,7 +33,7 @@ func TestOption_InputFieldName(t *testing.T) {
 
 				Default: "-123",
 			},
-			want: `Opt_Optname`,
+			want: `opt_optname`,
 		},
 	}
 
@@ -58,7 +58,7 @@ func TestOption_InputFieldType(t *testing.T) {
 
 				Default: "-123",
 			},
-			want: `int64`,
+			want: `int`,
 		},
 		{
 			sut: data.Option{
@@ -78,7 +78,7 @@ func TestOption_InputFieldType(t *testing.T) {
 
 				Default: "-123",
 			},
-			want: `float64`,
+			want: `float`,
 		},
 		{
 			sut: data.Option{
@@ -88,7 +88,7 @@ func TestOption_InputFieldType(t *testing.T) {
 
 				Default: "-123",
 			},
-			want: `string`,
+			want: `str`,
 		},
 		{
 			sut: data.Option{
@@ -97,7 +97,7 @@ func TestOption_InputFieldType(t *testing.T) {
 
 				Default: "-123",
 			},
-			want: `string`,
+			want: `str`,
 		},
 	}
 
@@ -182,7 +182,7 @@ func TestOption_DefaultLiteral(t *testing.T) {
 
 				Default: "-123",
 			},
-			want: `int64(-123)`,
+			want: `int(-123)`,
 		},
 		{
 			sut: data.Option{
@@ -190,7 +190,7 @@ func TestOption_DefaultLiteral(t *testing.T) {
 				Name:  name.Path{"opt", "name", "123"},
 				Short: name.Path{"o"},
 			},
-			want: `int64(0)`,
+			want: `int(0)`,
 		},
 		{
 			sut: data.Option{
@@ -200,7 +200,7 @@ func TestOption_DefaultLiteral(t *testing.T) {
 
 				Default: "true",
 			},
-			want: `true`,
+			want: `True`,
 		},
 		{
 			sut: data.Option{
@@ -210,7 +210,7 @@ func TestOption_DefaultLiteral(t *testing.T) {
 
 				Default: "false",
 			},
-			want: `false`,
+			want: `False`,
 		},
 		{
 			sut: data.Option{
@@ -218,7 +218,7 @@ func TestOption_DefaultLiteral(t *testing.T) {
 				Name:  name.Path{"opt", "name", "123"},
 				Short: name.Path{"o"},
 			},
-			want: `false`,
+			want: `False`,
 		},
 		{
 			sut: data.Option{
@@ -228,7 +228,7 @@ func TestOption_DefaultLiteral(t *testing.T) {
 
 				Default: "-123.456",
 			},
-			want: `float64(-123.456)`,
+			want: `float(-123.456)`,
 		},
 		{
 			sut: data.Option{
@@ -236,7 +236,7 @@ func TestOption_DefaultLiteral(t *testing.T) {
 				Name:  name.Path{"opt", "name", "123"},
 				Short: name.Path{"o"},
 			},
-			want: `float64(0.0)`,
+			want: `float(0.0)`,
 		},
 		{
 			sut: data.Option{
