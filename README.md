@@ -1,11 +1,12 @@
 # cyamli
 
-A command line tool to generate command line interfaces for your command line tools from the YAML-based CLI schemas.
+A command line tool to generate typed code to handle command line arguments of command line tools from the YAML-based CLI schemas.
 
 ## Highlights
 
-- It defines the CLI schema in YAML.
-- It provides a typed CLI code generator.
+This repository:
+- defines the CLI schema in YAML.
+- provides a typed CLI code generator from the CLI schema.
 
 ## CLI schema
 
@@ -23,7 +24,7 @@ From a YAML file written according to the CLI schema definition, `cyamli` genera
 go install "github.com/Jumpaku/cyamli/cmd/cyamli@latest" 
 ```
 
-Or use go generate as follows:
+or use go generate as follows:
 
 ```go
 //go:generate "github.com/Jumpaku/cyamli/cmd/cyamli@latest" -schema-path=path/to/cli.yaml -out-path=path/to/cli.gen.go
