@@ -31,9 +31,7 @@ func (d Command) CLIInputStructName() string {
 }
 
 func (d Command) CLIFuncMethodChain() string {
-	return d.Name.Map(func(s string) string {
-		return name.Title(s)
-	}).Join(".", "", ".FUNC")
+	return d.Name.Map(name.Title).Join(".", "", ".FUNC")
 }
 
 func (d Command) SimpleDescriptionLiteral() string {
