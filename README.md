@@ -1,6 +1,6 @@
 # cyamli
 
-A command line tool to generate typed code to handle command line arguments of command line tools from the YAML-based CLI schemas.
+A command line tool to generate command line interfaces for your command line tools from the YAML-based CLI schemas.
 
 ## Highlights
 
