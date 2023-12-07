@@ -82,9 +82,10 @@ func Run(cli CLI, args []string) error
 To define the behavior of your program, you can utilize the generated types and functions as follows:
 
 ```go
+// Create the CLI object
+var cli = NewCLI()
+
 func main() {
-	// Create the CLI object
-	cli := NewCLI()
 	// Overwrite behaviors
 	cli.FUNC = showHelp
 	cli.Hello.FUNC = sayHello
@@ -100,9 +101,9 @@ Example implementations for `showHelp` and `sayHello` are as follows:
 ```go
 func showHelp(subcommand []string, input CLI_Input, inputErr error) (err error) {
 	if input.Opt_Help {
-		fmt.Println("This is an example program.")
+		fmt.Println(cli.DESC_Detail())
 	} else {
-		fmt.Println("Do nothing.")
+		fmt.Println(cli.DESC_Simple())
 	}
 	return nil
 }
@@ -139,64 +140,6 @@ The example CLI applications are found in https://github.com/Jumpaku/cyamli/tree
 ### Supported programming languages
 
 Only Go is supported currently.
-
-### Auto-generated help descriptions
-
-`cyamli` can provide auto-generated simple or detail help descriptions for commands defined by the CLI schema.
-The following functions generate help descriptions using `cyamli` as a Go library.
-
-```go
-func showSimpleDescription(subcommand []string, writer io.Writer, inputErr error) {
-	schema := LoadSchema()
-	_ = description.DescribeCommand(
-		description.SimpleExecutor(),
-		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
-		writer,
-	)
-}
-func showDetailDescription(subcommand []string, writer io.Writer) {
-	schema := LoadSchema()
-	_ = description.DescribeCommand(
-		description.DetailExecutor(),
-		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
-		writer,
-	)
-}
-```
-
-An example output for `showSimpleDescription`:
-```
-greet hello:
-Prints "Hello, <target name>! My name is <greeter>!"
-
-Usage:
-    $ greet hello [<option>|<argument>]... [-- [<argument>]...]
-
-Options:
-    -target-name
-
-Arguments:
-    <greeter>
-```
-
-An example output for `showDetailDescription`:
-```
-greet hello:
-Prints "Hello, <target name>! My name is <greeter>!"
-
-Usage:
-    $ greet hello [<option>|<argument>]... [-- [<argument>]...]
-
-
-Options:
-    -target-name=<string>, -t=<string>  (default=""):
-        The name of the person to be said hello.
-
-
-Arguments:
-    [0]  <greeter:string>
-        The name of the person who says hello.
-```
 
 ### Handling command line arguments
 

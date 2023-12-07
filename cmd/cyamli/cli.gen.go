@@ -14,6 +14,14 @@ type CLI struct {
 
 	FUNC Func[CLI_Input]
 }
+
+func (CLI) DESC_Simple() string {
+	return "cyamli (v0.0.10):\nA command line tool to generate CLI for your app from YAML-based schema.\n\nUsage:\n    $ cyamli [<option>]...\n\nOptions:\n    -help, -version\n\nSubcommands:\n    golang\n\n"
+}
+func (CLI) DESC_Detail() string {
+	return "cyamli (v0.0.10):\nA command line tool to generate CLI for your app from YAML-based schema.\n\nUsage:\n    $ cyamli [<option>]...\n\n\nOptions:\n    -help[=<boolean>], -h[=<boolean>]  (default=false):\n        shows description of this app\n\n    -version[=<boolean>], -v[=<boolean>]  (default=false):\n        shows version of this app\n\n\nSubcommands:\n    golang:\n        generates CLI for your app written in Go.\n\n"
+}
+
 type CLI_Input struct {
 	Opt_Help bool
 
@@ -72,6 +80,14 @@ func resolve_CLI_Input(input *CLI_Input, restArgs []string) error {
 type CLI_Golang struct {
 	FUNC Func[CLI_Golang_Input]
 }
+
+func (CLI_Golang) DESC_Simple() string {
+	return "generates CLI for your app written in Go.\n\nUsage:\n    $ <program> golang [<option>]...\n\nOptions:\n    -help, -out-path, -package, -schema-path\n\n"
+}
+func (CLI_Golang) DESC_Detail() string {
+	return "generates CLI for your app written in Go.\n\nUsage:\n    $ <program> golang [<option>]...\n\n\nOptions:\n    -help[=<boolean>], -h[=<boolean>]  (default=false):\n        shows description of golang subcommand\n\n    -out-path=<string>  (default=\"\"):\n        if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n    -package=<string>  (default=\"main\"):\n        package name where the generated file will be placed.\n\n    -schema-path=<string>  (default=\"\"):\n        if specified then reads schema file from the path, otherwise reads from stdin.\n\n"
+}
+
 type CLI_Golang_Input struct {
 	Opt_Help bool
 
