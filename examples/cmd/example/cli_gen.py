@@ -382,7 +382,7 @@ def resolve_CLI_Input(rest_args: list[str])->CLI_Input:
         
             case "-option-c" | "-c":
                 if not assign:
-                    split[1] = "True"
+                    split.append("True")
                     
                 input.opt_option_c = parse_value(bool, split[1])
         
@@ -551,7 +551,7 @@ def parse_value(typ, *strValues: str) -> str | bool | float | int | tuple[str,..
             if strValues[0] in {"", "0", "f", "F", "FALSE", "false", "False"}:
                 return False
             if strValues[0] in {"1", "t", "T", "TRUE", "true", "True"}:
-                return False
+                return True
             raise Exception("could not convert string to bool: '" + strValues[0] + "'")
         if typ == float:
             return float(strValues[0])

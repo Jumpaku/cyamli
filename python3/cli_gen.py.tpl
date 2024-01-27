@@ -107,7 +107,7 @@ def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}
         {{range $Index, $Option := .Options}}
             case {{$Option.NameLiteral}}{{if $Option.ShortNameLiteral}} | {{$Option.ShortNameLiteral}}{{end}}:
                 if not assign:
-                    {{if eq $Option.InputFieldType "bool"}}split[1] = "True"
+                    {{if eq $Option.InputFieldType "bool"}}split.append("True")
                     {{else}}raise Exception("value is not specified to option "+ opt_name)
                     {{end}}
                 input.{{$Option.InputFieldName}} = parse_value({{$Option.InputFieldType}}, split[1])
@@ -192,7 +192,7 @@ def parse_value(typ, *strValues: str) -> str | bool | float | int | tuple[str,..
             if strValues[0] in {"", "0", "f", "F", "FALSE", "false", "False"}:
                 return False
             if strValues[0] in {"1", "t", "T", "TRUE", "true", "True"}:
-                return False
+                return True
             raise Exception("could not convert string to bool: '" + strValues[0] + "'")
         if typ == float:
             return float(strValues[0])

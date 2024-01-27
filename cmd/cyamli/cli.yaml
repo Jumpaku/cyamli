@@ -25,3 +25,14 @@ subcommands:
         description: shows description of golang subcommand
         short: -h
         type: boolean
+  python3:
+    description: generates CLI for your app written in Python3.
+    options: 
+      -schema-path:
+        description: if specified then reads schema file from the path, otherwise reads from stdin.
+      -out-path:
+        description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+      -help:
+        description: shows description of python3 subcommand
+        short: -h
+        type: boolean
