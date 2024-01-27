@@ -19,6 +19,12 @@ type {{.CLIStructName}} struct {
 {{end}}
 	FUNC Func[{{.CLIInputStructName}}]
 }
+func ({{.CLIStructName}}) DESC_Simple() string {
+	return {{.SimpleDescriptionLiteral}}
+}
+func ({{.CLIStructName}}) DESC_Detail() string {
+	return {{.DetailDescriptionLiteral}}
+}
 type {{.CLIInputStructName}} struct {
 {{range $Index, $Option := .Options}}
 	{{$Option.InputFieldName}} {{$Option.InputFieldType}}
@@ -95,6 +101,12 @@ type {{.CLIStructName}} struct {
 	{{$Subcommand.SubcommandFieldName}} {{$Subcommand.SubcommandFieldType}}
 {{end}}
 	FUNC Func[{{.CLIInputStructName}}]
+}
+func ({{.CLIStructName}}) DESC_Simple() string {
+	return {{.SimpleDescriptionLiteral}}
+}
+func ({{.CLIStructName}}) DESC_Detail() string {
+	return {{.DetailDescriptionLiteral}}
 }
 type {{.CLIInputStructName}} struct {
 {{range $Index, $Option := .Options}}

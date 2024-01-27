@@ -1,7 +1,6 @@
 package data
 
 import (
-	"bytes"
 	"fmt"
 	"slices"
 
@@ -19,10 +18,6 @@ type Data struct {
 	Commands         []Command
 }
 
-func (d Data) SchemaYAMLLiteral() string {
-	return fmt.Sprintf("%q", d.SchemaYAML)
-}
-
 func Construct(packageName string, s *schema.Schema) (Data, error) {
 	data := Data{
 		Package:          packageName,
@@ -30,14 +25,8 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 		GeneratorVersion: cyamli.Version,
 	}
 
-	buffer := bytes.NewBuffer(nil)
-	if err := s.Save(buffer); err != nil {
-		return Data{}, fmt.Errorf("fail to create CLI data: %w", err)
-	}
-	data.SchemaYAML = buffer.String()
-
 	err := s.Walk(func(path name.Path, cmd *schema.Command) error {
-		cmdData := Command{Name: path}
+		cmdData := Command{schemaCommand: cmd, Name: path}
 
 		for optName, opt := range cmd.Options {
 			cmdData.Options = append(cmdData.Options, Option{
@@ -70,11 +59,12 @@ func Construct(packageName string, s *schema.Schema) (Data, error) {
 				programName = programName.Append(s.Program.Name)
 			}
 			data.Program = Program{
-				Name:        programName,
-				Version:     s.Program.Version,
-				Options:     cmdData.Options,
-				Arguments:   cmdData.Arguments,
-				Subcommands: cmdData.Subcommands,
+				schemaProgram: &s.Program,
+				Name:          programName,
+				Version:       s.Program.Version,
+				Options:       cmdData.Options,
+				Arguments:     cmdData.Arguments,
+				Subcommands:   cmdData.Subcommands,
 			}
 		} else {
 			data.Commands = append(data.Commands, cmdData)

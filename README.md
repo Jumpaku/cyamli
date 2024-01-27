@@ -4,8 +4,9 @@ A command line tool to generate command line interfaces for your command line to
 
 ## Highlights
 
-- It defines the CLI schema in YAML.
-- It provides a typed CLI code generator.
+This repository:
+- defines the CLI schema in YAML.
+- provides a typed CLI code generator from the CLI schema.
 
 ## CLI schema
 
@@ -23,7 +24,7 @@ From a YAML file written according to the CLI schema definition, `cyamli` genera
 go install "github.com/Jumpaku/cyamli/cmd/cyamli@latest" 
 ```
 
-Or use go generate as follows:
+or use go generate as follows:
 
 ```go
 //go:generate "github.com/Jumpaku/cyamli/cmd/cyamli@latest" -schema-path=path/to/cli.yaml -out-path=path/to/cli.gen.go
@@ -82,9 +83,10 @@ func Run(cli CLI, args []string) error
 To define the behavior of your program, you can utilize the generated types and functions as follows:
 
 ```go
+// Create the CLI object
+var cli = NewCLI()
+
 func main() {
-	// Create the CLI object
-	cli := NewCLI()
 	// Overwrite behaviors
 	cli.FUNC = showHelp
 	cli.Hello.FUNC = sayHello
@@ -99,20 +101,25 @@ Example implementations for `showHelp` and `sayHello` are as follows:
 
 ```go
 func showHelp(subcommand []string, input CLI_Input, inputErr error) (err error) {
+	if inputErr != nil {
+		fmt.Println(cli.DESC_Simple())
+		panic(inputErr)
+	}
 	if input.Opt_Help {
-		fmt.Println("This is an example program.")
-	} else {
-		fmt.Println("Do nothing.")
+		fmt.Println(cli.DESC_Detail())
 	}
 	return nil
 }
 func sayHello(subcommand []string, input CLI_Hello_Input, inputErr error) (err error) {
-	hello := "Hello"
-	if input.Opt_TargetName != "" {
-		hello += ", " + input.Opt_TargetName
+	if inputErr != nil {
+		fmt.Println(cli.Hello.DESC_Simple())
+		return inputErr
 	}
-	hello += "! My name is " + input.Arg_Greeter + "!"
-	fmt.Println(hello)
+	if input.Opt_TargetName != "" {
+		fmt.Printf("Hello, %s! My name is %s!\n", input.Opt_TargetName, input.Arg_Greeter)
+	} else {
+		fmt.Printf("Hello! My name is %s!\n", input.Arg_Greeter)
+	}
 	return nil
 }
 ```
@@ -139,64 +146,6 @@ The example CLI applications are found in https://github.com/Jumpaku/cyamli/tree
 ### Supported programming languages
 
 Only Go is supported currently.
-
-### Auto-generated help descriptions
-
-`cyamli` can provide auto-generated simple or detail help descriptions for commands defined by the CLI schema.
-The following functions generate help descriptions using `cyamli` as a Go library.
-
-```go
-func showSimpleDescription(subcommand []string, writer io.Writer, inputErr error) {
-	schema := LoadSchema()
-	_ = description.DescribeCommand(
-		description.SimpleExecutor(),
-		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
-		writer,
-	)
-}
-func showDetailDescription(subcommand []string, writer io.Writer) {
-	schema := LoadSchema()
-	_ = description.DescribeCommand(
-		description.DetailExecutor(),
-		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
-		writer,
-	)
-}
-```
-
-An example output for `showSimpleDescription`:
-```
-greet hello:
-Prints "Hello, <target name>! My name is <greeter>!"
-
-Usage:
-    $ greet hello [<option>|<argument>]... [-- [<argument>]...]
-
-Options:
-    -target-name
-
-Arguments:
-    <greeter>
-```
-
-An example output for `showDetailDescription`:
-```
-greet hello:
-Prints "Hello, <target name>! My name is <greeter>!"
-
-Usage:
-    $ greet hello [<option>|<argument>]... [-- [<argument>]...]
-
-
-Options:
-    -target-name=<string>, -t=<string>  (default=""):
-        The name of the person to be said hello.
-
-
-Arguments:
-    [0]  <greeter:string>
-        The name of the person who says hello.
-```
 
 ### Handling command line arguments
 

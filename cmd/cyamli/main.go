@@ -8,7 +8,6 @@ import (
 
 	_ "embed"
 
-	"github.com/Jumpaku/cyamli/description"
 	"github.com/Jumpaku/cyamli/golang"
 	"github.com/Jumpaku/cyamli/schema"
 )
@@ -20,14 +19,19 @@ func LoadSchema() *schema.Schema {
 	s, _ := schema.Load(bytes.NewBuffer(schemaData))
 	return s
 }
+
+var cli = NewCLI()
+
 func main() {
-	cli := NewCLI()
 	cli.FUNC = func(subcommand []string, input CLI_Input, inputErr error) (err error) {
-		if input.Opt_Version {
+		switch {
+		case inputErr != nil:
+			fmt.Println(cli.DESC_Simple())
+		case input.Opt_Version:
 			fmt.Printf("version: %s\n", LoadSchema().Program.Version)
-			return nil
+		case input.Opt_Help:
+			fmt.Println(cli.DESC_Detail())
 		}
-		showDetailDescription(subcommand, os.Stdout)
 		return nil
 	}
 	cli.Golang.FUNC = funcGolang
@@ -37,31 +41,13 @@ func main() {
 	}
 }
 
-func showSimpleDescription(subcommand []string, writer io.Writer, inputErr error) {
-	schema := LoadSchema()
-	_ = description.DescribeCommand(
-		description.SimpleExecutor(),
-		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
-		writer,
-	)
-}
-
-func showDetailDescription(subcommand []string, writer io.Writer) {
-	schema := LoadSchema()
-	_ = description.DescribeCommand(
-		description.DetailExecutor(),
-		description.CreateCommandData(schema.Program.Name, schema.Program.Version, subcommand, schema.Find(subcommand)),
-		writer,
-	)
-}
-
 func funcGolang(subcommand []string, input CLI_Golang_Input, inputErr error) (err error) {
 	if inputErr != nil {
-		showSimpleDescription(subcommand, os.Stderr, inputErr)
+		fmt.Println(cli.DESC_Simple())
 		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
 	}
 	if input.Opt_Help {
-		showDetailDescription(subcommand, os.Stdout)
+		fmt.Println(cli.Golang.DESC_Detail())
 		return nil
 	}
 	var reader io.Reader = os.Stdin
