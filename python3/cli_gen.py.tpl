@@ -9,25 +9,26 @@ import typing
 FuncTypeInput = typing.TypeVar('FuncTypeInput')
 FuncType: TypeAlias = typing.Callable[[None,FuncTypeInput,Exception],None]
 
-
-{{/* Child commands */}}
+{{- /* Child commands */}}
 {{range .Commands}}
 
 @dataclass
 class {{.CLIInputClassName}}:
-    {{range $Index, $Option := .Options}}
-    {{$Option.InputFieldName}}: {{$Option.InputFieldType}} = {{$Option.DefaultLiteral}}
-    {{end}}
-    {{range $Index, $Argument := .Arguments}}
-    {{$Argument.InputFieldName}}: {{$Argument.InputFieldType}} = {{$Argument.InputFieldType}}()
-    {{end}}
-    {{if and (eq (len .Options) 0) (eq (len .Arguments) 0)}}pass{{end}}
+    {{range $Index, $Option := .Options -}}
+    {{$Option.InputFieldName}}: {{$Option.InputFieldType}} = {{$Option.DefaultLiteral}}{{"\n    "}}
+    {{- end}}
+    {{range $Index, $Argument := .Arguments -}}
+    {{$Argument.InputFieldName}}: {{$Argument.InputFieldType}} = {{$Argument.InputFieldType}}(){{"\n    "}}
+    {{- end}}
+    pass
 
 
 class {{.CLIClassName}}:
-    {{range $Index, $Subcommand := .Subcommands}}
-    {{$Subcommand.SubcommandFieldName}}: {{$Subcommand.SubcommandFieldType}} = {{$Subcommand.SubcommandFieldType}}()
-    {{end}}
+    {{range $Index, $Subcommand := .Subcommands -}}
+    {{$Subcommand.SubcommandFieldName}}: {{$Subcommand.SubcommandFieldType}} = {{$Subcommand.SubcommandFieldType}}(){{"\n    "}}
+    {{- end}}
+    desc_simple: str = {{.SimpleDescriptionLiteral}}
+    desc_detail: str = {{.DetailDescriptionLiteral}}
     FUNC: FuncType[{{.CLIInputClassName}}] = None
 
 
@@ -54,40 +55,39 @@ def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}
         {{end}}
             case _:
                 raise Exception("unsupported option " + opt_name)
-    {{range $Index, $Argument := .Arguments}}
-    {{if $Argument.Variadic}}
+    {{range $Index, $Argument := .Arguments -}}
+    {{- if $Argument.Variadic -}}
     if len(arguments) <= {{$Index}} - 1:
         raise Exception("too few arguments")
     input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, arguments[{{$Index}}:])
-    {{else}}
+    {{- else -}}
     if len(arguments) <= {{$Index}}:
         raise Exception("too few arguments")
     input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, arguments[{{$Index}}])
-    {{end}}
-    {{end}}
+    {{- end -}}{{"\n    "}}
+    {{- end}}
     return input
-
 {{end}}
 
-
-{{/* Root command */}}
+{{- /* Root command */}}
 {{with .Program}}
-
 @dataclass
 class {{.CLIInputClassName}}:
-    {{range $Index, $Option := .Options}}
-    {{$Option.InputFieldName}}: {{$Option.InputFieldType}} = {{$Option.DefaultLiteral}}
-    {{end}}
-    {{range $Index, $Argument := .Arguments}}
-    {{$Argument.InputFieldName}}: {{$Argument.InputFieldType}} = {{$Argument.InputFieldType}}()
-    {{end}}
-    {{if and (eq (len .Options) 0) (eq (len .Arguments) 0)}}pass{{end}}
+    {{range $Index, $Option := .Options -}}
+    {{$Option.InputFieldName}}: {{$Option.InputFieldType}} = {{$Option.DefaultLiteral}}{{"\n    "}}
+    {{- end}}
+    {{range $Index, $Argument := .Arguments -}}
+    {{$Argument.InputFieldName}}: {{$Argument.InputFieldType}} = {{$Argument.InputFieldType}}(){{"\n    "}}
+    {{- end}}
+    pass
 
 
 class {{.CLIClassName}}:
-    {{range $Index, $Subcommand := .Subcommands}}
-    {{$Subcommand.SubcommandFieldName}}: {{$Subcommand.SubcommandFieldType}} = {{$Subcommand.SubcommandFieldType}}()
-    {{end}}
+    {{range $Index, $Subcommand := .Subcommands -}}
+    {{$Subcommand.SubcommandFieldName}}: {{$Subcommand.SubcommandFieldType}} = {{$Subcommand.SubcommandFieldType}}(){{"\n    "}}
+    {{- end}}
+    desc_simple: str = {{.SimpleDescriptionLiteral}}
+    desc_detail: str = {{.DetailDescriptionLiteral}}
     FUNC: FuncType[{{.CLIInputClassName}}] = None
 
 
@@ -114,22 +114,21 @@ def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}
         {{end}}
             case _:
                 raise Exception("unsupported option " + opt_name)
-    {{range $Index, $Argument := .Arguments}}
-    {{if $Argument.Variadic}}
+    {{range $Index, $Argument := .Arguments -}}
+    {{- if $Argument.Variadic -}}
     if len(arguments) <= {{$Index}} - 1:
         raise Exception("too few arguments")
     input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, arguments[{{$Index}}:])
-    {{else}}
+    {{- else -}}
     if len(arguments) <= {{$Index}}:
         raise Exception("too few arguments")
     input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, arguments[{{$Index}}])
-    {{end}}
-    {{end}}
+    {{- end -}}{{"\n    "}}
+    {{- end}}
     return input
-
 {{end}}
 
-{{/* Entry point */}}
+{{/* Entry point */ -}}
 def run(cli: CLI, args: list[str]):
     r = resolve_subcommand(args)
     subcommand_path, rest_args = r.subcommand, r.rest_args
@@ -164,6 +163,7 @@ class ResolveSubcommandResult:
     subcommand: list[str]
     rest_args: list[str]
 
+
 def resolve_subcommand(args: list[str])->ResolveSubcommandResult:
     if not args:
         raise Exception("command line arguments are too few")
@@ -183,12 +183,17 @@ def resolve_subcommand(args: list[str])->ResolveSubcommandResult:
     
     return ResolveSubcommandResult(subcommand_path, args[1+len(subcommand_path):])
 
+
 def parse_value(typ, *strValues: str) -> str | bool | float | int | tuple[str,...] | tuple[bool,...] | tuple[float,...] | tuple[int,...]:
     try: 
         if typ == str:
             return str(strValues[0])
         if typ == bool:
-            return bool(strValues[0])
+            if strValues[0] in {"", "0", "f", "F", "FALSE", "false", "False"}:
+                return False
+            if strValues[0] in {"1", "t", "T", "TRUE", "true", "True"}:
+                return False
+            raise Exception("could not convert string to bool: '" + strValues[0] + "'")
         if typ == float:
             return float(strValues[0])
         if typ == int:

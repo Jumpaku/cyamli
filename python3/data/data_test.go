@@ -9,7 +9,6 @@ import (
 	"github.com/Jumpaku/cyamli/name"
 	"github.com/Jumpaku/cyamli/python3/data"
 	"github.com/Jumpaku/cyamli/schema"
-	"github.com/Jumpaku/cyamli/test"
 	"github.com/Jumpaku/cyamli/test/testdata"
 
 	"github.com/stretchr/testify/assert"
@@ -27,7 +26,6 @@ func TestData_Construct(t *testing.T) {
 			want: data.Data{
 				Generator:        cyamli.Name,
 				GeneratorVersion: cyamli.Version,
-				SchemaYAML:       testdata.EmptyYAML,
 				Program:          data.Program{},
 				Commands:         []data.Command{},
 			},
@@ -38,7 +36,6 @@ func TestData_Construct(t *testing.T) {
 			want: data.Data{
 				Generator:        cyamli.Name,
 				GeneratorVersion: cyamli.Version,
-				SchemaYAML:       testdata.ExampleYAML,
 				Program: data.Program{
 					Name:    name.Path{"example"},
 					Version: "v1.0.0",
@@ -194,13 +191,6 @@ func TestData_Construct(t *testing.T) {
 
 			assert.Equal(t, testcase.want.Generator, got.Generator)
 			assert.Equal(t, testcase.want.GeneratorVersion, got.GeneratorVersion)
-			{
-				gotSchema, err := schema.Load(bytes.NewBufferString(got.SchemaYAML))
-				if err != nil {
-					t.Fatalf("fail to load schema: %+v", err)
-				}
-				test.AssertMatchSchema(t, originalSchema, gotSchema)
-			}
 			{
 				want, got := testcase.want.Program, got.Program
 				assertMatchProgram(t, want, got)
