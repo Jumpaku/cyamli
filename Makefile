@@ -5,7 +5,7 @@ help: ## Show help
 		awk 'BEGIN {FS = ":.*?##"}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: check
-check: ## Generates Go CLI for cyamli command.
+check: ## Checks version, runs tests.
 	grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$$' < version.txt
 	$(eval VERSION := $(shell head -n 1 version.txt))
 	grep -E '^version: $(VERSION)$$' < cmd/cyamli/cli.yaml
@@ -13,7 +13,7 @@ check: ## Generates Go CLI for cyamli command.
 
 .PHONY: gen-cli
 gen-cli: ## Generates Go CLI for cyamli command.
-	go run ./internal/tools/gen-cli/main.go < cmd/cyamli/cli.yaml > cmd/cyamli/cli.gen.go
+	go run ./internal/tools/gen-cli-golang/main.go < cmd/cyamli/cli.yaml > cmd/cyamli/cli.gen.go
 
 .PHONY: version-apply
 version-apply: ## Generates Go CLI for cyamli command.
@@ -27,5 +27,8 @@ version-apply: ## Generates Go CLI for cyamli command.
 
 .PHONY: examples
 examples: ## Generates Go CLI for cyamli command.
-	go run ./internal/tools/gen-cli/main.go < examples/cmd/example/cli.yaml > examples/cmd/example/cli.gen.go
-	go run ./internal/tools/gen-cli/main.go < examples/cmd/greet/cli.yaml > examples/cmd/greet/cli.gen.go
+	go run ./internal/tools/gen-cli-golang/main.go < examples/cmd/example/cli.yaml > examples/cmd/example/cli.gen.go
+	go run ./internal/tools/gen-cli-golang/main.go < examples/cmd/greet/cli.yaml > examples/cmd/greet/cli.gen.go
+
+	go run ./internal/tools/gen-cli-python3/main.go < examples/cmd/example/cli.yaml > examples/cmd/example/cli_gen.py
+	go run ./internal/tools/gen-cli-python3/main.go < examples/cmd/greet/cli.yaml > examples/cmd/greet/cli_gen.py

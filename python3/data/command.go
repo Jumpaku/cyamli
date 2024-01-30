@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/Jumpaku/cyamli/description"
 	"github.com/Jumpaku/cyamli/name"
@@ -22,16 +23,16 @@ func (d Command) FullPathLiteral() string {
 	return fmt.Sprintf("%q", d.Name.Join(" ", "", ""))
 }
 
-func (d Command) CLIStructName() string {
+func (d Command) CLIClassName() string {
 	return d.Name.Map(name.Title).Join("", "CLI_", "")
 }
 
-func (d Command) CLIInputStructName() string {
+func (d Command) CLIInputClassName() string {
 	return d.Name.Map(name.Title).Join("", "CLI_", "_Input")
 }
 
 func (d Command) CLIFuncMethodChain() string {
-	return d.Name.Map(name.Title).Join(".", "", ".FUNC")
+	return d.Name.Map(strings.ToLower).Join(".", "", ".FUNC")
 }
 
 func (d Command) SimpleDescriptionLiteral() string {

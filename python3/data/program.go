@@ -10,32 +10,33 @@ import (
 	"github.com/Jumpaku/go-assert"
 )
 
-type Command struct {
-	schemaCommand *schema.Command
+type Program struct {
+	schemaProgram *schema.Program
 	Name          name.Path
+	Version       string
 	Options       []Option
 	Arguments     []Argument
 	Subcommands   []Subcommand
 }
 
-func (d Command) FullPathLiteral() string {
-	return fmt.Sprintf("%q", d.Name.Join(" ", "", ""))
+func (d Program) FullPathLiteral() string {
+	return `""`
 }
 
-func (d Command) CLIStructName() string {
-	return d.Name.Map(name.Title).Join("", "CLI_", "")
+func (d Program) CLIClassName() string {
+	return "CLI"
 }
 
-func (d Command) CLIInputStructName() string {
-	return d.Name.Map(name.Title).Join("", "CLI_", "_Input")
+func (d Program) CLIFuncMethodChain() string {
+	return "FUNC"
 }
 
-func (d Command) CLIFuncMethodChain() string {
-	return d.Name.Map(name.Title).Join(".", "", ".FUNC")
+func (d Program) CLIInputClassName() string {
+	return "CLI_Input"
 }
 
-func (d Command) SimpleDescriptionLiteral() string {
-	cmdData := description.CreateCommandData("", "", d.Name, d.schemaCommand)
+func (d Program) SimpleDescriptionLiteral() string {
+	cmdData := description.CreateCommandData(d.schemaProgram.Name, d.schemaProgram.Version, name.Path{}, d.schemaProgram.Command())
 	buf := bytes.NewBuffer(nil)
 	err := description.DescribeCommand(description.SimpleExecutor(), cmdData, buf)
 	assert.State(err == nil, "fail to generate simple description: %w", err)
@@ -43,8 +44,8 @@ func (d Command) SimpleDescriptionLiteral() string {
 	return fmt.Sprintf("%q", buf.String())
 }
 
-func (d Command) DetailDescriptionLiteral() string {
-	cmdData := description.CreateCommandData("", "", d.Name, d.schemaCommand)
+func (d Program) DetailDescriptionLiteral() string {
+	cmdData := description.CreateCommandData(d.schemaProgram.Name, d.schemaProgram.Version, name.Path{}, d.schemaProgram.Command())
 	buf := bytes.NewBuffer(nil)
 	err := description.DescribeCommand(description.DetailExecutor(), cmdData, buf)
 	assert.State(err == nil, "fail to generate simple description: %w", err)
