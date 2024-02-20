@@ -27,7 +27,7 @@ go install "github.com/Jumpaku/cyamli/cmd/cyamli@latest"
 or use go generate as follows:
 
 ```go
-//go:generate "github.com/Jumpaku/cyamli/cmd/cyamli@latest" -schema-path=path/to/cli.yaml -out-path=path/to/cli.gen.go
+//go:generate go run "github.com/Jumpaku/cyamli/cmd/cyamli@latest" golang -schema-path=path/to/cli.yaml -out-path=path/to/cli.gen.go
 ```
 
 ### Usage
