@@ -145,7 +145,10 @@ The example CLI applications are found in https://github.com/Jumpaku/cyamli/tree
 
 ### Supported programming languages
 
-Only Go is supported currently.
+The following programming languages are supported currently.
+
+* Go
+* Python3
 
 ### Handling command line arguments
 
