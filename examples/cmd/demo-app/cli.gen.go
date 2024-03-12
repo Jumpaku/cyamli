@@ -10,27 +10,25 @@ import (
 type Func[Input any] func(subcommand []string, input Input, inputErr error) (err error)
 
 type CLI struct {
-	Hello CLI_Hello
+	Describe CLI_Describe
+
+	List CLI_List
 
 	FUNC Func[CLI_Input]
 }
 
 func (CLI) DESC_Simple() string {
-	return "greet:\nthis is an example program\n\nUsage:\n    $ greet [<option>]...\n\nOptions:\n    -help\n\nSubcommands:\n    hello\n\n"
+	return "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\nSubcommands:\n    describe, list\n\n"
 }
 func (CLI) DESC_Detail() string {
-	return "greet:\nthis is an example program\n\nUsage:\n    $ greet [<option>]...\n\n\nOptions:\n    -help[=<boolean>], -h[=<boolean>]  (default=false):\n        Show help information.\n\n\nSubcommands:\n    hello:\n        Prints \"Hello, <target name>! My name is <greeter>!\"\n\n"
+	return "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\n\nSubcommands:\n    describe:\n        show information of tables\n\n    list:\n        list tables\n\n"
 }
 
 type CLI_Input struct {
-	Opt_Help bool
 }
 
 func resolve_CLI_Input(input *CLI_Input, restArgs []string) error {
-	*input = CLI_Input{
-
-		Opt_Help: false,
-	}
+	*input = CLI_Input{}
 
 	var arguments []string
 	for idx, arg := range restArgs {
@@ -48,15 +46,6 @@ func resolve_CLI_Input(input *CLI_Input, restArgs []string) error {
 		switch optName {
 		default:
 			return fmt.Errorf("unknown option %q", optName)
-
-		case "-help", "-h":
-			if !cut {
-				lit = "true"
-
-			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
-				return fmt.Errorf("value %q is not assignable to option %q", lit, optName)
-			}
 
 		}
 	}
@@ -64,27 +53,31 @@ func resolve_CLI_Input(input *CLI_Input, restArgs []string) error {
 	return nil
 }
 
-type CLI_Hello struct {
-	FUNC Func[CLI_Hello_Input]
+type CLI_Describe struct {
+	FUNC Func[CLI_Describe_Input]
 }
 
-func (CLI_Hello) DESC_Simple() string {
-	return "Prints \"Hello, <target name>! My name is <greeter>!\"\n\nUsage:\n    $ <program> hello [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -target-name\n\nArguments:\n    <greeter>\n\n"
+func (CLI_Describe) DESC_Simple() string {
+	return "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -config, -verbose\n\nArguments:\n    <tables>...\n\n"
 }
-func (CLI_Hello) DESC_Detail() string {
-	return "Prints \"Hello, <target name>! My name is <greeter>!\"\n\nUsage:\n    $ <program> hello [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -target-name=<string>, -t=<string>  (default=\"\"):\n        The name of the person to be said hello.\n\n\nArguments:\n    [0]  <greeter:string>\n        The name of the person who says hello.\n\n"
-}
-
-type CLI_Hello_Input struct {
-	Opt_TargetName string
-
-	Arg_Greeter string
+func (CLI_Describe) DESC_Detail() string {
+	return "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n    -verbose[=<boolean>], -v[=<boolean>]  (default=false):\n        shows detailed log\n\n\nArguments:\n    [0:] [<tables:string>]...\n        names of tables to be described\n\n"
 }
 
-func resolve_CLI_Hello_Input(input *CLI_Hello_Input, restArgs []string) error {
-	*input = CLI_Hello_Input{
+type CLI_Describe_Input struct {
+	Opt_Config string
 
-		Opt_TargetName: "",
+	Opt_Verbose bool
+
+	Arg_Tables []string
+}
+
+func resolve_CLI_Describe_Input(input *CLI_Describe_Input, restArgs []string) error {
+	*input = CLI_Describe_Input{
+
+		Opt_Config: "",
+
+		Opt_Verbose: false,
 	}
 
 	var arguments []string
@@ -104,23 +97,85 @@ func resolve_CLI_Hello_Input(input *CLI_Hello_Input, restArgs []string) error {
 		default:
 			return fmt.Errorf("unknown option %q", optName)
 
-		case "-target-name", "-t":
+		case "-config", "-c":
 			if !cut {
 				return fmt.Errorf("value is not specified to option %q", optName)
 
 			}
-			if err := parseValue(&input.Opt_TargetName, lit); err != nil {
+			if err := parseValue(&input.Opt_Config, lit); err != nil {
+				return fmt.Errorf("value %q is not assignable to option %q", lit, optName)
+			}
+
+		case "-verbose", "-v":
+			if !cut {
+				lit = "true"
+
+			}
+			if err := parseValue(&input.Opt_Verbose, lit); err != nil {
 				return fmt.Errorf("value %q is not assignable to option %q", lit, optName)
 			}
 
 		}
 	}
 
-	if len(arguments) <= 0 {
+	if len(arguments) <= 0-1 {
 		return fmt.Errorf("too few arguments")
 	}
-	if err := parseValue(&input.Arg_Greeter, arguments[0]); err != nil {
-		return fmt.Errorf("value is not assignable to argument at [%d]", 0)
+	if err := parseValue(&input.Arg_Tables, arguments[0:]...); err != nil {
+		return fmt.Errorf("values [%s] are not assignable to arguments at [%d:]", strings.Join(arguments[0:], " "), 0)
+	}
+
+	return nil
+}
+
+type CLI_List struct {
+	FUNC Func[CLI_List_Input]
+}
+
+func (CLI_List) DESC_Simple() string {
+	return "list tables\n\nUsage:\n    $ <program> list [<option>]...\n\nOptions:\n    -config\n\n"
+}
+func (CLI_List) DESC_Detail() string {
+	return "list tables\n\nUsage:\n    $ <program> list [<option>]...\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n"
+}
+
+type CLI_List_Input struct {
+	Opt_Config string
+}
+
+func resolve_CLI_List_Input(input *CLI_List_Input, restArgs []string) error {
+	*input = CLI_List_Input{
+
+		Opt_Config: "",
+	}
+
+	var arguments []string
+	for idx, arg := range restArgs {
+		if arg == "--" {
+			arguments = append(arguments, restArgs[idx+1:]...)
+			break
+		}
+		if !strings.HasPrefix(arg, "-") {
+			arguments = append(arguments, arg)
+			continue
+		}
+		optName, lit, cut := strings.Cut(arg, "=")
+		consumeVariables(optName, lit, cut)
+
+		switch optName {
+		default:
+			return fmt.Errorf("unknown option %q", optName)
+
+		case "-config", "-c":
+			if !cut {
+				return fmt.Errorf("value is not specified to option %q", optName)
+
+			}
+			if err := parseValue(&input.Opt_Config, lit); err != nil {
+				return fmt.Errorf("value %q is not assignable to option %q", lit, optName)
+			}
+
+		}
 	}
 
 	return nil
@@ -143,13 +198,22 @@ func Run(cli CLI, args []string) error {
 		err := resolve_CLI_Input(&input, restArgs)
 		return funcMethod(subcommandPath, input, err)
 
-	case "hello":
-		funcMethod := cli.Hello.FUNC
+	case "describe":
+		funcMethod := cli.Describe.FUNC
 		if funcMethod == nil {
-			return fmt.Errorf("%q is unsupported: cli.Hello.FUNC not assigned", "hello")
+			return fmt.Errorf("%q is unsupported: cli.Describe.FUNC not assigned", "describe")
 		}
-		var input CLI_Hello_Input
-		err := resolve_CLI_Hello_Input(&input, restArgs)
+		var input CLI_Describe_Input
+		err := resolve_CLI_Describe_Input(&input, restArgs)
+		return funcMethod(subcommandPath, input, err)
+
+	case "list":
+		funcMethod := cli.List.FUNC
+		if funcMethod == nil {
+			return fmt.Errorf("%q is unsupported: cli.List.FUNC not assigned", "list")
+		}
+		var input CLI_List_Input
+		err := resolve_CLI_List_Input(&input, restArgs)
 		return funcMethod(subcommandPath, input, err)
 
 	}
@@ -161,8 +225,8 @@ func resolveSubcommand(args []string) (subcommandPath []string, restArgs []strin
 		panic("command line arguments are too few")
 	}
 	subcommandSet := map[string]bool{
-		"":      true,
-		"hello": true,
+		"":         true,
+		"describe": true, "list": true,
 	}
 
 	for _, arg := range args[1:] {

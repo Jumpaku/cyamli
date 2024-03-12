@@ -10,23 +10,22 @@ FuncType: TypeAlias = typing.Callable[[None,FuncTypeInput,Exception],None]
 
 
 @dataclass
-class CLI_Hello_Input:
-    opt_target_name: str = ""
+class CLI_List_Input:
+    opt_config: str = ""
     
-    arg_greeter: str = str()
     
     pass
 
 
-class CLI_Hello:
+class CLI_List:
     
-    desc_simple: str = "Prints \"Hello, <target name>! My name is <greeter>!\"\n\nUsage:\n    $ <program> hello [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -target-name\n\nArguments:\n    <greeter>\n\n"
-    desc_detail: str = "Prints \"Hello, <target name>! My name is <greeter>!\"\n\nUsage:\n    $ <program> hello [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -target-name=<string>, -t=<string>  (default=\"\"):\n        The name of the person to be said hello.\n\n\nArguments:\n    [0]  <greeter:string>\n        The name of the person who says hello.\n\n"
-    FUNC: FuncType[CLI_Hello_Input] = None
+    desc_simple: str = "list tables\n\nUsage:\n    $ <program> list [<option>]...\n\nOptions:\n    -config\n\n"
+    desc_detail: str = "list tables\n\nUsage:\n    $ <program> list [<option>]...\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n"
+    FUNC: FuncType[CLI_List_Input] = None
 
 
-def resolve_CLI_Hello_Input(rest_args: list[str])->CLI_Hello_Input:
-    input = CLI_Hello_Input()
+def resolve_CLI_List_Input(rest_args: list[str])->CLI_List_Input:
+    input = CLI_List_Input()
     arguments = []
     for i, arg in enumerate(rest_args):
         if arg == "--":
@@ -39,34 +38,83 @@ def resolve_CLI_Hello_Input(rest_args: list[str])->CLI_Hello_Input:
         opt_name, assign = split[0], len(split) > 1
         match opt_name:
         
-            case "-target-name" | "-t":
+            case "-config" | "-c":
                 if not assign:
                     raise Exception("value is not specified to option "+ opt_name)
                     
-                input.opt_target_name = parse_value(str, split[1])
+                input.opt_config = parse_value(str, split[1])
         
             case _:
                 raise Exception("unsupported option " + opt_name)
-    if len(arguments) <= 0:
+    
+    return input
+
+
+@dataclass
+class CLI_Describe_Input:
+    opt_config: str = ""
+    opt_verbose: bool = False
+    
+    arg_tables: tuple[str,...] = tuple[str,...]()
+    
+    pass
+
+
+class CLI_Describe:
+    
+    desc_simple: str = "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -config, -verbose\n\nArguments:\n    <tables>...\n\n"
+    desc_detail: str = "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n    -verbose[=<boolean>], -v[=<boolean>]  (default=false):\n        shows detailed log\n\n\nArguments:\n    [0:] [<tables:string>]...\n        names of tables to be described\n\n"
+    FUNC: FuncType[CLI_Describe_Input] = None
+
+
+def resolve_CLI_Describe_Input(rest_args: list[str])->CLI_Describe_Input:
+    input = CLI_Describe_Input()
+    arguments = []
+    for i, arg in enumerate(rest_args):
+        if arg == "--":
+            arguments += rest_args[i+1:]
+            break
+        if not arg.startswith("-"):
+            arguments.append(arg)
+            continue
+        split = arg.split("=", 1)
+        opt_name, assign = split[0], len(split) > 1
+        match opt_name:
+        
+            case "-config" | "-c":
+                if not assign:
+                    raise Exception("value is not specified to option "+ opt_name)
+                    
+                input.opt_config = parse_value(str, split[1])
+        
+            case "-verbose" | "-v":
+                if not assign:
+                    split.append("True")
+                    
+                input.opt_verbose = parse_value(bool, split[1])
+        
+            case _:
+                raise Exception("unsupported option " + opt_name)
+    if len(arguments) <= 0 - 1:
         raise Exception("too few arguments")
-    input.arg_greeter = parse_value(str, arguments[0])
+    input.arg_tables = parse_value(tuple[str,...], arguments[0:])
     
     return input
 
 
 @dataclass
 class CLI_Input:
-    opt_help: bool = False
     
     
     pass
 
 
 class CLI:
-    hello: CLI_Hello = CLI_Hello()
+    list: CLI_List = CLI_List()
+    describe: CLI_Describe = CLI_Describe()
     
-    desc_simple: str = "greet:\nthis is an example program\n\nUsage:\n    $ greet [<option>]...\n\nOptions:\n    -help\n\nSubcommands:\n    hello\n\n"
-    desc_detail: str = "greet:\nthis is an example program\n\nUsage:\n    $ greet [<option>]...\n\n\nOptions:\n    -help[=<boolean>], -h[=<boolean>]  (default=false):\n        Show help information.\n\n\nSubcommands:\n    hello:\n        Prints \"Hello, <target name>! My name is <greeter>!\"\n\n"
+    desc_simple: str = "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\nSubcommands:\n    describe, list\n\n"
+    desc_detail: str = "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\n\nSubcommands:\n    describe:\n        show information of tables\n\n    list:\n        list tables\n\n"
     FUNC: FuncType[CLI_Input] = None
 
 
@@ -83,12 +131,6 @@ def resolve_CLI_Input(rest_args: list[str])->CLI_Input:
         split = arg.split("=", 1)
         opt_name, assign = split[0], len(split) > 1
         match opt_name:
-        
-            case "-help" | "-h":
-                if not assign:
-                    split.append("True")
-                    
-                input.opt_help = parse_value(bool, split[1])
         
             case _:
                 raise Exception("unsupported option " + opt_name)
@@ -113,16 +155,27 @@ def run(cli: CLI, args: list[str]):
             cli.FUNC(input, ex)
     
     
-        case "hello":
-            if not cli.hello.FUNC:
-                raise Exception("unsupported subcommand \"" + "hello" + "\": cli.hello.FUNC not assigned")
+        case "list":
+            if not cli.list.FUNC:
+                raise Exception("unsupported subcommand \"" + "list" + "\": cli.list.FUNC not assigned")
             ex: Exception = None
-            input: CLI_Hello_Input = None
+            input: CLI_List_Input = None
             try:
-                input = resolve_CLI_Hello_Input(rest_args)
+                input = resolve_CLI_List_Input(rest_args)
             except Exception as e:
                 ex = e
-            cli.hello.FUNC(input, ex)
+            cli.list.FUNC(input, ex)
+    
+        case "describe":
+            if not cli.describe.FUNC:
+                raise Exception("unsupported subcommand \"" + "describe" + "\": cli.describe.FUNC not assigned")
+            ex: Exception = None
+            input: CLI_Describe_Input = None
+            try:
+                input = resolve_CLI_Describe_Input(rest_args)
+            except Exception as e:
+                ex = e
+            cli.describe.FUNC(input, ex)
     
 
 @dataclass
@@ -137,7 +190,7 @@ def resolve_subcommand(args: list[str])->ResolveSubcommandResult:
     
     subcommand_set = {
         "",
-        "hello",
+        "list","describe",
     }
 
     subcommand_path = []
