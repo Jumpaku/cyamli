@@ -1,0 +1,23 @@
+name: demo
+description: demo app to get table information from databases
+subcommands:
+  list:
+    description: list tables
+    options:
+      -config:
+        description: path to config file
+        short: -c
+  describe:
+    description: show information of tables
+    options:
+      -config:
+        description: path to config file
+        short: -c
+      -verbose:
+        description: shows detailed log
+        short: -v
+        type: boolean
+    arguments:
+      - name: tables
+        variadic: true
+        description: names of tables to be described

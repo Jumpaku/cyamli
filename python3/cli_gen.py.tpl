@@ -48,7 +48,7 @@ def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}
         {{range $Index, $Option := .Options}}
             case {{$Option.NameLiteral}}{{if $Option.ShortNameLiteral}} | {{$Option.ShortNameLiteral}}{{end}}:
                 if not assign:
-                    {{if eq $Option.InputFieldType "bool"}}split[1] = "True"
+                    {{if eq $Option.InputFieldType "bool"}}split.append("True")
                     {{else}}raise Exception("value is not specified to option "+ opt_name)
                     {{end}}
                 input.{{$Option.InputFieldName}} = parse_value({{$Option.InputFieldType}}, split[1])

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"go/format"
 	"io"
 	"os"
 
@@ -83,8 +84,11 @@ func funcGolang(subcommand []string, input CLI_Golang_Input, inputErr error) (er
 	if err := golang.Generate(input.Opt_Package, schema, buf); err != nil {
 		return fmt.Errorf("fail to generate cli %q: %w", input.Opt_SchemaPath, err)
 	}
-
-	if _, err := writer.Write(buf.Bytes()); err != nil {
+	fmtBytes, err := format.Source(buf.Bytes())
+	if err != nil {
+		return fmt.Errorf("fail to format cli code: %w", err)
+	}
+	if _, err := writer.Write(fmtBytes); err != nil {
 		return fmt.Errorf("fail to generate cli %q: %w", input.Opt_SchemaPath, err)
 	}
 
