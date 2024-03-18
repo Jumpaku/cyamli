@@ -59,7 +59,7 @@ def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}
     {{- if $Argument.Variadic -}}
     if len(arguments) <= {{$Index}} - 1:
         raise Exception("too few arguments")
-    input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, arguments[{{$Index}}:])
+    input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, *arguments[{{$Index}}:])
     {{- else -}}
     if len(arguments) <= {{$Index}}:
         raise Exception("too few arguments")
@@ -118,7 +118,7 @@ def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}
     {{- if $Argument.Variadic -}}
     if len(arguments) <= {{$Index}} - 1:
         raise Exception("too few arguments")
-    input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, arguments[{{$Index}}:])
+    input.{{$Argument.InputFieldName}} = parse_value({{$Argument.InputFieldType}}, *arguments[{{$Index}}:])
     {{- else -}}
     if len(arguments) <= {{$Index}}:
         raise Exception("too few arguments")
