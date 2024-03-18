@@ -51,7 +51,7 @@ def resolve_CLI_List_Input(rest_args: list[str])->CLI_List_Input:
 
 
 @dataclass
-class CLI_Describe_Input:
+class CLI_Fetch_Input:
     opt_config: str = ""
     opt_verbose: bool = False
     
@@ -60,15 +60,15 @@ class CLI_Describe_Input:
     pass
 
 
-class CLI_Describe:
+class CLI_Fetch:
     
-    desc_simple: str = "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -config, -verbose\n\nArguments:\n    <tables>...\n\n"
-    desc_detail: str = "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n    -verbose[=<boolean>], -v[=<boolean>]  (default=false):\n        shows detailed log\n\n\nArguments:\n    [0:] [<tables:string>]...\n        names of tables to be described\n\n"
-    FUNC: FuncType[CLI_Describe_Input] = None
+    desc_simple: str = "show information of tables\n\nUsage:\n    $ <program> fetch [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -config, -verbose\n\nArguments:\n    <tables>...\n\n"
+    desc_detail: str = "show information of tables\n\nUsage:\n    $ <program> fetch [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n    -verbose[=<boolean>], -v[=<boolean>]  (default=false):\n        shows detailed log\n\n\nArguments:\n    [0:] [<tables:string>]...\n        names of tables to be described\n\n"
+    FUNC: FuncType[CLI_Fetch_Input] = None
 
 
-def resolve_CLI_Describe_Input(rest_args: list[str])->CLI_Describe_Input:
-    input = CLI_Describe_Input()
+def resolve_CLI_Fetch_Input(rest_args: list[str])->CLI_Fetch_Input:
+    input = CLI_Fetch_Input()
     arguments = []
     for i, arg in enumerate(rest_args):
         if arg == "--":
@@ -111,10 +111,10 @@ class CLI_Input:
 
 class CLI:
     list: CLI_List = CLI_List()
-    describe: CLI_Describe = CLI_Describe()
+    fetch: CLI_Fetch = CLI_Fetch()
     
-    desc_simple: str = "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\nSubcommands:\n    describe, list\n\n"
-    desc_detail: str = "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\n\nSubcommands:\n    describe:\n        show information of tables\n\n    list:\n        list tables\n\n"
+    desc_simple: str = "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\nSubcommands:\n    fetch, list\n\n"
+    desc_detail: str = "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\n\nSubcommands:\n    fetch:\n        show information of tables\n\n    list:\n        list tables\n\n"
     FUNC: FuncType[CLI_Input] = None
 
 
@@ -166,16 +166,16 @@ def run(cli: CLI, args: list[str]):
                 ex = e
             cli.list.FUNC(input, ex)
     
-        case "describe":
-            if not cli.describe.FUNC:
-                raise Exception("unsupported subcommand \"" + "describe" + "\": cli.describe.FUNC not assigned")
+        case "fetch":
+            if not cli.fetch.FUNC:
+                raise Exception("unsupported subcommand \"" + "fetch" + "\": cli.fetch.FUNC not assigned")
             ex: Exception = None
-            input: CLI_Describe_Input = None
+            input: CLI_Fetch_Input = None
             try:
-                input = resolve_CLI_Describe_Input(rest_args)
+                input = resolve_CLI_Fetch_Input(rest_args)
             except Exception as e:
                 ex = e
-            cli.describe.FUNC(input, ex)
+            cli.fetch.FUNC(input, ex)
     
 
 @dataclass
@@ -190,7 +190,7 @@ def resolve_subcommand(args: list[str])->ResolveSubcommandResult:
     
     subcommand_set = {
         "",
-        "list","describe",
+        "list","fetch",
     }
 
     subcommand_path = []

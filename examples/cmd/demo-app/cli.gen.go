@@ -10,7 +10,7 @@ import (
 type Func[Input any] func(subcommand []string, input Input, inputErr error) (err error)
 
 type CLI struct {
-	Describe CLI_Describe
+	Fetch CLI_Fetch
 
 	List CLI_List
 
@@ -18,10 +18,10 @@ type CLI struct {
 }
 
 func (CLI) DESC_Simple() string {
-	return "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\nSubcommands:\n    describe, list\n\n"
+	return "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\nSubcommands:\n    fetch, list\n\n"
 }
 func (CLI) DESC_Detail() string {
-	return "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\n\nSubcommands:\n    describe:\n        show information of tables\n\n    list:\n        list tables\n\n"
+	return "demo:\ndemo app to get table information from databases\n\nUsage:\n    $ demo\n\n\nSubcommands:\n    fetch:\n        show information of tables\n\n    list:\n        list tables\n\n"
 }
 
 type CLI_Input struct {
@@ -53,18 +53,18 @@ func resolve_CLI_Input(input *CLI_Input, restArgs []string) error {
 	return nil
 }
 
-type CLI_Describe struct {
-	FUNC Func[CLI_Describe_Input]
+type CLI_Fetch struct {
+	FUNC Func[CLI_Fetch_Input]
 }
 
-func (CLI_Describe) DESC_Simple() string {
-	return "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -config, -verbose\n\nArguments:\n    <tables>...\n\n"
+func (CLI_Fetch) DESC_Simple() string {
+	return "show information of tables\n\nUsage:\n    $ <program> fetch [<option>|<argument>]... [-- [<argument>]...]\n\nOptions:\n    -config, -verbose\n\nArguments:\n    <tables>...\n\n"
 }
-func (CLI_Describe) DESC_Detail() string {
-	return "show information of tables\n\nUsage:\n    $ <program> describe [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n    -verbose[=<boolean>], -v[=<boolean>]  (default=false):\n        shows detailed log\n\n\nArguments:\n    [0:] [<tables:string>]...\n        names of tables to be described\n\n"
+func (CLI_Fetch) DESC_Detail() string {
+	return "show information of tables\n\nUsage:\n    $ <program> fetch [<option>|<argument>]... [-- [<argument>]...]\n\n\nOptions:\n    -config=<string>, -c=<string>  (default=\"\"):\n        path to config file\n\n    -verbose[=<boolean>], -v[=<boolean>]  (default=false):\n        shows detailed log\n\n\nArguments:\n    [0:] [<tables:string>]...\n        names of tables to be described\n\n"
 }
 
-type CLI_Describe_Input struct {
+type CLI_Fetch_Input struct {
 	Opt_Config string
 
 	Opt_Verbose bool
@@ -72,8 +72,8 @@ type CLI_Describe_Input struct {
 	Arg_Tables []string
 }
 
-func resolve_CLI_Describe_Input(input *CLI_Describe_Input, restArgs []string) error {
-	*input = CLI_Describe_Input{
+func resolve_CLI_Fetch_Input(input *CLI_Fetch_Input, restArgs []string) error {
+	*input = CLI_Fetch_Input{
 
 		Opt_Config: "",
 
@@ -198,13 +198,13 @@ func Run(cli CLI, args []string) error {
 		err := resolve_CLI_Input(&input, restArgs)
 		return funcMethod(subcommandPath, input, err)
 
-	case "describe":
-		funcMethod := cli.Describe.FUNC
+	case "fetch":
+		funcMethod := cli.Fetch.FUNC
 		if funcMethod == nil {
-			return fmt.Errorf("%q is unsupported: cli.Describe.FUNC not assigned", "describe")
+			return fmt.Errorf("%q is unsupported: cli.Fetch.FUNC not assigned", "fetch")
 		}
-		var input CLI_Describe_Input
-		err := resolve_CLI_Describe_Input(&input, restArgs)
+		var input CLI_Fetch_Input
+		err := resolve_CLI_Fetch_Input(&input, restArgs)
 		return funcMethod(subcommandPath, input, err)
 
 	case "list":
@@ -225,8 +225,8 @@ func resolveSubcommand(args []string) (subcommandPath []string, restArgs []strin
 		panic("command line arguments are too few")
 	}
 	subcommandSet := map[string]bool{
-		"":         true,
-		"describe": true, "list": true,
+		"":      true,
+		"fetch": true, "list": true,
 	}
 
 	for _, arg := range args[1:] {
