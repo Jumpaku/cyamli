@@ -11,6 +11,6 @@ def func(args, err):
 cli = cli_gen.CLI()
 cli.FUNC = func
 cli.list.FUNC = func
-cli.describe.FUNC = func
+cli.fetch.FUNC = func
 
 cli_gen.run(cli, sys.argv)
