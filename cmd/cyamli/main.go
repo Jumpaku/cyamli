@@ -3,9 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/Jumpaku/cyamli/docs"
+	"github.com/Jumpaku/cyamli/name"
 	"go/format"
 	"io"
 	"os"
+	"slices"
 
 	_ "embed"
 
@@ -36,21 +39,61 @@ func main() {
 		}
 		return nil
 	}
-	cli.Golang.FUNC = funcGolang
-	cli.Python3.FUNC = funcPython3
+	cli.List.FUNC = funcList
+	cli.Generate.Golang.FUNC = funcGenerateGolang
+	cli.Generate.Python3.FUNC = funcGeneratePython3
+	cli.Generate.Docs.FUNC = funcGenerateDocs
 
 	if err := Run(cli, os.Args); err != nil {
 		panic(err)
 	}
 }
 
-func funcGolang(subcommand []string, input CLI_Golang_Input, inputErr error) (err error) {
+func funcList(_ []string, input CLI_List_Input, inputErr error) (err error) {
+	if inputErr != nil {
+		fmt.Println(cli.DESC_Simple())
+		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
+	}
+	var reader io.Reader = os.Stdin
+	if input.Opt_SchemaPath != "" {
+		f, err := os.Open(input.Opt_SchemaPath)
+		if err != nil {
+			return fmt.Errorf("fail to open schema file %q: %w", input.Opt_SchemaPath, err)
+		}
+		defer f.Close()
+
+		reader = f
+	}
+
+	s, err := schema.Load(reader)
+	if err != nil {
+		return fmt.Errorf("fail to open schema file %q: %w", input.Opt_SchemaPath, err)
+	}
+
+	subcommands := []name.Path{}
+	_ = s.Walk(func(path name.Path, cmd *schema.Command) error {
+		subcommands = append(subcommands, path)
+		return nil
+	})
+	slices.SortFunc(subcommands, func(a, b name.Path) int { return slices.Compare(a, b) })
+
+	for _, path := range subcommands {
+		_, err := fmt.Fprintln(os.Stdout, path.Join(" ", "", ""))
+		if err != nil {
+			return fmt.Errorf("fail to print %q: %w", input.Opt_SchemaPath, err)
+		}
+	}
+
+	return nil
+}
+
+func funcGenerateGolang(_ []string, input CLI_GenerateGolang_Input, inputErr error) (err error) {
 	if inputErr != nil {
 		fmt.Println(cli.DESC_Simple())
 		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
 	}
 	if input.Opt_Help {
-		fmt.Println(cli.Golang.DESC_Detail())
+		fmt.Println(cli.Generate.Golang.DESC_Detail())
 		return nil
 	}
 	var reader io.Reader = os.Stdin
@@ -95,13 +138,13 @@ func funcGolang(subcommand []string, input CLI_Golang_Input, inputErr error) (er
 	return nil
 }
 
-func funcPython3(subcommand []string, input CLI_Python3_Input, inputErr error) (err error) {
+func funcGeneratePython3(_ []string, input CLI_GeneratePython3_Input, inputErr error) (err error) {
 	if inputErr != nil {
 		fmt.Println(cli.DESC_Simple())
 		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
 	}
 	if input.Opt_Help {
-		fmt.Println(cli.Golang.DESC_Detail())
+		fmt.Println(cli.Generate.Golang.DESC_Detail())
 		return nil
 	}
 	var reader io.Reader = os.Stdin
@@ -137,6 +180,54 @@ func funcPython3(subcommand []string, input CLI_Python3_Input, inputErr error) (
 	}
 
 	if _, err := writer.Write(buf.Bytes()); err != nil {
+		return fmt.Errorf("fail to generate cli %q: %w", input.Opt_SchemaPath, err)
+	}
+
+	return nil
+}
+
+func funcGenerateDocs(_ []string, input CLI_GenerateDocs_Input, inputErr error) (err error) {
+	if inputErr != nil {
+		fmt.Println(cli.DESC_Simple())
+		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
+	}
+	if input.Opt_Help {
+		fmt.Println(cli.Generate.Golang.DESC_Detail())
+		return nil
+	}
+	var reader io.Reader = os.Stdin
+	if input.Opt_SchemaPath != "" {
+		f, err := os.Open(input.Opt_SchemaPath)
+		if err != nil {
+			return fmt.Errorf("fail to open schema file %q: %w", input.Opt_SchemaPath, err)
+		}
+		defer f.Close()
+
+		reader = f
+	}
+
+	schema, err := schema.Load(reader)
+	if err != nil {
+		return fmt.Errorf("fail to open schema file %q: %w", input.Opt_SchemaPath, err)
+	}
+
+	var writer io.Writer = os.Stdout
+	if input.Opt_OutPath != "" {
+		f, err := os.Create(input.Opt_OutPath)
+		if err != nil {
+			return fmt.Errorf("fail to open output file %q: %w", input.Opt_OutPath, err)
+		}
+		defer f.Close()
+
+		writer = f
+	}
+
+	args := docs.GenerateArgs{
+		Format:     docs.DocsFormat(input.Opt_Format),
+		All:        input.Opt_All,
+		Subcommand: input.Arg_Subcommands,
+	}
+	if err := docs.Generate(schema, args, writer); err != nil {
 		return fmt.Errorf("fail to generate cli %q: %w", input.Opt_SchemaPath, err)
 	}
 
