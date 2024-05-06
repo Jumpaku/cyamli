@@ -18,7 +18,7 @@ func main() {
 		fmt.Printf("%+v\n", input)
 		return nil
 	}
-	cli.Describe.FUNC = func(subcommand []string, input CLI_Describe_Input, inputErr error) (err error) {
+	cli.Fetch.FUNC = func(subcommand []string, input CLI_Fetch_Input, inputErr error) (err error) {
 		fmt.Printf("%+v\n", inputErr)
 		fmt.Printf("%+v\n", input)
 		return nil

@@ -7,7 +7,7 @@ subcommands:
       -config:
         description: path to config file
         short: -c
-  describe:
+  fetch:
     description: show information of tables
     options:
       -config:
