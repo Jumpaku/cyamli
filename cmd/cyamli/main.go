@@ -78,7 +78,12 @@ func funcList(_ []string, input CLI_List_Input, inputErr error) (err error) {
 	slices.SortFunc(subcommands, func(a, b name.Path) int { return slices.Compare(a, b) })
 
 	for _, path := range subcommands {
-		_, err := fmt.Fprintln(os.Stdout, path.Join(" ", "", ""))
+		program := s.Program.Name
+		if program == "" {
+			program = "<program>"
+		}
+
+		_, err := fmt.Fprintln(os.Stdout, append(name.Path{program}, path...).Join(" ", "", ""))
 		if err != nil {
 			return fmt.Errorf("fail to print %q: %w", input.Opt_SchemaPath, err)
 		}
