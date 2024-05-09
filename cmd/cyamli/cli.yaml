@@ -1,5 +1,5 @@
 name: cyamli
-version: v0.0.14
+version: v0.0.15
 description: A command line tool to generate CLI for your app from YAML-based schema.
 options:
   -help:
@@ -11,28 +11,58 @@ options:
     short: -v
     type: boolean
 subcommands:
-  golang:
-    description: generates CLI for your app written in Go.
-    options: 
-      -package:
-        description: package name where the generated file will be placed.
-        default: main
+  list:
+    description: shows subcommands
+    options:
       -schema-path:
         description: if specified then reads schema file from the path, otherwise reads from stdin.
-      -out-path:
-        description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
-      -help:
-        description: shows description of golang subcommand
-        short: -h
-        type: boolean
-  python3:
-    description: generates CLI for your app written in Python3.
-    options: 
-      -schema-path:
-        description: if specified then reads schema file from the path, otherwise reads from stdin.
-      -out-path:
-        description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
-      -help:
-        description: shows description of python3 subcommand
-        short: -h
-        type: boolean
+  generate:
+    subcommands:
+      golang:
+        description: generates CLI for your app written in Go.
+        options:
+          -package:
+            description: package name where the generated file will be placed.
+            default: main
+          -schema-path:
+            description: if specified then reads schema file from the path, otherwise reads from stdin.
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+          -help:
+            description: shows description of golang subcommand
+            short: -h
+            type: boolean
+      python3:
+        description: generates CLI for your app written in Python3.
+        options:
+          -schema-path:
+            description: if specified then reads schema file from the path, otherwise reads from stdin.
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+          -help:
+            description: shows description of python3 subcommand
+            short: -h
+            type: boolean
+      docs:
+        description: generates documentation for your CLI app.
+        options:
+          -schema-path:
+            description: if specified then reads schema file from the path, otherwise reads from stdin.
+          -out-path:
+            description: if specified then creates a file at the path and writes generated documentation, otherwise outputs to stdout.
+          -help:
+            description: shows description of docs subcommand
+            short: -h
+            type: boolean
+          -format:
+            description: "specifies output format of the documentation in text or markdown"
+            short: -f
+            default: text
+          -all:
+            description: if specified then outputs documentation for all subcommands, otherwise in text format.
+            short: -a
+            type: boolean
+        arguments:
+          - name: subcommands
+            description: selects subcommand for which the documentation is output.
+            variadic: true
