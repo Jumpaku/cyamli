@@ -1,5 +1,5 @@
 name: cyamli
-version: v0.0.15
+version: v1.0.0
 description: A command line tool to generate CLI for your app from YAML-based schema.
 options:
   -help:

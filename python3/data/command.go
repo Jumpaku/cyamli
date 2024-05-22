@@ -3,15 +3,16 @@ package data
 import (
 	"bytes"
 	"fmt"
+	"github.com/Jumpaku/cyamli/docs"
 	"strings"
 
-	"github.com/Jumpaku/cyamli/description"
 	"github.com/Jumpaku/cyamli/name"
 	"github.com/Jumpaku/cyamli/schema"
 	"github.com/Jumpaku/go-assert"
 )
 
 type Command struct {
+	schema        *schema.Schema
 	schemaCommand *schema.Command
 	Name          name.Path
 	Options       []Option
@@ -35,19 +36,13 @@ func (d Command) CLIFuncMethodChain() string {
 	return d.Name.Map(strings.ToLower).Join(".", "", ".FUNC")
 }
 
-func (d Command) SimpleDescriptionLiteral() string {
-	cmdData := description.CreateCommandData("", "", d.Name, d.schemaCommand)
+func (d Command) DocText() string {
 	buf := bytes.NewBuffer(nil)
-	err := description.DescribeCommand(description.SimpleExecutor(), cmdData, buf)
-	assert.State(err == nil, "fail to generate simple description: %w", err)
-
-	return fmt.Sprintf("%q", buf.String())
-}
-
-func (d Command) DetailDescriptionLiteral() string {
-	cmdData := description.CreateCommandData("", "", d.Name, d.schemaCommand)
-	buf := bytes.NewBuffer(nil)
-	err := description.DescribeCommand(description.DetailExecutor(), cmdData, buf)
+	err := docs.Generate(d.schema, docs.GenerateArgs{
+		Format:     docs.DocsFormatText,
+		All:        false,
+		Subcommand: d.Name,
+	}, buf)
 	assert.State(err == nil, "fail to generate simple description: %w", err)
 
 	return fmt.Sprintf("%q", buf.String())

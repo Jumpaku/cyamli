@@ -23,7 +23,7 @@ func Construct(s *schema.Schema) (Data, error) {
 	}
 
 	err := s.Walk(func(path name.Path, cmd *schema.Command) error {
-		cmdData := Command{schemaCommand: cmd, Name: path}
+		cmdData := Command{schema: s, schemaCommand: cmd, Name: path}
 
 		for optName, opt := range cmd.Options {
 			cmdData.Options = append(cmdData.Options, Option{
@@ -56,6 +56,7 @@ func Construct(s *schema.Schema) (Data, error) {
 				programName = programName.Append(s.Program.Name)
 			}
 			data.Program = Program{
+				schema:        s,
 				schemaProgram: &s.Program,
 				Name:          programName,
 				Version:       s.Program.Version,

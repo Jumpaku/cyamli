@@ -25,17 +25,20 @@ func LoadSchema() *schema.Schema {
 	return s
 }
 
-var cli = NewCLI()
+//go:generate go run "github.com/Jumpaku/cyamli/cmd/cyamli@v0.0.15" generate golang -package=main -schema-path=cli.yaml -out-path=cli.gen.go
+
+//go:generate go run "../../internal/cmd/gen-docs" -- cli.yaml docs.gen.go main
 
 func main() {
+	var cli = NewCLI()
 	cli.FUNC = func(subcommand []string, input CLI_Input, inputErr error) (err error) {
 		switch {
 		case inputErr != nil:
-			fmt.Println(cli.DESC_Simple())
+			fmt.Println(GetDoc(subcommand))
 		case input.Opt_Version:
 			fmt.Printf("version: %s\n", LoadSchema().Program.Version)
 		case input.Opt_Help:
-			fmt.Println(cli.DESC_Detail())
+			fmt.Println(GetDoc(subcommand))
 		}
 		return nil
 	}
@@ -49,9 +52,9 @@ func main() {
 	}
 }
 
-func funcList(_ []string, input CLI_List_Input, inputErr error) (err error) {
+func funcList(subcommand []string, input CLI_List_Input, inputErr error) (err error) {
 	if inputErr != nil {
-		fmt.Println(cli.DESC_Simple())
+		fmt.Println(GetDoc(subcommand))
 		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
 	}
 	var reader io.Reader = os.Stdin
@@ -92,13 +95,13 @@ func funcList(_ []string, input CLI_List_Input, inputErr error) (err error) {
 	return nil
 }
 
-func funcGenerateGolang(_ []string, input CLI_GenerateGolang_Input, inputErr error) (err error) {
+func funcGenerateGolang(subcommand []string, input CLI_GenerateGolang_Input, inputErr error) (err error) {
 	if inputErr != nil {
-		fmt.Println(cli.DESC_Simple())
+		fmt.Println(GetDoc(subcommand))
 		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
 	}
 	if input.Opt_Help {
-		fmt.Println(cli.Generate.Golang.DESC_Detail())
+		fmt.Println(GetDoc(subcommand))
 		return nil
 	}
 	var reader io.Reader = os.Stdin
@@ -143,13 +146,13 @@ func funcGenerateGolang(_ []string, input CLI_GenerateGolang_Input, inputErr err
 	return nil
 }
 
-func funcGeneratePython3(_ []string, input CLI_GeneratePython3_Input, inputErr error) (err error) {
+func funcGeneratePython3(subcommand []string, input CLI_GeneratePython3_Input, inputErr error) (err error) {
 	if inputErr != nil {
-		fmt.Println(cli.DESC_Simple())
+		fmt.Println(GetDoc(subcommand))
 		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
 	}
 	if input.Opt_Help {
-		fmt.Println(cli.Generate.Golang.DESC_Detail())
+		fmt.Println(GetDoc(subcommand))
 		return nil
 	}
 	var reader io.Reader = os.Stdin
@@ -191,13 +194,13 @@ func funcGeneratePython3(_ []string, input CLI_GeneratePython3_Input, inputErr e
 	return nil
 }
 
-func funcGenerateDocs(_ []string, input CLI_GenerateDocs_Input, inputErr error) (err error) {
+func funcGenerateDocs(subcommand []string, input CLI_GenerateDocs_Input, inputErr error) (err error) {
 	if inputErr != nil {
-		fmt.Println(cli.DESC_Simple())
+		fmt.Println(GetDoc(subcommand))
 		return fmt.Errorf("fail to resolve command line arguments: %w", inputErr)
 	}
 	if input.Opt_Help {
-		fmt.Println(cli.Generate.Golang.DESC_Detail())
+		fmt.Println(GetDoc(subcommand))
 		return nil
 	}
 	var reader io.Reader = os.Stdin

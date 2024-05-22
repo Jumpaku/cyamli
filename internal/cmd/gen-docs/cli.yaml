@@ -1,0 +1,4 @@
+arguments:
+  - name: schema
+  - name: out_path
+  - name: package
