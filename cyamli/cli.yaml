@@ -14,10 +14,19 @@ subcommands:
   list:
     description: shows subcommands
     options:
+      -help:
+        description: shows description of list subcommand
+        short: -h
+        type: boolean
       -schema-path:
         description: if specified then reads schema file from the path, otherwise reads from stdin.
   generate:
     description: holds subcommands to generate CLI code.
+    options:
+      -help:
+        description: shows description of generate subcommand
+        short: -h
+        type: boolean
     subcommands:
       golang:
         description: generates CLI for your app written in Go.

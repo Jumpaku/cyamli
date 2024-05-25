@@ -1,0 +1,31 @@
+cyamli (v1.0.0)
+
+cyamli generate docs
+
+    Description:
+        generates documentation for your CLI app.
+
+    Syntax:
+        $ cyamli generate docs [<option>|<argument>]... [-- [<argument>]...]
+
+    Options:
+        -all[=<boolean>], -a[=<boolean>]  (default=false):
+            if specified then outputs documentation for all subcommands, otherwise in text format.
+
+        -format=<string>, -f=<string>  (default="text"):
+            specifies output format of the documentation in text or markdown
+
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of docs subcommand
+
+        -out-path=<string>  (default=""):
+            if specified then creates a file at the path and writes generated documentation, otherwise outputs to stdout.
+
+        -schema-path=<string>  (default=""):
+            if specified then reads schema file from the path, otherwise reads from stdin.
+
+    Arguments:
+        1. [<subcommands:string>]...
+            selects subcommand for which the documentation is output.
+
+

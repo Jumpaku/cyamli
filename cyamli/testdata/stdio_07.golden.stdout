@@ -1,0 +1,6 @@
+cyamli
+cyamli generate
+cyamli generate docs
+cyamli generate golang
+cyamli generate python3
+cyamli list

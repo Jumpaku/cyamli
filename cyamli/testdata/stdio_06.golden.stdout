@@ -1,0 +1,25 @@
+cyamli (v1.0.0)
+
+cyamli
+
+    Description:
+        A command line tool to generate CLI for your app from YAML-based schema.
+
+    Syntax:
+        $ cyamli  [<option>]...
+
+    Options:
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of this app
+
+        -version[=<boolean>], -v[=<boolean>]  (default=false):
+            shows version of this app
+
+    Subcommands:
+        generate:
+            holds subcommands to generate CLI code.
+
+        list:
+            shows subcommands
+
+

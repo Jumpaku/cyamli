@@ -95,7 +95,7 @@ var cyamliSchema = &schema.Schema{
 				Subcommands: map[string]*schema.Command(nil),
 			},
 			string("generate"): &schema.Command{
-				Description: string(""),
+				Description: string("holds subcommands to generate CLI code."),
 				Options:     map[string]*schema.Option(nil),
 				Arguments:   []*schema.Argument(nil),
 				Subcommands: map[string]*schema.Command{
