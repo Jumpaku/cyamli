@@ -4,16 +4,16 @@ A command line tool to generate interfaces for command line tools from YAML-base
 
 ## Overview
 
-Developing console apps need to define and parse CLIs such as command line arguments, where command line arguments consist of subcommands, options, and positional arguments.
+Developing console apps involves defining and parsing command line interfaces (CLIs) such as command line arguments, which consist of subcommands, options, and positional arguments.
 
-`cyamli` is schema-based code generator to generate API (Application Programming Interface, such as types and functions) to handle typed CLI.
-The schema of a typed CLI can be written in YAML according to the CLI schema definition ( https://github.com/Jumpaku/cyamli/blob/main/cli-schema-definition.ts ).
+`cyamli` is a schema-based code generator that generates APIs (Application Programming Interfaces, such as types and functions) to handle typed CLIs.
+The schema of a typed CLI can be written in YAML according to the CLI schema definition (https://github.com/Jumpaku/cyamli/blob/main/cli-schema-definition.ts).
 
 ## Motivation
 
-- Schema-based approach leveraging standardized and consistent source.
-- Promote typed CLI for benefits of static checking and code completion.
-- Reduce boilerplate by automatically generating code which is need.
+- Schema-based approach leveraging standardized and consistent sources.
+- Promoting typed CLIs for the benefits of static checking and code completion.
+- Reducing boilerplate by automatically generating the necessary code.
 
 
 ## Installation
@@ -29,12 +29,12 @@ Assume a situation where you need to develop a console app in Go to fetch inform
 Usage of `cyamli` is as follows:
 
 1. Define a CLI as a YAML file.
-2. Generate API to parse the CLI in Go.
+2. Generate the API to parse the CLI in Go.
 3. Assign functions to the generated API.
 
 ### Define a CLI as a YAML file
 
-The following YAML file `cli.yaml` defines a CLI for the example console app.
+The following YAML file, `cli.yaml`, defines a CLI for the example console app.
 
 ```yaml
 name: demo
@@ -53,7 +53,7 @@ subcommands:
         description: path to config file
         short: -c
       -verbose:
-        description: show detailed contents for selected tables
+        description: show detailed contents for specified tables
         short: -v
         type: boolean
     arguments:
@@ -62,9 +62,9 @@ subcommands:
         description: names of tables to be described
 ```
 
-### Generate API to parse the CLI in Go.
+### Generate API to parse the CLI in Go
 
-The following command reads a schema from `cli.yaml` and write Go API into `cli.gen.go`.
+The following command reads a schema from `cli.yaml` and writes the Go API into `cli.gen.go`.
 
 ```shell
 cyamli generate golang -schema-path=cli.yaml -out-path=cli.gen.go
@@ -85,9 +85,9 @@ func GetDoc(subcommand []string) string
 
 ### Assign functions to the generated API.
 
-`NewCLI()` returns an object `cli` which represents a root command and its descendant objects represent subcommands.
+`NewCLI()` returns an object `cli` which represents a root command, and its descendant objects represent subcommands.
 Each of them has a `FUNC` field.
-A function assigned to the field will be called by the `Run(cli, os.Args)`.
+A function assigned to this field will be called by `Run(cli, os.Args)`.
 
 The following code snippet demonstrates an implementation for the example console app.
 
@@ -133,11 +133,11 @@ go run main.go fetch -c config.yaml -v table1 table2
 
 ### Supported programming languages
 
-The following programming languages are supported currently.
+The following programming languages are currently supported:
 
 * Go
 * Python3
-* Documentation for text, HTML, and Markdown
+* Documentation in text, HTML, and Markdown
 
 ### Handling command line arguments
 
