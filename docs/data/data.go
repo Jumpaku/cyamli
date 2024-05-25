@@ -55,6 +55,9 @@ func Construct(s *schema.Schema) Data {
 		data.Commands = append(data.Commands, createCommandData(path, cmd))
 		return nil
 	})
+	slices.SortFunc(data.Commands, func(a, b CommandData) int {
+		return cmp.Compare(a.Path.Join(" ", "", ""), b.Path.Join(" ", "", ""))
+	})
 	return data
 }
 

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/Jumpaku/cyamli"
 	"github.com/Jumpaku/cyamli/name"
 	"github.com/Jumpaku/cyamli/schema"
 )
@@ -18,11 +17,11 @@ type Data struct {
 	Commands         []Command
 }
 
-func Construct(packageName string, s *schema.Schema) (Data, error) {
+func Construct(s *schema.Schema, generatorName, generatorVersion string, packageName string) (Data, error) {
 	data := Data{
 		Package:          packageName,
-		Generator:        cyamli.Name,
-		GeneratorVersion: cyamli.Version,
+		Generator:        generatorName,
+		GeneratorVersion: generatorVersion,
 	}
 
 	err := s.Walk(func(path name.Path, cmd *schema.Command) error {

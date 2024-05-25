@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"github.com/Jumpaku/cyamli/info"
 	"go/format"
 	"log"
 	"os"
@@ -18,7 +19,7 @@ func main() {
 
 	buf := bytes.NewBuffer(nil)
 
-	err = golang.Generate("main", s, buf)
+	err = golang.Generate(s, info.Name, info.Version, "cyamli", buf)
 	if err != nil {
 		log.Panicln(err)
 	}
