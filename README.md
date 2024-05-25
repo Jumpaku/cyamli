@@ -125,8 +125,8 @@ func main() {
 The example console app can be executed as follows:
 
 ```shell
-go run main.go list -c config.yaml
-go run main.go fetch -c config.yaml -v table1 table2
+go run main.go list -c=config.yaml
+go run main.go fetch -c=config.yaml -v table1 table2
 ```
 
 ## Details
