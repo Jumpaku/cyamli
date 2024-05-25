@@ -1,0 +1,25 @@
+cyamli (v1.0.0)
+
+cyamli generate
+
+    Description:
+        holds subcommands to generate CLI code.
+
+    Syntax:
+        $ cyamli generate [<option>]...
+
+    Options:
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of generate subcommand
+
+    Subcommands:
+        docs:
+            generates documentation for your CLI app.
+
+        golang:
+            generates CLI for your app written in Go.
+
+        python3:
+            generates CLI for your app written in Python3.
+
+

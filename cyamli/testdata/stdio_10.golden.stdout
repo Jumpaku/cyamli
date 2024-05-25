@@ -1,0 +1,18 @@
+cyamli (v1.0.0)
+
+cyamli list
+
+    Description:
+        shows subcommands
+
+    Syntax:
+        $ cyamli list [<option>]...
+
+    Options:
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of list subcommand
+
+        -schema-path=<string>  (default=""):
+            if specified then reads schema file from the path, otherwise reads from stdin.
+
+

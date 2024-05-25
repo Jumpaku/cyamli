@@ -1,0 +1,21 @@
+cyamli (v1.0.0)
+
+cyamli generate python3
+
+    Description:
+        generates CLI for your app written in Python3.
+
+    Syntax:
+        $ cyamli generate python3 [<option>]...
+
+    Options:
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of python3 subcommand
+
+        -out-path=<string>  (default=""):
+            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+
+        -schema-path=<string>  (default=""):
+            if specified then reads schema file from the path, otherwise reads from stdin.
+
+

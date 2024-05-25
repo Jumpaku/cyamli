@@ -14,8 +14,8 @@ import (
 var cliPyTemplate string
 var executor = template.Must(template.New("cli.py.tpl").Parse(cliPyTemplate))
 
-func Generate(schema *schema.Schema, out io.Writer) error {
-	d, err := data.Construct(schema)
+func Generate(schema *schema.Schema, generatorName, generatorVersion string, out io.Writer) error {
+	d, err := data.Construct(schema, generatorName, generatorVersion)
 	if err != nil {
 		return fmt.Errorf("fail to create CLI data from schema: %w", err)
 	}

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/Jumpaku/cyamli/docs/data"
 	"github.com/Jumpaku/cyamli/name"
-	"github.com/Jumpaku/cyamli/tpl"
 	"github.com/samber/lo"
 	"github.com/yosssi/gohtml"
 	template2 "html/template"
@@ -17,11 +16,16 @@ import (
 	"github.com/Jumpaku/cyamli/schema"
 )
 
+var funcs = template.FuncMap{
+	"func_add": func(a, b int) int { return a + b },
+	"func_sub": func(a, b int) int { return a - b },
+}
+
 //go:embed docs.txt.tpl
 var docsTextTemplate string
 var executorText = func() *template.Template {
 	e := template.New("docs.txt.tpl")
-	e.Funcs(tpl.ArithmeticFuncs())
+	e.Funcs(funcs)
 	return template.Must(e.Parse(docsTextTemplate))
 }()
 
@@ -29,7 +33,7 @@ var executorText = func() *template.Template {
 var docsMarkdownTemplate string
 var executorMarkdown = func() *template.Template {
 	e := template.New("docs.md.tpl")
-	e.Funcs(tpl.ArithmeticFuncs())
+	e.Funcs(funcs)
 	return template.Must(e.Parse(docsMarkdownTemplate))
 }()
 
@@ -37,7 +41,7 @@ var executorMarkdown = func() *template.Template {
 var docsHTMLTemplate string
 var executorHTML = func() *template2.Template {
 	e := template2.New("docs.html.tpl")
-	e.Funcs(tpl.ArithmeticFuncs())
+	e.Funcs(funcs)
 	return template2.Must(e.Parse(docsHTMLTemplate))
 }()
 
@@ -69,6 +73,8 @@ func Generate(schema *schema.Schema, args GenerateArgs, out io.Writer) error {
 	}
 
 	switch args.Format {
+	default:
+		return fmt.Errorf(`unsupported format: %q`, args.Format)
 	case DocsFormatText, DocsFormatUnspecified:
 		if err := executorText.Execute(out, d); err != nil {
 			return fmt.Errorf("fail to execute template for text: %w", err)

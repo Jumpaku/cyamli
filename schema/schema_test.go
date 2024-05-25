@@ -3,14 +3,258 @@ package schema_test
 import (
 	"bytes"
 	_ "embed"
-	"testing"
-
 	"github.com/Jumpaku/cyamli/schema"
-	"github.com/Jumpaku/cyamli/test"
-	"github.com/Jumpaku/cyamli/test/testdata"
-
+	"github.com/kortschak/utter"
 	"github.com/stretchr/testify/assert"
+	"os"
+	"testing"
 )
+
+func assertMatchSchema(t *testing.T, want, got *schema.Schema) {
+	wp, gp := want.Program, got.Program
+	assert.Equal(t, wp.Name, gp.Name)
+	assert.Equal(t, wp.Version, gp.Version)
+	assertMatchCommand(t, wp.Command(), gp.Command())
+}
+
+func assertMatchCommand(t *testing.T, want, got *schema.Command) {
+	assert.Equal(t, want.Description, got.Description)
+
+	wOpt, gOpt := want.Options, got.Options
+	for name, w := range wOpt {
+		g, ok := gOpt[name]
+		assert.Truef(t, ok, "option %q not found", name)
+		assert.Equal(t, w.Short, g.Short)
+		assert.Equal(t, w.Default, g.Default)
+		assert.Equal(t, w.Description, g.Description)
+		assert.Equal(t, w.Type, g.Type)
+	}
+
+	wArg, gArg := want.Arguments, got.Arguments
+	for idx, w := range wArg {
+		assert.Truef(t, idx < len(gArg), "argument %q not found at %d", w.Name, idx)
+		g := gArg[idx]
+		assert.Equal(t, w.Name, g.Name)
+		assert.Equal(t, w.Variadic, g.Variadic)
+		assert.Equal(t, w.Description, g.Description)
+		assert.Equal(t, w.Type, g.Type)
+	}
+
+	wSub, gSub := want.Subcommands, got.Subcommands
+	for name, w := range wSub {
+		g, ok := gSub[name]
+		assert.Truef(t, ok, "subcommand %q not found", name)
+		assertMatchCommand(t, w, g)
+	}
+}
+
+func mustRead(path string) string {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
+}
+
+var cyamliYAML = mustRead("testdata/cyamli.yaml")
+
+var demoAppYAML = mustRead("testdata/demo-app.yaml")
+
+var cyamliSchema = &schema.Schema{
+	Program: schema.Program{
+		Name:        string("cyamli"),
+		Version:     string("v1.0.0"),
+		Description: string("A command line tool to generate CLI for your app from YAML-based schema."),
+		Options: map[string]*schema.Option{
+			string("-help"): &schema.Option{
+				Short:       string("-h"),
+				Description: string("shows description of this app"),
+				Type:        schema.Type("boolean"),
+				Default:     string(""),
+			},
+			string("-version"): &schema.Option{
+				Short:       string("-v"),
+				Description: string("shows version of this app"),
+				Type:        schema.Type("boolean"),
+				Default:     string(""),
+			},
+		},
+		Arguments: []*schema.Argument(nil),
+		Subcommands: map[string]*schema.Command{
+			string("list"): &schema.Command{
+				Description: string("shows subcommands"),
+				Options: map[string]*schema.Option{
+					string("-schema-path"): &schema.Option{
+						Short:       string(""),
+						Description: string("if specified then reads schema file from the path, otherwise reads from stdin."),
+						Type:        schema.Type(""),
+						Default:     string(""),
+					},
+				},
+				Arguments:   []*schema.Argument(nil),
+				Subcommands: map[string]*schema.Command(nil),
+			},
+			string("generate"): &schema.Command{
+				Description: string("holds subcommands to generate CLI code."),
+				Options:     map[string]*schema.Option(nil),
+				Arguments:   []*schema.Argument(nil),
+				Subcommands: map[string]*schema.Command{
+					string("golang"): &schema.Command{
+						Description: string("generates CLI for your app written in Go."),
+						Options: map[string]*schema.Option{
+							string("-package"): &schema.Option{
+								Short:       string(""),
+								Description: string("package name where the generated file will be placed."),
+								Type:        schema.Type(""),
+								Default:     string("main"),
+							},
+							string("-schema-path"): &schema.Option{
+								Short:       string(""),
+								Description: string("if specified then reads schema file from the path, otherwise reads from stdin."),
+								Type:        schema.Type(""),
+								Default:     string(""),
+							},
+							string("-out-path"): &schema.Option{
+								Short:       string(""),
+								Description: string("if specified then creates a file at the path and writes generated code, otherwise outputs to stdout."),
+								Type:        schema.Type(""),
+								Default:     string(""),
+							},
+							string("-help"): &schema.Option{
+								Short:       string("-h"),
+								Description: string("shows description of golang subcommand"),
+								Type:        schema.Type("boolean"),
+								Default:     string(""),
+							},
+						},
+						Arguments:   []*schema.Argument(nil),
+						Subcommands: map[string]*schema.Command(nil),
+					},
+					string("python3"): &schema.Command{
+						Description: string("generates CLI for your app written in Python3."),
+						Options: map[string]*schema.Option{
+							string("-out-path"): &schema.Option{
+								Short:       string(""),
+								Description: string("if specified then creates a file at the path and writes generated code, otherwise outputs to stdout."),
+								Type:        schema.Type(""),
+								Default:     string(""),
+							},
+							string("-help"): &schema.Option{
+								Short:       string("-h"),
+								Description: string("shows description of python3 subcommand"),
+								Type:        schema.Type("boolean"),
+								Default:     string(""),
+							},
+							string("-schema-path"): &schema.Option{
+								Short:       string(""),
+								Description: string("if specified then reads schema file from the path, otherwise reads from stdin."),
+								Type:        schema.Type(""),
+								Default:     string(""),
+							},
+						},
+						Arguments:   []*schema.Argument(nil),
+						Subcommands: map[string]*schema.Command(nil),
+					},
+					string("docs"): &schema.Command{
+						Description: string("generates documentation for your CLI app."),
+						Options: map[string]*schema.Option{
+							string("-all"): &schema.Option{
+								Short:       string("-a"),
+								Description: string("if specified then outputs documentation for all subcommands, otherwise in text format."),
+								Type:        schema.Type("boolean"),
+								Default:     string(""),
+							},
+							string("-schema-path"): &schema.Option{
+								Short:       string(""),
+								Description: string("if specified then reads schema file from the path, otherwise reads from stdin."),
+								Type:        schema.Type(""),
+								Default:     string(""),
+							},
+							string("-out-path"): &schema.Option{
+								Short:       string(""),
+								Description: string("if specified then creates a file at the path and writes generated documentation, otherwise outputs to stdout."),
+								Type:        schema.Type(""),
+								Default:     string(""),
+							},
+							string("-help"): &schema.Option{
+								Short:       string("-h"),
+								Description: string("shows description of docs subcommand"),
+								Type:        schema.Type("boolean"),
+								Default:     string(""),
+							},
+							string("-format"): &schema.Option{
+								Short:       string("-f"),
+								Description: string("specifies output format of the documentation in text or markdown"),
+								Type:        schema.Type(""),
+								Default:     string("text"),
+							},
+						},
+						Arguments: []*schema.Argument{
+							&schema.Argument{
+								Name:        string("subcommands"),
+								Description: string("selects subcommand for which the documentation is output."),
+								Type:        schema.Type(""),
+								Variadic:    bool(true),
+							},
+						},
+						Subcommands: map[string]*schema.Command(nil),
+					},
+				},
+			},
+		},
+	},
+}
+
+var demoAppSchema = &schema.Schema{
+	Program: schema.Program{
+		Name:        string("demo"),
+		Version:     string(""),
+		Description: string("demo app to get table information from databases"),
+		Options:     map[string]*schema.Option(nil),
+		Arguments:   []*schema.Argument(nil),
+		Subcommands: map[string]*schema.Command{
+			string("list"): &schema.Command{
+				Description: string("list tables"),
+				Options: map[string]*schema.Option{
+					string("-config"): &schema.Option{
+						Short:       string("-c"),
+						Description: string("path to config file"),
+						Type:        schema.Type(""),
+						Default:     string(""),
+					},
+				},
+				Arguments:   []*schema.Argument(nil),
+				Subcommands: map[string]*schema.Command(nil),
+			},
+			string("fetch"): &schema.Command{
+				Description: string("show information of tables"),
+				Options: map[string]*schema.Option{
+					string("-config"): &schema.Option{
+						Short:       string("-c"),
+						Description: string("path to config file"),
+						Type:        schema.Type(""),
+						Default:     string(""),
+					},
+					string("-verbose"): &schema.Option{
+						Short:       string("-v"),
+						Description: string("shows detailed log"),
+						Type:        schema.Type("boolean"),
+						Default:     string(""),
+					},
+				},
+				Arguments: []*schema.Argument{
+					&schema.Argument{
+						Name:        string("tables"),
+						Description: string("names of tables to be described"),
+						Type:        schema.Type(""),
+						Variadic:    bool(true),
+					},
+				},
+				Subcommands: map[string]*schema.Command(nil),
+			},
+		},
+	},
+}
 
 func TestSchema_Load(t *testing.T) {
 	testcases := []struct {
@@ -20,157 +264,14 @@ func TestSchema_Load(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-			name: "empty",
-			in:   testdata.EmptyYAML,
-			want: &schema.Schema{
-				Program: schema.Program{},
-			},
+			name: "cyamli",
+			in:   cyamliYAML,
+			want: cyamliSchema,
 		},
 		{
-			name: "example",
-			in:   testdata.ExampleYAML,
-			want: &schema.Schema{
-				Program: schema.Program{
-					Name:        "example",
-					Version:     "v1.0.0",
-					Description: "this is an example command",
-					Options: map[string]*schema.Option{
-						"-option-a": {
-							Short:       "-a",
-							Description: "a - this is an option for root command",
-							Type:        schema.TypeString,
-							Default:     "abc",
-						},
-						"-option-b": {
-							Short:       "-b",
-							Description: "b - this is an option for root command",
-							Type:        schema.TypeInteger,
-							Default:     "-123",
-						},
-						"-option-c": {
-							Short:       "-c",
-							Description: "c - this is an option for root command",
-							Type:        schema.TypeBoolean,
-							Default:     "true",
-						},
-						"-option-d": {
-							Short:       "-d",
-							Description: "d - this is an option for root command",
-							Type:        schema.TypeFloat,
-							Default:     "-123.456",
-						},
-						"-option-e": {},
-					},
-					Arguments: []*schema.Argument{
-						{
-							Name:        "arg_a",
-							Description: "a - this is an argument for root command",
-							Type:        schema.TypeString,
-						},
-						{
-							Name:        "arg_b",
-							Description: "b - this is an argument for root command",
-							Type:        schema.TypeInteger,
-						},
-						{
-							Name:        "arg_c",
-							Description: "c - this is an argument for root command",
-							Type:        schema.TypeBoolean,
-						},
-						{
-							Name:        "arg_d",
-							Description: "d - this is an argument for root command",
-							Type:        schema.TypeFloat,
-						},
-						{
-							Name: "arg_e",
-						},
-						{
-							Name:        "arg_v",
-							Description: "v - this is an argument for root command",
-							Variadic:    true,
-						},
-					},
-					Subcommands: map[string]*schema.Command{
-						"sub1": {
-							Description: "1 - this is a sub command",
-							Options:     map[string]*schema.Option{},
-							Arguments:   []*schema.Argument{},
-							Subcommands: map[string]*schema.Command{},
-						},
-						"sub2": {
-							Description: "2 - this is a sub command",
-							Options:     map[string]*schema.Option{},
-							Arguments:   []*schema.Argument{},
-							Subcommands: map[string]*schema.Command{},
-						},
-						"sub3": {
-							Description: "3 - this is a sub command",
-							Options: map[string]*schema.Option{
-								"-option-a": {
-									Short:       "-a",
-									Description: "3 - a - this is an option for root command",
-									Type:        schema.TypeString,
-									Default:     "abc",
-								},
-								"-option-b": {
-									Short:       "-b",
-									Description: "3 - b - this is an option for root command",
-									Type:        schema.TypeInteger,
-									Default:     "-123",
-								},
-								"-option-c": {
-									Short:       "-c",
-									Description: "3 - c - this is an option for root command",
-									Type:        schema.TypeBoolean,
-									Default:     "true",
-								},
-								"-option-d": {
-									Short:       "-d",
-									Description: "3 - d - this is an option for root command",
-									Type:        schema.TypeFloat,
-									Default:     "-123.456",
-								},
-								"-option-e": {},
-							},
-							Arguments: []*schema.Argument{
-								{
-									Name:        "arg_a",
-									Description: "3 - a - this is an argument for root command",
-									Type:        schema.TypeString,
-								},
-								{
-									Name:        "arg_b",
-									Description: "3 - b - this is an argument for root command",
-									Type:        schema.TypeInteger,
-								},
-								{
-									Name:        "arg_c",
-									Description: "3 - c - this is an argument for root command",
-									Type:        schema.TypeBoolean,
-								},
-								{
-									Name:        "arg_d",
-									Description: "3 - d - this is an argument for root command",
-									Type:        schema.TypeFloat,
-								},
-								{
-									Name: "arg_e",
-								},
-								{
-									Name:        "arg_v",
-									Description: "3 - v - this is an argument for root command",
-									Variadic:    true,
-								},
-							},
-							Subcommands: map[string]*schema.Command{
-								"subx": {},
-								"suby": {},
-							},
-						},
-					},
-				},
-			},
+			name: "demo-app",
+			in:   demoAppYAML,
+			want: demoAppSchema,
 		},
 	}
 
@@ -180,7 +281,7 @@ func TestSchema_Load(t *testing.T) {
 			if testcase.shouldErr {
 				assert.NotNil(t, err)
 			} else {
-				test.AssertMatchSchema(t, testcase.want, got)
+				assertMatchSchema(t, testcase.want, got)
 			}
 		})
 	}
@@ -189,167 +290,26 @@ func TestSchema_Load(t *testing.T) {
 func TestSchema_Save(t *testing.T) {
 	testcases := []struct {
 		name      string
-		original  *schema.Schema
+		sut       *schema.Schema
+		want      string
 		shouldErr bool
 	}{
 		{
-
-			name: "empty",
-			original: &schema.Schema{
-				Program: schema.Program{},
-			},
+			name: "cyamli",
+			sut:  cyamliSchema,
+			want: cyamliYAML,
 		},
 		{
-			name: "example",
-			original: &schema.Schema{
-				Program: schema.Program{
-					Name:        "example",
-					Version:     "v1.0.0",
-					Description: "this is an example command",
-					Options: map[string]*schema.Option{
-						"-option-a": {
-							Short:       "-a",
-							Description: "a - this is an option for root command",
-							Type:        schema.TypeString,
-							Default:     "abc",
-						},
-						"-option-b": {
-							Short:       "-b",
-							Description: "b - this is an option for root command",
-							Type:        schema.TypeInteger,
-							Default:     "-123",
-						},
-						"-option-c": {
-							Short:       "-c",
-							Description: "c - this is an option for root command",
-							Type:        schema.TypeBoolean,
-							Default:     "true",
-						},
-						"-option-d": {
-							Short:       "-d",
-							Description: "d - this is an option for root command",
-							Type:        schema.TypeFloat,
-							Default:     "-123.456",
-						},
-						"-option-e": {},
-					},
-					Arguments: []*schema.Argument{
-						{
-							Name:        "arg_a",
-							Description: "a - this is an argument for root command",
-							Type:        schema.TypeString,
-						},
-						{
-							Name:        "arg_b",
-							Description: "b - this is an argument for root command",
-							Type:        schema.TypeInteger,
-						},
-						{
-							Name:        "arg_c",
-							Description: "c - this is an argument for root command",
-							Type:        schema.TypeBoolean,
-						},
-						{
-							Name:        "arg_d",
-							Description: "d - this is an argument for root command",
-							Type:        schema.TypeFloat,
-						},
-						{
-							Name: "arg_e",
-						},
-						{
-							Name:        "arg_v",
-							Description: "v - this is an argument for root command",
-							Variadic:    true,
-						},
-					},
-					Subcommands: map[string]*schema.Command{
-						"sub1": {
-							Description: "1 - this is a sub command",
-							Options:     map[string]*schema.Option{},
-							Arguments:   []*schema.Argument{},
-							Subcommands: map[string]*schema.Command{},
-						},
-						"sub2": {
-							Description: "2 - this is a sub command",
-							Options:     map[string]*schema.Option{},
-							Arguments:   []*schema.Argument{},
-							Subcommands: map[string]*schema.Command{},
-						},
-						"sub3": {
-							Description: "3 - this is a sub command",
-							Options: map[string]*schema.Option{
-								"-option-a": {
-									Short:       "-a",
-									Description: "3 - a - this is an option for root command",
-									Type:        schema.TypeString,
-									Default:     "abc",
-								},
-								"-option-b": {
-									Short:       "-b",
-									Description: "3 - b - this is an option for root command",
-									Type:        schema.TypeInteger,
-									Default:     "-123",
-								},
-								"-option-c": {
-									Short:       "-c",
-									Description: "3 - c - this is an option for root command",
-									Type:        schema.TypeBoolean,
-									Default:     "true",
-								},
-								"-option-d": {
-									Short:       "-d",
-									Description: "3 - d - this is an option for root command",
-									Type:        schema.TypeFloat,
-									Default:     "-123.456",
-								},
-								"-option-e": {},
-							},
-							Arguments: []*schema.Argument{
-								{
-									Name:        "arg_a",
-									Description: "3 - a - this is an argument for root command",
-									Type:        schema.TypeString,
-								},
-								{
-									Name:        "arg_b",
-									Description: "3 - b - this is an argument for root command",
-									Type:        schema.TypeInteger,
-								},
-								{
-									Name:        "arg_c",
-									Description: "3 - c - this is an argument for root command",
-									Type:        schema.TypeBoolean,
-								},
-								{
-									Name:        "arg_d",
-									Description: "3 - d - this is an argument for root command",
-									Type:        schema.TypeFloat,
-								},
-								{
-									Name: "arg_e",
-								},
-								{
-									Name:        "arg_v",
-									Description: "3 - v - this is an argument for root command",
-									Variadic:    true,
-								},
-							},
-							Subcommands: map[string]*schema.Command{
-								"sub1": {},
-								"sub2": {},
-							},
-						},
-					},
-				},
-			},
+			name: "demo-app",
+			sut:  demoAppSchema,
+			want: demoAppYAML,
 		},
 	}
 
 	for _, testcase := range testcases {
 		t.Run(testcase.name, func(t *testing.T) {
 			buffer := bytes.NewBuffer(nil)
-			err := testcase.original.Save(buffer)
+			err := testcase.sut.Save(buffer)
 			if testcase.shouldErr {
 				assert.NotNil(t, err)
 			} else {
@@ -357,8 +317,17 @@ func TestSchema_Save(t *testing.T) {
 				if err != nil {
 					t.Fatalf("fail to load schema: %+v", err)
 				}
-				test.AssertMatchSchema(t, testcase.original, loaded)
+				assertMatchSchema(t, testcase.sut, loaded)
 			}
 		})
 	}
+}
+
+func TestSchema_Dump(t *testing.T) {
+	t.Skip()
+	s, err := schema.Load(bytes.NewBufferString(demoAppYAML))
+	if err != nil {
+		t.Fatalf("fail to load schema: %+v", err)
+	}
+	utter.Dump(s)
 }
