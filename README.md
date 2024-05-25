@@ -1,145 +1,133 @@
 # cyamli
 
-A command line tool to generate command line interfaces for your command line tools from the YAML-based CLI schemas.
+A command line tool to generate interfaces for command line tools from YAML-based CLI schemas.
 
-## Highlights
+## Overview
 
-This repository:
-- defines the CLI schema in YAML.
-- provides a typed CLI code generator from the CLI schema.
+Developing console apps need to define and parse CLIs such as command line arguments, where command line arguments consist of subcommands, options, and positional arguments.
 
-## CLI schema
+`cyamli` is schema-based code generator to generate API (Application Programming Interface, such as types and functions) to handle typed CLI.
+The schema of a typed CLI can be written in YAML according to the CLI schema definition ( https://github.com/Jumpaku/cyamli/blob/main/cli-schema-definition.ts ).
 
-The CLI schema definition is provided in [`cli-schema-definition.ts`](https://github.com/Jumpaku/cyamli/blob/main/cli-schema-definition.ts).
+## Motivation
 
-## CLI code generator
+- Schema-based approach leveraging standardized and consistent source.
+- Promote typed CLI for benefits of static checking and code completion.
+- Reduce boilerplate by automatically generating code which is need.
 
-From a YAML file written according to the CLI schema definition, `cyamli` generates a typed code for handling command line arguments.
 
-### Installation
+## Installation
 
-`cyamli` can be installed as follows:
-
-```sh
-go install "github.com/Jumpaku/cyamli/cmd/cyamli@latest" 
+```shell
+go install github.com/Jumpaku/cyamli@latest
 ```
 
-or use go generate as follows:
+## Usage with an example
 
-```go
-//go:generate go run "github.com/Jumpaku/cyamli/cmd/cyamli@latest" golang -schema-path=path/to/cli.yaml -out-path=path/to/cli.gen.go
-```
+Assume a situation where you need to develop a console app in Go to fetch information from a database.
 
-### Usage
+Usage of `cyamli` is as follows:
 
-1. Generating the CLI type.
-2. Overwriting the CLI object.
-3. Executing program.
+1. Define a CLI as a YAML file.
+2. Generate API to parse the CLI in Go.
+3. Assign functions to the generated API.
 
-#### Generating the CLI type
+### Define a CLI as a YAML file
 
-Prepare the CLI schema for your application, for example:
+The following YAML file `cli.yaml` defines a CLI for the example console app.
 
 ```yaml
-name: greet
-description: this is an example program
-options:
-  -help:
-    short: -h
-    description: Show help information.
-    type: boolean
+name: demo
+description: demo app to get table information from databases
 subcommands:
-  hello:
-    description: Prints "Hello, <target name>! My name is <greeter>!"
+  list:
+    description: list tables
     options:
-      -target-name:
-        short: -t
-        description: The name of the person to be said hello.
+      -config:
+        description: path to config file
+        short: -c
+  fetch:
+    description: show information of tables
+    options:
+      -config:
+        description: path to config file
+        short: -c
+      -verbose:
+        description: show detailed contents for selected tables
+        short: -v
+        type: boolean
     arguments:
-      - name: greeter
-        description: The name of the person who says hello.
+      - name: tables
+        variadic: true
+        description: names of tables to be described
 ```
 
-Run `cyamli` as follows:
+### Generate API to parse the CLI in Go.
 
-```sh
-cyamli golang < path/to/cli-schema.yaml > path/to/generated/code.go
+The following command reads a schema from `cli.yaml` and write Go API into `cli.gen.go`.
+
+```shell
+cyamli generate golang -schema-path=cli.yaml -out-path=cli.gen.go
 ```
 
-The above generates a Go code which includes:
+`cli.gen.go` includes the following API:
 
 ```go
-type CLI 
-type CLI_Input 
-type CLI_Hello 
-type CLI_Hello_Input
-
+// CLI represents a root command.
+type CLI struct
+// NewCLI returns a CLI object.
 func NewCLI() CLI
+// Run parses command line arguments args and calls a corresponding function assigned in cli.
 func Run(cli CLI, args []string) error
+// GetDoc returns a help message corresponding to subcommand.
+func GetDoc(subcommand []string) string 
 ```
 
-#### Overwriting the CLI object
+### Assign functions to the generated API.
 
-To define the behavior of your program, you can utilize the generated types and functions as follows:
+`NewCLI()` returns an object `cli` which represents a root command and its descendant objects represent subcommands.
+Each of them has a `FUNC` field.
+A function assigned to the field will be called by the `Run(cli, os.Args)`.
+
+The following code snippet demonstrates an implementation for the example console app.
 
 ```go
-// Create the CLI object
-var cli = NewCLI()
+package main
+
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	// Overwrite behaviors
-	cli.FUNC = showHelp
-	cli.Hello.FUNC = sayHello
-	// Run with command line arguments
+	cli := NewCLI()
+	cli.FUNC = func(subcommand []string, input CLI_Input, inputErr error) (err error) {
+		fmt.Println(input, inputErr)
+		fmt.Println(GetDoc(subcommand))
+		return nil
+	}
+	cli.List.FUNC = func(subcommand []string, input CLI_List_Input, inputErr error) (err error) {
+		fmt.Println(input, inputErr)
+		fmt.Println(GetDoc(subcommand))
+		return nil
+	}
+	cli.Fetch.FUNC = func(subcommand []string, input CLI_Fetch_Input, inputErr error) (err error) {
+		fmt.Println(input, inputErr)
+		fmt.Println(GetDoc(subcommand))
+		return nil
+	}
 	if err := Run(cli, os.Args); err != nil {
 		panic(err)
 	}
 }
 ```
 
-Example implementations for `showHelp` and `sayHello` are as follows:
+The example console app can be executed as follows:
 
-```go
-func showHelp(subcommand []string, input CLI_Input, inputErr error) (err error) {
-	if inputErr != nil {
-		fmt.Println(cli.DESC_Simple())
-		panic(inputErr)
-	}
-	if input.Opt_Help {
-		fmt.Println(cli.DESC_Detail())
-	}
-	return nil
-}
-func sayHello(subcommand []string, input CLI_Hello_Input, inputErr error) (err error) {
-	if inputErr != nil {
-		fmt.Println(cli.Hello.DESC_Simple())
-		return inputErr
-	}
-	if input.Opt_TargetName != "" {
-		fmt.Printf("Hello, %s! My name is %s!\n", input.Opt_TargetName, input.Arg_Greeter)
-	} else {
-		fmt.Printf("Hello! My name is %s!\n", input.Arg_Greeter)
-	}
-	return nil
-}
+```shell
+go run main.go list -c config.yaml
+go run main.go fetch -c config.yaml -v table1 table2
 ```
-
-#### Executing program
-
-Execute the `main` function as follows
-
-```sh
-go run main.go -h
-# => This is an example program.
-go run main.go hello Alice
-# => Hello! My name is Alice!
-go run main.go hello -target-name=Bob Alice
-# => Hello, Bob! My name is Alice!
-```
-
-## Examples
-
-The example CLI applications are found in https://github.com/Jumpaku/cyamli/tree/main/examples .
 
 ## Details
 
@@ -149,15 +137,18 @@ The following programming languages are supported currently.
 
 * Go
 * Python3
+* Documentation for text, HTML, and Markdown
 
 ### Handling command line arguments
+
+Command line arguments according to the following syntax can be handled by the generated API.
 
 ```
 <program> <subcommand> [<option>|<argument>]... [-- [<argument>]...]
 ```
 
 - `<program>` is the path to your executable file.
-- `<subcommand>` is a sequence of tokens, which represents a path in the command tree illustrated in your CLI schema.
+- `<subcommand>` is a sequence of tokens, which represents a path in the command tree illustrated in a defined CLI schema.
 	- Each element of `<subcommand>` must match the regular expression `^[a-z][a-z0-9]*$`.
     - `<subcommand>` may be empty, which means the execution of the root command.
 - `<option>` represents an option, which is a token in form of `<option_name>[=<option_value>]`.
