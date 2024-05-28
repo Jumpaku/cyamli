@@ -44,4 +44,4 @@ examples: install ## Generates Go CLI for cyamli command.
 .PHONY: docs
 docs: install ## Generates documentation of cyamli.
 	go run . generate docs -all -format=markdown < cyamli/cli.yaml > cyamli-docs.md
-	go run . generate docs -all -format=markdown < cyamli/cli.yaml > cyamli-docs.md
+	go run . generate docs -all -format=html < cyamli/cli.yaml > cyamli-docs.html
