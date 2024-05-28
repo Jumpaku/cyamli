@@ -3,6 +3,7 @@ package schema_test
 import (
 	"bytes"
 	_ "embed"
+	"github.com/Jumpaku/cyamli/info"
 	"github.com/Jumpaku/cyamli/schema"
 	"github.com/kortschak/utter"
 	"github.com/stretchr/testify/assert"
@@ -64,7 +65,7 @@ var demoAppYAML = mustRead("testdata/demo-app.yaml")
 var cyamliSchema = &schema.Schema{
 	Program: schema.Program{
 		Name:        string("cyamli"),
-		Version:     string("v1.0.0"),
+		Version:     string(info.Version),
 		Description: string("A command line tool to generate CLI for your app from YAML-based schema."),
 		Options: map[string]*schema.Option{
 			string("-help"): &schema.Option{
