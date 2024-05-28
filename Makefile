@@ -13,6 +13,7 @@ check: ## Checks version, runs tests.
 
 .PHONY: install
 install: ## Install cyamli built in present status.
+	go generate -v ./...
 	go run ./internal/cmd/gen-golang < cyamli/cli.yaml > cyamli/cli.gen.go
 	go install .
 	cyamli generate golang -package=cyamli < cyamli/cli.yaml > cyamli/cli.gen.go
@@ -25,6 +26,9 @@ version-apply: ## Generates Go CLI for cyamli command.
 	$(eval VERSION := $(shell head -n 1 ./info/version.txt))
 	sed -E -i.backup "s/^version: v[0-9]+\.[0-9]+\.[0-9]+$$/version: $(VERSION)/g" ./cyamli/cli.yaml
 	rm ./cyamli/cli.yaml.backup
+	sed -E -i.backup 's=^\$$id:.*\/schema\/cli\.schema\.json$$=$$id: https://github.com/Jumpaku/cyamli/raw/$(VERSION)/schema/cli.schema.json=g' ./schema/cli.schema.yaml
+	rm ./schema/cli.schema.yaml.backup
+	go run ./internal/cmd/yaml-to-json < ./schema/cli.schema.yaml > ./schema/cli.schema.json
 	make install
 	make examples
 	make docs
@@ -40,3 +44,4 @@ examples: install ## Generates Go CLI for cyamli command.
 .PHONY: docs
 docs: install ## Generates documentation of cyamli.
 	go run . generate docs -all -format=markdown < cyamli/cli.yaml > cyamli-docs.md
+	go run . generate docs -all -format=html < cyamli/cli.yaml > cyamli-docs.html

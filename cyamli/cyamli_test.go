@@ -5,10 +5,11 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Jumpaku/cyamli/cyamli"
-	"github.com/sergi/go-diff/diffmatchpatch"
+	"github.com/kylelemons/godebug/diff"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -62,22 +63,27 @@ func mustCreate(t *testing.T, path string) *os.File {
 
 func buildDiff(t *testing.T, want, got string) string {
 	t.Helper()
-
-	diff := diffmatchpatch.New()
-	diffs := diff.DiffMain(want, got, false)
-	diffs = diff.DiffCleanupSemantic(diffs)
-	text := ``
-	for _, d := range diffs {
-		switch d.Type {
-		case diffmatchpatch.DiffEqual:
-			text += d.Text
-		case diffmatchpatch.DiffInsert:
-			text += fmt.Sprintf(`【+ %s +】`, d.Text)
-		case diffmatchpatch.DiffDelete:
-			text += fmt.Sprintf(`【- %s -】`, d.Text)
+	lines := strings.Split(diff.Diff(want, got), "\n")
+	diffText := ""
+	n := len(lines)
+	r := 3
+	added := true
+	for i, line := range lines {
+		var print bool
+		for j := i - r; j <= i+r; j++ {
+			if j >= 0 && j < n && (strings.HasPrefix(lines[j], "+") || strings.HasPrefix(lines[j], "-")) {
+				print = true
+			}
+		}
+		if print {
+			diffText += line + "\n"
+			added = true
+		} else if added {
+			diffText += "\n...\n\n"
+			added = false
 		}
 	}
-	return text
+	return diffText
 }
 
 func TestExecute_stdio(t *testing.T) {
@@ -282,6 +288,28 @@ func TestExecute_stdio(t *testing.T) {
 			inFileName: "cyamli.yaml",
 			wantCode:   0,
 		},
+
+		// validate
+		{
+			args:       []string{"cyamli", "validate"},
+			inFileName: "cyamli.yaml",
+			wantCode:   0,
+		},
+		{
+			args:       []string{"cyamli", "validate"},
+			inFileName: "demo-app.yaml",
+			wantCode:   0,
+		},
+		{
+			args:       []string{"cyamli", "validate"},
+			inFileName: "empty.yaml",
+			wantCode:   0,
+		},
+		{
+			args:       []string{"cyamli", "validate", "-help"},
+			inFileName: "cyamli.yaml",
+			wantCode:   0,
+		},
 	}
 	for number, tt := range tests {
 		name := fmt.Sprintf(`stdio_%02d`, number)
@@ -459,7 +487,7 @@ func TestExecute_fileio(t *testing.T) {
 
 			wantOutput := mustRead(t, filepath.Join("testdata", name+".golden.output"))
 			if wantOutput != gotOutput {
-				t.Errorf("Execute() output mismatch\n%s", buildDiff(t, "", gotOutput))
+				t.Errorf("Execute() output mismatch\n%s", buildDiff(t, wantOutput, gotOutput))
 			}
 			wantStderr := mustRead(t, filepath.Join("testdata", name+".golden.stderr"))
 			gotStdout := stdout.String()

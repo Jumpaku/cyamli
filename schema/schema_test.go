@@ -3,9 +3,11 @@ package schema_test
 import (
 	"bytes"
 	_ "embed"
+	"github.com/Jumpaku/cyamli/info"
 	"github.com/Jumpaku/cyamli/schema"
 	"github.com/kortschak/utter"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"os"
 	"testing"
 )
@@ -63,7 +65,7 @@ var demoAppYAML = mustRead("testdata/demo-app.yaml")
 var cyamliSchema = &schema.Schema{
 	Program: schema.Program{
 		Name:        string("cyamli"),
-		Version:     string("v1.0.0"),
+		Version:     string(info.Version),
 		Description: string("A command line tool to generate CLI for your app from YAML-based schema."),
 		Options: map[string]*schema.Option{
 			string("-help"): &schema.Option{
@@ -318,6 +320,110 @@ func TestSchema_Save(t *testing.T) {
 					t.Fatalf("fail to load schema: %+v", err)
 				}
 				assertMatchSchema(t, testcase.sut, loaded)
+			}
+		})
+	}
+}
+
+func TestSchema_Validate(t *testing.T) {
+	testcases := []struct {
+		name      string
+		in        io.Reader
+		shouldErr bool
+	}{
+		{
+			name:      "cyamli",
+			in:        bytes.NewBufferString(cyamliYAML),
+			shouldErr: false,
+		},
+		{
+			name:      "demo-app",
+			in:        bytes.NewBufferString(demoAppYAML),
+			shouldErr: false,
+		},
+		{
+			name:      "unknown property",
+			in:        bytes.NewBufferString(`unknown: null`),
+			shouldErr: true,
+		},
+		// option
+		{
+			name:      "valid option",
+			in:        bytes.NewBufferString(`options: { -o: { short: -s, description: "", type: string, default: "" } }`),
+			shouldErr: false,
+		},
+		{
+			name:      "invalid option name",
+			in:        bytes.NewBufferString(`options: { invalid: { short: -s, description: "", type: string, default: "" } }`),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid option short name",
+			in:        bytes.NewBufferString(`options: { -o: { short: invalid, description: "", type: string, default: "" } }`),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid option property",
+			in:        bytes.NewBufferString(`options: { -o: { invalid: null } }`),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid option type",
+			in:        bytes.NewBufferString(`options: { -o: { short: -s, description: "", type: invalid, default: "" } }`),
+			shouldErr: true,
+		},
+		// argument
+		{
+			name:      "valid argument",
+			in:        bytes.NewBufferString(`arguments: [ { name: a, description: "", type: string, variadic: false } ]`),
+			shouldErr: false,
+		},
+		{
+			name:      "invalid argument name",
+			in:        bytes.NewBufferString(`arguments: [ { name: INVALID, description: "", type: string, variadic: false } ]`),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid argument without name",
+			in:        bytes.NewBufferString(`arguments: [ { description: "", type: string, variadic: false } ]`),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid argument property",
+			in:        bytes.NewBufferString(`arguments: [ { name: a, invalid: null } ]`),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid argument type",
+			in:        bytes.NewBufferString(`arguments: [ { name: a, description: "", type: invalid, variadic: false } ]`),
+			shouldErr: true,
+		},
+		// subcommand
+		{
+			name:      "valid subcommand",
+			in:        bytes.NewBufferString(`subcommands: { s: { description: "", options: {}, arguments: [], subcommands: {} } }`),
+			shouldErr: false,
+		},
+		{
+			name:      "invalid subcommand name",
+			in:        bytes.NewBufferString(`subcommands: [ S: { description: "", options: {}, arguments: [], subcommands: {} } ]`),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid subcommand property",
+			in:        bytes.NewBufferString(`subcommands: { s: { invalid: null, description: "", options: {}, arguments: [], subcommands: {} } }`),
+			shouldErr: true,
+		},
+	}
+
+	for _, testcase := range testcases {
+		t.Run(testcase.name, func(t *testing.T) {
+
+			err := schema.Validate(testcase.in)
+			if testcase.shouldErr {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
 			}
 		})
 	}
