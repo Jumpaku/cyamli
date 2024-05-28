@@ -1,4 +1,4 @@
-# cyamli (v1.0.0)
+# cyamli (v1.1.0)
 
 ## cyamli
 
@@ -27,6 +27,9 @@ cyamli  [<option>]...
 
 * list:  
   shows subcommands  
+
+* validate:  
+  validates CLI schema  
 
 
 ## cyamli generate
@@ -160,6 +163,27 @@ cyamli list [<option>]...
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
   shows description of list subcommand  
+
+* `-schema-path=<string>`  (default=`""`):  
+  if specified then reads schema file from the path, otherwise reads from stdin.  
+
+
+## cyamli validate
+
+### Description
+
+validates CLI schema
+
+### Syntax
+
+```shell
+cyamli validate [<option>]...
+```
+
+### Options
+
+* `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
+  shows description of validates subcommand  
 
 * `-schema-path=<string>`  (default=`""`):  
   if specified then reads schema file from the path, otherwise reads from stdin.  

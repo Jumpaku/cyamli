@@ -25,6 +25,9 @@ version-apply: ## Generates Go CLI for cyamli command.
 	$(eval VERSION := $(shell head -n 1 ./info/version.txt))
 	sed -E -i.backup "s/^version: v[0-9]+\.[0-9]+\.[0-9]+$$/version: $(VERSION)/g" ./cyamli/cli.yaml
 	rm ./cyamli/cli.yaml.backup
+	sed -E -i.backup 's=^\$$id:.*\/schema\/cli\.schema\.json$$=$$id: https://github.com/Jumpaku/cyamli/raw/$(VERSION)/schema/cli.schema.json=g' ./schema/cli.schema.yaml
+	rm ./schema/cli.schema.yaml.backup
+	go run ./internal/cmd/yaml-to-json < ./schema/cli.schema.yaml > ./schema/cli.schema.json
 	make install
 	make examples
 	make docs

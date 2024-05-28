@@ -5,11 +5,12 @@ go 1.21.4
 require (
 	github.com/Jumpaku/go-assert v1.0.0
 	github.com/davecgh/go-spew v1.1.1
-	github.com/goccy/go-yaml v1.11.2
+	github.com/goccy/go-yaml v1.11.3
 	github.com/kortschak/utter v1.7.0
-	github.com/samber/lo v1.38.1
+	github.com/samber/lo v1.39.0
+	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
 	github.com/sergi/go-diff v1.3.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
 )
 

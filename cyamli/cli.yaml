@@ -1,5 +1,5 @@
 name: cyamli
-version: v1.0.0
+version: v1.1.0
 description: A command line tool to generate CLI for your app from YAML-based schema.
 options:
   -help:
@@ -16,6 +16,15 @@ subcommands:
     options:
       -help:
         description: shows description of list subcommand
+        short: -h
+        type: boolean
+      -schema-path:
+        description: if specified then reads schema file from the path, otherwise reads from stdin.
+  validate:
+    description: validates CLI schema
+    options:
+      -help:
+        description: shows description of validates subcommand
         short: -h
         type: boolean
       -schema-path:
@@ -65,7 +74,7 @@ subcommands:
             short: -h
             type: boolean
           -format:
-            description: "specifies output format of the documentation in text or markdown"
+            description: specifies output format of the documentation in text or markdown
             short: -f
             default: text
           -all:

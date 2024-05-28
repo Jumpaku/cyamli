@@ -11,17 +11,17 @@ options:
     short: -b
     description: b - this is an option for root command
     type: integer
-    default: -123
+    default: '-123'
   -option-c:
     short: -c
     description: c - this is an option for root command
     type: boolean
-    default: true
+    default: 'true'
   -option-d:
     short: -d
     description: d - this is an option for root command
     type: float
-    default: -123.456
+    default: '-123.456'
   -option-e: {}
 arguments:
   - name: arg_a
@@ -61,17 +61,17 @@ subcommands:
         short: -b
         description: 3 - b - this is an option for root command
         type: integer
-        default: -123
+        default: '-123'
       -option-c:
         short: -c
         description: 3 - c - this is an option for root command
         type: boolean
-        default: true
+        default: 'true'
       -option-d:
         short: -d
         description: 3 - d - this is an option for root command
         type: float
-        default: -123.456
+        default: '-123.456'
       -option-e: {}
     arguments:
       - name: arg_a
