@@ -8,7 +8,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
-//go:generate go run "github.com/Jumpaku/cyamli/cmd/cyamli@latest" golang -schema-path=cli.yaml -out-path=cli.gen.go
 func main() {
 	cli := NewCLI()
 	cli.FUNC = HelpFunc[CLI_Input]

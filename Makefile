@@ -13,6 +13,7 @@ check: ## Checks version, runs tests.
 
 .PHONY: install
 install: ## Install cyamli built in present status.
+	go generate -v ./...
 	go run ./internal/cmd/gen-golang < cyamli/cli.yaml > cyamli/cli.gen.go
 	go install .
 	cyamli generate golang -package=cyamli < cyamli/cli.yaml > cyamli/cli.gen.go
@@ -42,4 +43,5 @@ examples: install ## Generates Go CLI for cyamli command.
 
 .PHONY: docs
 docs: install ## Generates documentation of cyamli.
+	go run . generate docs -all -format=markdown < cyamli/cli.yaml > cyamli-docs.md
 	go run . generate docs -all -format=markdown < cyamli/cli.yaml > cyamli-docs.md

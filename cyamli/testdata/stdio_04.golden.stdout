@@ -22,4 +22,7 @@ cyamli
         list:
             shows subcommands
 
+        validate:
+            validates CLI schema
+
 

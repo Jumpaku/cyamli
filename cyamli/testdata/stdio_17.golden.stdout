@@ -5,6 +5,52 @@ import typing
 
 
 @dataclass
+class CLI_Validate_Input:
+    opt_help: bool = False
+    opt_schema_path: str = ""
+    
+    
+    pass
+
+
+class CLI_Validate:
+    
+    FUNC: typing.Callable[[None,list[str],CLI_Validate_Input,Exception],None] = None
+
+
+def resolve_CLI_Validate_Input(rest_args: list[str])->CLI_Validate_Input:
+    input = CLI_Validate_Input()
+    arguments = []
+    for i, arg in enumerate(rest_args):
+        if arg == "--":
+            arguments += rest_args[i+1:]
+            break
+        if not arg.startswith("-"):
+            arguments.append(arg)
+            continue
+        split = arg.split("=", 1)
+        opt_name, assign = split[0], len(split) > 1
+        
+        if opt_name == "-help" or opt_name == "-h":
+            if not assign:
+                split.append("True")
+                
+            input.opt_help = parse_value(bool, split[1])
+            continue
+        
+        if opt_name == "-schema-path":
+            if not assign:
+                raise Exception("value is not specified to option "+ opt_name)
+                
+            input.opt_schema_path = parse_value(str, split[1])
+            continue
+        
+        raise Exception("unsupported option " + opt_name)
+    
+    return input
+
+
+@dataclass
 class CLI_List_Input:
     opt_help: bool = False
     opt_schema_path: str = ""
@@ -291,6 +337,7 @@ class CLI_Input:
 
 
 class CLI:
+    validate: CLI_Validate = CLI_Validate()
     list: CLI_List = CLI_List()
     generate: CLI_Generate = CLI_Generate()
     
@@ -345,6 +392,17 @@ def run(cli: CLI, args: list[str]):
             ex = e
         cli.FUNC(subcommand_path, input, ex)
     
+    
+    if joined_subcommand == "validate":
+        if not cli.validate.FUNC:
+            raise Exception("unsupported subcommand \"" + "validate" + "\": cli.validate.FUNC not assigned")
+        ex: Exception = None
+        input: CLI_Validate_Input = None
+        try:
+            input = resolve_CLI_Validate_Input(rest_args)
+        except Exception as e:
+            ex = e
+        cli.validate.FUNC(subcommand_path, input, ex)
     
     if joined_subcommand == "list":
         if not cli.list.FUNC:
@@ -415,7 +473,7 @@ def resolve_subcommand(args: list[str])->ResolveSubcommandResult:
     
     subcommand_set = {
         "",
-        "list","generate python3","generate golang","generate docs","generate",
+        "validate","list","generate python3","generate golang","generate docs","generate",
     }
 
     subcommand_path = []
@@ -461,8 +519,11 @@ def get_doc(subcommand: list[str]) -> str:
     joined_subcommand = " ".join(subcommand)
     
     if joined_subcommand == "":
-        return "cyamli (v1.0.0)\n\ncyamli\n\n    Description:\n        A command line tool to generate CLI for your app from YAML-based schema.\n\n    Syntax:\n        $ cyamli  [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app\n\n        -version[=<boolean>], -v[=<boolean>]  (default=false):\n            shows version of this app\n\n    Subcommands:\n        generate:\n            holds subcommands to generate CLI code.\n\n        list:\n            shows subcommands\n\n\n"
+        return "cyamli (v1.0.0)\n\ncyamli\n\n    Description:\n        A command line tool to generate CLI for your app from YAML-based schema.\n\n    Syntax:\n        $ cyamli  [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app\n\n        -version[=<boolean>], -v[=<boolean>]  (default=false):\n            shows version of this app\n\n    Subcommands:\n        generate:\n            holds subcommands to generate CLI code.\n\n        list:\n            shows subcommands\n\n        validate:\n            validates CLI schema\n\n\n"
     
+    
+    if joined_subcommand == "validate":
+        return "cyamli (v1.0.0)\n\ncyamli validate\n\n    Description:\n        validates CLI schema\n\n    Syntax:\n        $ cyamli validate [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of validates subcommand\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
     
     if joined_subcommand == "list":
         return "cyamli (v1.0.0)\n\ncyamli list\n\n    Description:\n        shows subcommands\n\n    Syntax:\n        $ cyamli list [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of list subcommand\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"

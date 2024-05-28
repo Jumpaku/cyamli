@@ -43,6 +43,7 @@ func Execute(args []string, stdin io.Reader, stdout io.Writer, stderr io.Writer)
 	}
 	cli.FUNC = impl.root
 	cli.List.FUNC = impl.list
+	cli.Validate.FUNC = impl.validate
 	cli.Generate.FUNC = impl.generate
 	cli.Generate.Golang.FUNC = impl.generateGolang
 	cli.Generate.Python3.FUNC = impl.generatePython3
@@ -113,7 +114,31 @@ func (i implementation) list(subcommand []string, input CLI_List_Input, inputErr
 	return nil
 }
 
-func (i implementation) generate(subcommand []string, input CLI_Generate_Input, inputErr error) (err error) {
+func (i implementation) validate(subcommand []string, input CLI_Validate_Input, inputErr error) (err error) {
+	panicIfErrorf(inputErr, "failed to parse arguments ('cyamli %s -help' to see help)", strings.Join(subcommand, " "))
+
+	if input.Opt_Help {
+		mustPrintf(i.Stdout, GetDoc(subcommand))
+		return nil
+	}
+
+	var reader = i.Stdin
+	schemaSource := "(stdin)"
+	if input.Opt_SchemaPath != "" {
+		schemaSource = input.Opt_SchemaPath
+		f, err := os.Open(schemaSource)
+		panicIfErrorf(err, "fail to open schema file %q", schemaSource)
+		defer f.Close()
+		reader = f
+	}
+
+	err = schema.Validate(reader)
+	panicIfErrorf(err, "fail to read schema from %q", schemaSource)
+
+	return nil
+}
+
+func (i implementation) generate(subcommand []string, _ CLI_Generate_Input, inputErr error) (err error) {
 	panicIfErrorf(inputErr, "failed to parse arguments ('cyamli -help' to see help)")
 
 	mustPrintf(i.Stdout, GetDoc(subcommand))
@@ -138,7 +163,7 @@ func (i implementation) generateGolang(subcommand []string, input CLI_GenerateGo
 		reader = f
 	}
 
-	schema, err := schema.Load(reader)
+	s, err := schema.Load(reader)
 	panicIfErrorf(err, "fail to read schema file %q", schemaSource)
 
 	var writer = i.Stdout
@@ -149,7 +174,7 @@ func (i implementation) generateGolang(subcommand []string, input CLI_GenerateGo
 		writer = f
 	}
 
-	err = golang.Generate(schema, info.Name, info.Version, input.Opt_Package, writer)
+	err = golang.Generate(s, info.Name, info.Version, input.Opt_Package, writer)
 	panicIfErrorf(err, "fail to generate cli in golang")
 
 	return nil
@@ -171,7 +196,7 @@ func (i implementation) generatePython3(subcommand []string, input CLI_GenerateP
 		reader = f
 	}
 
-	schema, err := schema.Load(reader)
+	s, err := schema.Load(reader)
 	panicIfErrorf(err, "fail to read schema file %q", input.Opt_SchemaPath)
 
 	var writer = i.Stdout
@@ -182,7 +207,7 @@ func (i implementation) generatePython3(subcommand []string, input CLI_GenerateP
 		writer = f
 	}
 
-	err = python3.Generate(schema, info.Name, info.Version, writer)
+	err = python3.Generate(s, info.Name, info.Version, writer)
 	panicIfErrorf(err, "fail to generate cli in python3")
 
 	return nil
@@ -204,7 +229,7 @@ func (i implementation) generateDocs(subcommand []string, input CLI_GenerateDocs
 		reader = f
 	}
 
-	schema, err := schema.Load(reader)
+	s, err := schema.Load(reader)
 	panicIfErrorf(err, "fail to read schema file %q", input.Opt_SchemaPath)
 
 	var writer = i.Stdout
@@ -220,7 +245,7 @@ func (i implementation) generateDocs(subcommand []string, input CLI_GenerateDocs
 		All:        input.Opt_All,
 		Subcommand: input.Arg_Subcommands,
 	}
-	err = docs.Generate(schema, args, writer)
+	err = docs.Generate(s, args, writer)
 	panicIfErrorf(err, "fail to generate cli in python3")
 
 	return nil

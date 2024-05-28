@@ -91,6 +91,14 @@
               shows subcommands
             </p>
           </li>
+          <li>
+            <h4>
+              validate
+            </h4>
+            <p>
+              validates CLI schema
+            </p>
+          </li>
         </ul>
       </section>
       <section>
@@ -491,6 +499,64 @@
             </h4>
             <p>
               shows description of list subcommand
+            </p>
+          </li>
+          <li>
+            <h4>
+              <code>
+                -schema-path=&lt;string>
+              </code>
+              (default=
+              <code>
+                &#34;&#34;
+              </code>
+              ):
+            </h4>
+            <p>
+              if specified then reads schema file from the path, otherwise reads from stdin.
+            </p>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h2>
+          cyamli validate
+        </h2>
+        <h3>
+          Description
+        </h3>
+        <p>
+          validates CLI schema
+        </p>
+        <h3>
+          Syntax
+        </h3>
+        <p>
+          <code>
+            cyamli validate [&lt;option&gt;]...
+          </code>
+        </p>
+        <h3>
+          Options
+        </h3>
+        <ul>
+          <li>
+            <h4>
+              <code>
+                -help[=&lt;boolean>]
+              </code>
+              ,
+              <code>
+                -h[=&lt;boolean>]
+              </code>
+              (default=
+              <code>
+                false
+              </code>
+              ):
+            </h4>
+            <p>
+              shows description of validates subcommand
             </p>
           </li>
           <li>

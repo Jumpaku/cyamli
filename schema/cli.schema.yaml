@@ -1,5 +1,5 @@
 $schema: https://json-schema.org/draft/2020-12/schema
-$id: https://github.com/Jumpaku/cyamli/raw/v1.1.0/schema/cli.schema.json
+$id: https://github.com/Jumpaku/cyamli/raw/v1.0.0/schema/cli.schema.json
 title: cyamli CLI schema
 description: CLI schema for cyamli.
 
@@ -28,9 +28,9 @@ $defs:
   type:
     description: |
       Type represents a type of a value that can be assigned to an option or an argument.
-      One of the following values: "string", "integer", "boolean", "float" is available.
+      One of "string", "integer", "boolean", or "float" is available.
     type: string
-    enum: [string, integer, boolean, float]
+    enum: ["", string, integer, boolean, float]
 
   command:
     description: |
@@ -81,7 +81,7 @@ $defs:
           Short name of the option, which must match the regular expression `^-[a-z]$` and be unique in options of the command which the option belongs to.
           If short is not specified then short name for this option is not available.
         type: string
-        pattern: "^-[a-z]$"
+        pattern: "(^$)|(^-[a-z]$)"
       description:
         description: |
           Description of the option.
@@ -113,7 +113,7 @@ $defs:
           Name of the argument, which must match the regular expression `^[a-z][a-z0-9]*$` and be unique in arguments of the command which the argument belongs to.
           This property is required.
         type: string
-        pattern: "^[a-z][a-z0-9]*(_[a-z0-9]+)$"
+        pattern: "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
       description:
         description: |
           Description of the argument.
