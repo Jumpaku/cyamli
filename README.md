@@ -80,7 +80,7 @@ func NewCLI() CLI
 // Run parses command line arguments args and calls a corresponding function assigned in cli.
 func Run(cli CLI, args []string) error
 // GetDoc returns a help message corresponding to subcommand.
-func GetDoc(subcommand []string) string 
+func GetDoc(subcommand []string) string
 ```
 
 ### Assign functions to the generated API.
@@ -125,8 +125,8 @@ func main() {
 The example console app can be executed as follows:
 
 ```shell
-go run main.go list -c=config.yaml
-go run main.go fetch -c=config.yaml -v table1 table2
+go run main.go cli.gen.go list -c=config.yaml
+go run main.go cli.gen.go fetch -c=config.yaml -v table1 table2
 ```
 
 ## Details
@@ -160,4 +160,4 @@ Command line arguments according to the following syntax can be handled by the g
 
 ### Usage of cyamli command
 
-The documentation for `cyamli` command is provided at https://github.com/Jumpaku/cyamli/blob/main/cyamli-docs.md . 
+The documentation for `cyamli` command is provided at https://github.com/Jumpaku/cyamli/blob/main/cyamli-docs.md .
