@@ -49,6 +49,6 @@ jobs:
         run: |
           GOOS=${GOOS} GOARCH=${GOARCH} make build
           zip "cyamli-${GOOS}-${GOARCH}.zip" "bin/cyamli-${GOOS}-${GOARCH}" 
-          #gh release upload --clobber "${GITHUB_REF_NAME}" "cyamli-${GOOS}-${GOARCH}.zip"
+          gh release upload --clobber "${GITHUB_REF_NAME}" "cyamli-${GOOS}-${GOARCH}.zip"
           
           
