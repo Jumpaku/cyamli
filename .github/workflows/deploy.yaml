@@ -1,8 +1,5 @@
 name: Deploy
 on:
-  push:
-    tags: [ "v[0-9]+.[0-9]+.[0-9]+*" ]
-  workflow_dispatch:
   release:
     types: [published]
 
@@ -50,8 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           GOOS=${GOOS} GOARCH=${GOARCH} make build
-          ls bin/*
-          env | sort
-          #gh release upload --clobber "${GITHUB_REF_NAME}" bin/*
+          gh release upload --clobber "${GITHUB_REF_NAME}" "bin/cyamli-${GOOS}-${GOARCH}"
           
           
