@@ -46,7 +46,7 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-          TAG: ${{ var.GITHUB_REF_NAME }}
+          TAG: ${{ vars.GITHUB_REF_NAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           GOOS=${GOOS} GOARCH=${GOARCH} make build
