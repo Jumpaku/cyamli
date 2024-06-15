@@ -8,4 +8,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push Docker Image
+        run: |
+          docker buildx create --use --name=multiplatformbuild
+          docker buildx build \
+            --platform 'linux/amd64,linux/arm64' \
+            --tag ghcr.io/jumpaku/cyamli:latest \
+            --tag ghcr.io/jumpaku/cyamli:$(cat info/version.txt) \
+            --build-arg CYAMLI_VERSION=$(cat info/version.txt) \
+            --push \
+            .
