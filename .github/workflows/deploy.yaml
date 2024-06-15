@@ -46,12 +46,12 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-          TAG: ${{ vars.GITHUB_REF_NAME }}
+          GITHUB_REF_NAME: ${{ env.GITHUB_REF_NAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           GOOS=${GOOS} GOARCH=${GOARCH} make build
           ls bin/*
           env | sort
-          #gh release upload --clobber "${TAG}" bin/*
+          #gh release upload --clobber "${GITHUB_REF_NAME}" bin/*
           
           
