@@ -4,7 +4,7 @@ on:
     types: [published]
 
 jobs:
-  build-docker:
+  deploy-docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
             --push \
             .
 
-  build-executable:
+  deploy-executable:
     runs-on: ubuntu-latest
     strategy:
       matrix:
