@@ -47,6 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           GOOS=${GOOS} GOARCH=${GOARCH} make build
-          gh release upload --clobber "${GITHUB_REF_NAME}" "bin/cyamli-${GOOS}-${GOARCH}"
+          zip "cyamli-${GOOS}-${GOARCH}.zip" "bin/cyamli-${GOOS}-${GOARCH}" 
+          #gh release upload --clobber "${GITHUB_REF_NAME}" "cyamli-${GOOS}-${GOARCH}.zip"
           
           
