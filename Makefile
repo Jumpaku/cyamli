@@ -50,4 +50,5 @@ docs: install ## Generates documentation of cyamli.
 build: ## Build executable binary files. GOOS=darwin GOARCH=arm64 make build
 	mkdir -p ./bin
 	if [ "$${GOOS}" = "" ] || [ "$${GOARCH}" = "" ] ; then echo "environment variables GOOS and GOARCH are required"; exit 1; fi
-	go build -ldflags="-s -w" -trimpath -o "bin/cyamli-$${GOOS}-$${GOARCH}" .
+	go build -ldflags="-s -w" -trimpath -o "cyamli-$${GOOS}-$${GOARCH}" .
+	zip "cyamli-$${GOOS}-$${GOARCH}.zip" "cyamli-$${GOOS}-$${GOARCH}"
