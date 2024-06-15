@@ -7,7 +7,8 @@ A command line tool to generate interfaces for command line tools from YAML-base
 Developing console apps involves defining and parsing command line interfaces (CLIs) such as command line arguments, which consist of subcommands, options, and positional arguments.
 
 `cyamli` is a schema-based code generator that generates APIs (Application Programming Interfaces, such as types and functions) to handle typed CLIs.
-The schema of a typed CLI can be written in YAML according to the CLI schema definition ( https://github.com/Jumpaku/cyamli/blob/main/schema/cli.schema.yaml ).
+The schema of a typed CLI can be written in YAML according to the JSON schema at https://github.com/Jumpaku/cyamli/blob/main/schema/cli.schema.yaml ( JSON version is also available at https://github.com/Jumpaku/cyamli/blob/main/schema/cli.schema.yaml ).
+
 
 ## Motivation
 
@@ -24,15 +25,28 @@ The schema of a typed CLI can be written in YAML according to the CLI schema def
 go install github.com/Jumpaku/cyamli@latest
 ```
 
+
 ### Using Docker
 
 ```shell
 docker run -i -v $(pwd):/workspace ghcr.io/jumpaku/cyamli:latest cyamli
 ```
 
+
 ### Downloading executable binary files
 
 https://github.com/Jumpaku/cyamli/releases
+
+Note that the downloaded executable binary file may require a security confirmation before it can be run.
+
+
+### Building from source
+
+```shell
+git clone https://github.com/Jumpaku/cyamli.git
+cd cyamli
+go install .
+```
 
 
 ## Usage with an example
@@ -75,6 +89,7 @@ subcommands:
         description: names of tables to be described
 ```
 
+
 ### Generate API to parse the CLI in Go
 
 The following command reads a schema from `cli.yaml` and writes the Go API into `cli.gen.go`.
@@ -97,6 +112,7 @@ func GetDoc(subcommand []string) string
 ```
 
 ### Assign functions to the generated API.
+
 
 `NewCLI()` returns an object `cli` which represents a root command, and its descendant objects represent subcommands.
 Each of them has a `FUNC` field.
@@ -152,6 +168,7 @@ The following programming languages are currently supported:
 * Python3
 * Documentation in text, HTML, and Markdown
 
+
 ### Handling command line arguments
 
 Command line arguments according to the following syntax can be handled by the generated API.
@@ -170,6 +187,7 @@ Command line arguments according to the following syntax can be handled by the g
     - `=<option_value>` can be omitted if the type of the option is boolean.
 - `<argument>` represents an argument, which must be a string that can be parsed as a value of the type of the argument.
     - Tokens after `--` are handled as arguments even if prefixed by `-`.
+
 
 ### Usage of cyamli command
 
