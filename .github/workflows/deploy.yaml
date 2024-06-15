@@ -21,7 +21,7 @@ jobs:
           docker buildx create --use --name=multiplatformbuild
           docker buildx build \
             --platform 'linux/amd64,linux/arm64' \
-            --tag ghcr.io/jumpaku/cyamli-docker:latest \
-            --tag ghcr.io/jumpaku/cyamli-docker:$(cat info/version.txt) \
+            --tag ghcr.io/jumpaku/cyamli:latest \
+            --tag ghcr.io/jumpaku/cyamli:$(cat info/version.txt) \
             --push \
             .
