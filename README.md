@@ -30,6 +30,11 @@ go install github.com/Jumpaku/cyamli@latest
 docker run -i -v $(pwd):/workspace ghcr.io/jumpaku/cyamli:latest cyamli
 ```
 
+### Downloading executable binary files
+
+https://github.com/Jumpaku/cyamli/releases
+
+
 ## Usage with an example
 
 Assume a situation where you need to develop a console app in Go to fetch information from a database.

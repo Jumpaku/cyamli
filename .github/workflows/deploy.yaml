@@ -1,11 +1,10 @@
 name: Deploy
 on:
-  push:
-    tags: [ "v[0-9]+.[0-9]+.[0-9]+*" ]
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
-  build:
+  deploy-docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,3 +25,28 @@ jobs:
             --build-arg CYAMLI_VERSION=$(cat info/version.txt) \
             --push \
             .
+
+  deploy-executable:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: ["darwin", "linux", "windows"]
+        goarch: ["amd64", "arm64"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.4'
+      - name: Build and Upload Executable Binary Files
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          GITHUB_REF_NAME: ${{ env.GITHUB_REF_NAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          GOOS=${GOOS} GOARCH=${GOARCH} make build
+          gh release upload --clobber "${GITHUB_REF_NAME}" "bin/cyamli-${GOOS}-${GOARCH}"
+          
+          
