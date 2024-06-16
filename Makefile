@@ -41,6 +41,9 @@ examples: install ## Generates Go CLI for cyamli command.
 	go run . generate python3 < examples/cmd/example/cli.yaml > examples/cmd/example/cli_gen.py
 	go run . generate python3 < examples/cmd/demo-app/cli.yaml > examples/cmd/demo-app/cli_gen.py
 
+	go run . generate dart < examples/cmd/example/cli.yaml > examples/cmd/example/cli.g.dart
+	go run . generate dart < examples/cmd/demo-app/cli.yaml > examples/cmd/demo-app/cli.g.dart
+
 .PHONY: docs
 docs: install ## Generates documentation of cyamli.
 	go run . generate docs -all -format=markdown < cyamli/cli.yaml > cyamli-docs.md
