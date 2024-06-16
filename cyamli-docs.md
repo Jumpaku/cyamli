@@ -15,10 +15,10 @@ cyamli  [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of this app  
+  shows description of this app.  
 
 * `-version[=<boolean>]`, `-v[=<boolean>]`  (default=`false`):  
-  shows version of this app  
+  shows version of this app.  
 
 ### Subcommands
 
@@ -29,7 +29,7 @@ cyamli  [<option>]...
   shows subcommands  
 
 * validate:  
-  validates CLI schema  
+  validates CLI schema.  
 
 
 ## cyamli generate
@@ -47,9 +47,12 @@ cyamli generate [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of generate subcommand  
+  shows description of generate subcommand.  
 
 ### Subcommands
+
+* dart:  
+  generates CLI for your app written in Dart.  
 
 * docs:  
   generates documentation for your CLI app.  
@@ -59,6 +62,30 @@ cyamli generate [<option>]...
 
 * python3:  
   generates CLI for your app written in Python3.  
+
+
+## cyamli generate dart
+
+### Description
+
+generates CLI for your app written in Dart.
+
+### Syntax
+
+```shell
+cyamli generate dart [<option>]...
+```
+
+### Options
+
+* `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
+  shows description of dart subcommand.  
+
+* `-out-path=<string>`  (default=`""`):  
+  if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
+
+* `-schema-path=<string>`  (default=`""`):  
+  if specified then reads schema file from the path, otherwise reads from stdin.  
 
 
 ## cyamli generate docs
@@ -79,10 +106,10 @@ cyamli generate docs [<option>|<argument>]... [-- [<argument>]...]
   if specified then outputs documentation for all subcommands, otherwise in text format.  
 
 * `-format=<string>`, `-f=<string>`  (default=`"text"`):  
-  specifies output format of the documentation in text or markdown  
+  specifies output format of the documentation in text or markdown.  
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of docs subcommand  
+  shows description of docs subcommand.  
 
 * `-out-path=<string>`  (default=`""`):  
   if specified then creates a file at the path and writes generated documentation, otherwise outputs to stdout.  
@@ -111,7 +138,7 @@ cyamli generate golang [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of golang subcommand  
+  shows description of golang subcommand.  
 
 * `-out-path=<string>`  (default=`""`):  
   if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
@@ -138,7 +165,7 @@ cyamli generate python3 [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of python3 subcommand  
+  shows description of python3 subcommand.  
 
 * `-out-path=<string>`  (default=`""`):  
   if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
@@ -162,7 +189,7 @@ cyamli list [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of list subcommand  
+  shows description of list subcommand.  
 
 * `-schema-path=<string>`  (default=`""`):  
   if specified then reads schema file from the path, otherwise reads from stdin.  
@@ -172,7 +199,7 @@ cyamli list [<option>]...
 
 ### Description
 
-validates CLI schema
+validates CLI schema.
 
 ### Syntax
 
@@ -183,7 +210,7 @@ cyamli validate [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of validates subcommand  
+  shows description of validates subcommand.  
 
 * `-schema-path=<string>`  (default=`""`):  
   if specified then reads schema file from the path, otherwise reads from stdin.  
