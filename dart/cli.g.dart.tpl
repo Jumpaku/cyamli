@@ -1,6 +1,8 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // generator: {{.Generator}} {{.GeneratorVersion}}
 
+// ignore_for_file: unused_local_variable
+
 typedef Func<Input> = Function(List<String> subcommand, Input? input, Exception? inputErr);
 
 
@@ -55,7 +57,7 @@ typedef {{.CLIInputRecordName}} = ();
         {{else}} throw Exception("value is not specified to option ${optName}");
         {{end}}
       }
-      var_{{$Option.InputFieldName}} = _parseValue(var_{{$Option.InputFieldName}}.runtimeType, [lit]);
+      var_{{$Option.InputFieldName}} = _parseValue(var_{{$Option.InputFieldName}}.runtimeType, [lit]) as {{$Option.InputFieldType}};
     {{end}}
     default:
       throw Exception("unknown option ${optName}");
@@ -68,12 +70,12 @@ typedef {{.CLIInputRecordName}} = ();
   if (arguments.length <= {{$Index}} - 1) {
     throw Exception("too few arguments");
   }
-  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, arguments.sublist({{$Index}}));
+  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, arguments.sublist({{$Index}})) as {{$Argument.InputFieldType}};
   {{else}}
   if (arguments.length <= {{$Index}}) {
     throw Exception("too few arguments");
   }
-  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, [arguments[{{$Index}}]]);
+  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, [arguments[{{$Index}}]]) as {{$Argument.InputFieldType}};
   {{end}}
 
   {{end}}
@@ -141,7 +143,7 @@ typedef {{.CLIInputRecordName}} = ();
         {{else}} throw Exception("value is not specified to option ${optName}");
         {{end}}
       }
-      var_{{$Option.InputFieldName}} = _parseValue(var_{{$Option.InputFieldName}}.runtimeType, [lit]);
+      var_{{$Option.InputFieldName}} = _parseValue(var_{{$Option.InputFieldName}}.runtimeType, [lit]) as {{$Option.InputFieldType}};
     {{end}}
     default:
       throw Exception("unknown option ${optName}");
@@ -154,12 +156,12 @@ typedef {{.CLIInputRecordName}} = ();
   if (arguments.length <= {{$Index}} - 1) {
     throw Exception("too few arguments");
   }
-  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, arguments.sublist({{$Index}}));
+  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, arguments.sublist({{$Index}})) as {{$Argument.InputFieldType}};
   {{else}}
   if (arguments.length <= {{$Index}}) {
     throw Exception("too few arguments");
   }
-  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, [arguments[{{$Index}}]]);
+  {{$Argument.InputFieldType}} var_{{$Argument.InputFieldName}} = _parseValue({{$Argument.InputFieldType}}, [arguments[{{$Index}}]]) as {{$Argument.InputFieldType}};
   {{end}}
 
   {{end}}
