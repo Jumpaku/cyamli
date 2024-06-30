@@ -1,4 +1,4 @@
-cyamli (v1.1.3)
+cyamli (v1.1.4)
 
 cyamli list
 
@@ -10,7 +10,7 @@ cyamli list
 
     Options:
         -help[=<boolean>], -h[=<boolean>]  (default=false):
-            shows description of list subcommand
+            shows description of list subcommand.
 
         -schema-path=<string>  (default=""):
             if specified then reads schema file from the path, otherwise reads from stdin.

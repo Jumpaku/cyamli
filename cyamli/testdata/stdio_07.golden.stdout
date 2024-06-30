@@ -1,5 +1,6 @@
 cyamli
 cyamli generate
+cyamli generate dart
 cyamli generate docs
 cyamli generate golang
 cyamli generate python3

@@ -1,13 +1,13 @@
 name: cyamli
-version: v1.1.3
+version: v1.1.4
 description: A command line tool to generate CLI for your app from YAML-based schema.
 options:
   -help:
-    description: shows description of this app
+    description: shows description of this app.
     short: -h
     type: boolean
   -version:
-    description: shows version of this app
+    description: shows version of this app.
     short: -v
     type: boolean
 subcommands:
@@ -15,16 +15,16 @@ subcommands:
     description: shows subcommands
     options:
       -help:
-        description: shows description of list subcommand
+        description: shows description of list subcommand.
         short: -h
         type: boolean
       -schema-path:
         description: if specified then reads schema file from the path, otherwise reads from stdin.
   validate:
-    description: validates CLI schema
+    description: validates CLI schema.
     options:
       -help:
-        description: shows description of validates subcommand
+        description: shows description of validates subcommand.
         short: -h
         type: boolean
       -schema-path:
@@ -33,7 +33,7 @@ subcommands:
     description: holds subcommands to generate CLI code.
     options:
       -help:
-        description: shows description of generate subcommand
+        description: shows description of generate subcommand.
         short: -h
         type: boolean
     subcommands:
@@ -48,7 +48,7 @@ subcommands:
           -out-path:
             description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
           -help:
-            description: shows description of golang subcommand
+            description: shows description of golang subcommand.
             short: -h
             type: boolean
       python3:
@@ -59,7 +59,18 @@ subcommands:
           -out-path:
             description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
           -help:
-            description: shows description of python3 subcommand
+            description: shows description of python3 subcommand.
+            short: -h
+            type: boolean
+      dart:
+        description: generates CLI for your app written in Dart.
+        options:
+          -schema-path:
+            description: if specified then reads schema file from the path, otherwise reads from stdin.
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+          -help:
+            description: shows description of dart subcommand.
             short: -h
             type: boolean
       docs:
@@ -70,11 +81,11 @@ subcommands:
           -out-path:
             description: if specified then creates a file at the path and writes generated documentation, otherwise outputs to stdout.
           -help:
-            description: shows description of docs subcommand
+            description: shows description of docs subcommand.
             short: -h
             type: boolean
           -format:
-            description: specifies output format of the documentation in text or markdown
+            description: specifies output format of the documentation in text or markdown.
             short: -f
             default: text
           -all:

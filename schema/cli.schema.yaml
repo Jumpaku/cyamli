@@ -1,5 +1,5 @@
 $schema: https://json-schema.org/draft/2020-12/schema
-$id: https://github.com/Jumpaku/cyamli/raw/v1.1.3/schema/cli.schema.json
+$id: https://github.com/Jumpaku/cyamli/raw/v1.1.4/schema/cli.schema.json
 title: cyamli CLI schema
 description: CLI schema for cyamli.
 

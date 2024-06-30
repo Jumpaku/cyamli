@@ -1,4 +1,4 @@
-cyamli (v1.1.3)
+cyamli (v1.1.4)
 
 cyamli generate golang
 
@@ -10,7 +10,7 @@ cyamli generate golang
 
     Options:
         -help[=<boolean>], -h[=<boolean>]  (default=false):
-            shows description of golang subcommand
+            shows description of golang subcommand.
 
         -out-path=<string>  (default=""):
             if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.

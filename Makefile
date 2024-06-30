@@ -11,6 +11,10 @@ check: ## Checks version, runs tests.
 	grep -E '^version: $(VERSION)$$'  ./cyamli/cli.yaml
 	go test ./...
 
+.PHONY: update-test
+update-test: ## Checks version, runs tests.
+	go test ./cyamli/... -update
+
 .PHONY: install
 install: ## Install cyamli built in present status.
 	go generate -v ./...
@@ -40,6 +44,9 @@ examples: install ## Generates Go CLI for cyamli command.
 
 	go run . generate python3 < examples/cmd/example/cli.yaml > examples/cmd/example/cli_gen.py
 	go run . generate python3 < examples/cmd/demo-app/cli.yaml > examples/cmd/demo-app/cli_gen.py
+
+	go run . generate dart < examples/cmd/example/cli.yaml > examples/cmd/example/cli.g.dart
+	go run . generate dart < examples/cmd/demo-app/cli.yaml > examples/cmd/demo-app/cli.g.dart
 
 .PHONY: docs
 docs: install ## Generates documentation of cyamli.
