@@ -1,4 +1,4 @@
-cyamli (v1.1.3)
+cyamli (v1.1.4)
 
 cyamli
 
@@ -10,10 +10,10 @@ cyamli
 
     Options:
         -help[=<boolean>], -h[=<boolean>]  (default=false):
-            shows description of this app
+            shows description of this app.
 
         -version[=<boolean>], -v[=<boolean>]  (default=false):
-            shows version of this app
+            shows version of this app.
 
     Subcommands:
         generate:
@@ -23,6 +23,6 @@ cyamli
             shows subcommands
 
         validate:
-            validates CLI schema
+            validates CLI schema.
 
 

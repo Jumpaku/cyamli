@@ -1,16 +1,16 @@
-cyamli (v1.1.3)
+cyamli (v1.1.4)
 
 cyamli validate
 
     Description:
-        validates CLI schema
+        validates CLI schema.
 
     Syntax:
         $ cyamli validate [<option>]...
 
     Options:
         -help[=<boolean>], -h[=<boolean>]  (default=false):
-            shows description of validates subcommand
+            shows description of validates subcommand.
 
         -schema-path=<string>  (default=""):
             if specified then reads schema file from the path, otherwise reads from stdin.

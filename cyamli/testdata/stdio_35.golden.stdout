@@ -1,4 +1,4 @@
-cyamli (v1.1.3)
+cyamli (v1.1.4)
 
 cyamli generate
 
@@ -10,9 +10,12 @@ cyamli generate
 
     Options:
         -help[=<boolean>], -h[=<boolean>]  (default=false):
-            shows description of generate subcommand
+            shows description of generate subcommand.
 
     Subcommands:
+        dart:
+            generates CLI for your app written in Dart.
+
         docs:
             generates documentation for your CLI app.
 

@@ -11,6 +11,10 @@ check: ## Checks version, runs tests.
 	grep -E '^version: $(VERSION)$$'  ./cyamli/cli.yaml
 	go test ./...
 
+.PHONY: update-test
+update-test: ## Checks version, runs tests.
+	go test ./cyamli/... -update
+
 .PHONY: install
 install: ## Install cyamli built in present status.
 	go generate -v ./...

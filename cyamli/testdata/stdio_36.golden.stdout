@@ -1,4 +1,4 @@
-cyamli (v1.1.3)
+cyamli (v1.1.4)
 
 cyamli generate docs
 
@@ -13,10 +13,10 @@ cyamli generate docs
             if specified then outputs documentation for all subcommands, otherwise in text format.
 
         -format=<string>, -f=<string>  (default="text"):
-            specifies output format of the documentation in text or markdown
+            specifies output format of the documentation in text or markdown.
 
         -help[=<boolean>], -h[=<boolean>]  (default=false):
-            shows description of docs subcommand
+            shows description of docs subcommand.
 
         -out-path=<string>  (default=""):
             if specified then creates a file at the path and writes generated documentation, otherwise outputs to stdout.

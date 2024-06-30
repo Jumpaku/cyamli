@@ -70,13 +70,13 @@ var cyamliSchema = &schema.Schema{
 		Options: map[string]*schema.Option{
 			string("-help"): &schema.Option{
 				Short:       string("-h"),
-				Description: string("shows description of this app"),
+				Description: string("shows description of this app."),
 				Type:        schema.Type("boolean"),
 				Default:     string(""),
 			},
 			string("-version"): &schema.Option{
 				Short:       string("-v"),
-				Description: string("shows version of this app"),
+				Description: string("shows version of this app."),
 				Type:        schema.Type("boolean"),
 				Default:     string(""),
 			},
@@ -124,7 +124,7 @@ var cyamliSchema = &schema.Schema{
 							},
 							string("-help"): &schema.Option{
 								Short:       string("-h"),
-								Description: string("shows description of golang subcommand"),
+								Description: string("shows description of golang subcommand."),
 								Type:        schema.Type("boolean"),
 								Default:     string(""),
 							},
@@ -143,7 +143,7 @@ var cyamliSchema = &schema.Schema{
 							},
 							string("-help"): &schema.Option{
 								Short:       string("-h"),
-								Description: string("shows description of python3 subcommand"),
+								Description: string("shows description of python3 subcommand."),
 								Type:        schema.Type("boolean"),
 								Default:     string(""),
 							},
@@ -180,13 +180,13 @@ var cyamliSchema = &schema.Schema{
 							},
 							string("-help"): &schema.Option{
 								Short:       string("-h"),
-								Description: string("shows description of docs subcommand"),
+								Description: string("shows description of docs subcommand."),
 								Type:        schema.Type("boolean"),
 								Default:     string(""),
 							},
 							string("-format"): &schema.Option{
 								Short:       string("-f"),
-								Description: string("specifies output format of the documentation in text or markdown"),
+								Description: string("specifies output format of the documentation in text or markdown."),
 								Type:        schema.Type(""),
 								Default:     string("text"),
 							},

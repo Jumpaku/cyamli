@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// generator: github.com/Jumpaku/cyamli v1.1.3
+// generator: github.com/Jumpaku/cyamli v1.1.4
 
 typedef Func<Input> = Function(List<String> subcommand, Input? input, Exception? inputErr);
 
