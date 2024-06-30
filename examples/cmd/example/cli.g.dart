@@ -1,5 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// generator: github.com/Jumpaku/cyamli v1.1.4
+// generator: github.com/Jumpaku/cyamli v1.1.5
+
+// ignore_for_file: unused_local_variable
 
 typedef Func<Input> = Function(List<String> subcommand, Input? input, Exception? inputErr);
 
@@ -82,35 +84,35 @@ CLI_Input _resolve_CLI_Input(List<String> restArgs) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionA = _parseValue(var_optOptionA.runtimeType, [lit]);
+      var_optOptionA = _parseValue(var_optOptionA.runtimeType, [lit]) as String;
     
     case "-option-b" || "-b":
       if (!cut) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionB = _parseValue(var_optOptionB.runtimeType, [lit]);
+      var_optOptionB = _parseValue(var_optOptionB.runtimeType, [lit]) as int;
     
     case "-option-c" || "-c":
       if (!cut) {
         lit = "true";
         
       }
-      var_optOptionC = _parseValue(var_optOptionC.runtimeType, [lit]);
+      var_optOptionC = _parseValue(var_optOptionC.runtimeType, [lit]) as bool;
     
     case "-option-d" || "-d":
       if (!cut) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionD = _parseValue(var_optOptionD.runtimeType, [lit]);
+      var_optOptionD = _parseValue(var_optOptionD.runtimeType, [lit]) as double;
     
     case "-option-e":
       if (!cut) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionE = _parseValue(var_optOptionE.runtimeType, [lit]);
+      var_optOptionE = _parseValue(var_optOptionE.runtimeType, [lit]) as String;
     
     default:
       throw Exception("unknown option ${optName}");
@@ -123,7 +125,7 @@ CLI_Input _resolve_CLI_Input(List<String> restArgs) {
   if (arguments.length <= 0) {
     throw Exception("too few arguments");
   }
-  String var_argArgA = _parseValue(String, [arguments[0]]);
+  String var_argArgA = _parseValue(String, [arguments[0]]) as String;
   
 
   
@@ -132,7 +134,7 @@ CLI_Input _resolve_CLI_Input(List<String> restArgs) {
   if (arguments.length <= 1) {
     throw Exception("too few arguments");
   }
-  int var_argArgB = _parseValue(int, [arguments[1]]);
+  int var_argArgB = _parseValue(int, [arguments[1]]) as int;
   
 
   
@@ -141,7 +143,7 @@ CLI_Input _resolve_CLI_Input(List<String> restArgs) {
   if (arguments.length <= 2) {
     throw Exception("too few arguments");
   }
-  bool var_argArgC = _parseValue(bool, [arguments[2]]);
+  bool var_argArgC = _parseValue(bool, [arguments[2]]) as bool;
   
 
   
@@ -150,7 +152,7 @@ CLI_Input _resolve_CLI_Input(List<String> restArgs) {
   if (arguments.length <= 3) {
     throw Exception("too few arguments");
   }
-  double var_argArgD = _parseValue(double, [arguments[3]]);
+  double var_argArgD = _parseValue(double, [arguments[3]]) as double;
   
 
   
@@ -159,7 +161,7 @@ CLI_Input _resolve_CLI_Input(List<String> restArgs) {
   if (arguments.length <= 4) {
     throw Exception("too few arguments");
   }
-  String var_argArgE = _parseValue(String, [arguments[4]]);
+  String var_argArgE = _parseValue(String, [arguments[4]]) as String;
   
 
   
@@ -168,7 +170,7 @@ CLI_Input _resolve_CLI_Input(List<String> restArgs) {
   if (arguments.length <= 5 - 1) {
     throw Exception("too few arguments");
   }
-  List<String> var_argArgV = _parseValue(List<String>, arguments.sublist(5));
+  List<String> var_argArgV = _parseValue(List<String>, arguments.sublist(5)) as List<String>;
   
 
   
@@ -371,35 +373,35 @@ CLI_Sub3_Input _resolve_CLI_Sub3_Input(List<String> restArgs) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionA = _parseValue(var_optOptionA.runtimeType, [lit]);
+      var_optOptionA = _parseValue(var_optOptionA.runtimeType, [lit]) as String;
     
     case "-option-b" || "-b":
       if (!cut) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionB = _parseValue(var_optOptionB.runtimeType, [lit]);
+      var_optOptionB = _parseValue(var_optOptionB.runtimeType, [lit]) as int;
     
     case "-option-c" || "-c":
       if (!cut) {
         lit = "true";
         
       }
-      var_optOptionC = _parseValue(var_optOptionC.runtimeType, [lit]);
+      var_optOptionC = _parseValue(var_optOptionC.runtimeType, [lit]) as bool;
     
     case "-option-d" || "-d":
       if (!cut) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionD = _parseValue(var_optOptionD.runtimeType, [lit]);
+      var_optOptionD = _parseValue(var_optOptionD.runtimeType, [lit]) as double;
     
     case "-option-e":
       if (!cut) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optOptionE = _parseValue(var_optOptionE.runtimeType, [lit]);
+      var_optOptionE = _parseValue(var_optOptionE.runtimeType, [lit]) as String;
     
     default:
       throw Exception("unknown option ${optName}");
@@ -412,7 +414,7 @@ CLI_Sub3_Input _resolve_CLI_Sub3_Input(List<String> restArgs) {
   if (arguments.length <= 0) {
     throw Exception("too few arguments");
   }
-  String var_argArgA = _parseValue(String, [arguments[0]]);
+  String var_argArgA = _parseValue(String, [arguments[0]]) as String;
   
 
   
@@ -421,7 +423,7 @@ CLI_Sub3_Input _resolve_CLI_Sub3_Input(List<String> restArgs) {
   if (arguments.length <= 1) {
     throw Exception("too few arguments");
   }
-  int var_argArgB = _parseValue(int, [arguments[1]]);
+  int var_argArgB = _parseValue(int, [arguments[1]]) as int;
   
 
   
@@ -430,7 +432,7 @@ CLI_Sub3_Input _resolve_CLI_Sub3_Input(List<String> restArgs) {
   if (arguments.length <= 2) {
     throw Exception("too few arguments");
   }
-  bool var_argArgC = _parseValue(bool, [arguments[2]]);
+  bool var_argArgC = _parseValue(bool, [arguments[2]]) as bool;
   
 
   
@@ -439,7 +441,7 @@ CLI_Sub3_Input _resolve_CLI_Sub3_Input(List<String> restArgs) {
   if (arguments.length <= 3) {
     throw Exception("too few arguments");
   }
-  double var_argArgD = _parseValue(double, [arguments[3]]);
+  double var_argArgD = _parseValue(double, [arguments[3]]) as double;
   
 
   
@@ -448,7 +450,7 @@ CLI_Sub3_Input _resolve_CLI_Sub3_Input(List<String> restArgs) {
   if (arguments.length <= 4) {
     throw Exception("too few arguments");
   }
-  String var_argArgE = _parseValue(String, [arguments[4]]);
+  String var_argArgE = _parseValue(String, [arguments[4]]) as String;
   
 
   
@@ -457,7 +459,7 @@ CLI_Sub3_Input _resolve_CLI_Sub3_Input(List<String> restArgs) {
   if (arguments.length <= 5 - 1) {
     throw Exception("too few arguments");
   }
-  List<String> var_argArgV = _parseValue(List<String>, arguments.sublist(5));
+  List<String> var_argArgV = _parseValue(List<String>, arguments.sublist(5)) as List<String>;
   
 
   
@@ -537,7 +539,7 @@ CLI_Sub3Suba_Input _resolve_CLI_Sub3Suba_Input(List<String> restArgs) {
   if (arguments.length <= 0 - 1) {
     throw Exception("too few arguments");
   }
-  List<bool> var_argArgV = _parseValue(List<bool>, arguments.sublist(0));
+  List<bool> var_argArgV = _parseValue(List<bool>, arguments.sublist(0)) as List<bool>;
   
 
   
@@ -597,7 +599,7 @@ CLI_Sub3Subb_Input _resolve_CLI_Sub3Subb_Input(List<String> restArgs) {
   if (arguments.length <= 0 - 1) {
     throw Exception("too few arguments");
   }
-  List<int> var_argArgV = _parseValue(List<int>, arguments.sublist(0));
+  List<int> var_argArgV = _parseValue(List<int>, arguments.sublist(0)) as List<int>;
   
 
   
@@ -657,7 +659,7 @@ CLI_Sub3Subc_Input _resolve_CLI_Sub3Subc_Input(List<String> restArgs) {
   if (arguments.length <= 0 - 1) {
     throw Exception("too few arguments");
   }
-  List<double> var_argArgV = _parseValue(List<double>, arguments.sublist(0));
+  List<double> var_argArgV = _parseValue(List<double>, arguments.sublist(0)) as List<double>;
   
 
   
@@ -717,7 +719,7 @@ CLI_Sub3Subd_Input _resolve_CLI_Sub3Subd_Input(List<String> restArgs) {
   if (arguments.length <= 0 - 1) {
     throw Exception("too few arguments");
   }
-  List<String> var_argArgV = _parseValue(List<String>, arguments.sublist(0));
+  List<String> var_argArgV = _parseValue(List<String>, arguments.sublist(0)) as List<String>;
   
 
   

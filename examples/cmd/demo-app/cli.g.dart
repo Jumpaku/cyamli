@@ -1,5 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// generator: github.com/Jumpaku/cyamli v1.1.4
+// generator: github.com/Jumpaku/cyamli v1.1.5
+
+// ignore_for_file: unused_local_variable
 
 typedef Func<Input> = Function(List<String> subcommand, Input? input, Exception? inputErr);
 
@@ -105,14 +107,14 @@ CLI_Fetch_Input _resolve_CLI_Fetch_Input(List<String> restArgs) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optConfig = _parseValue(var_optConfig.runtimeType, [lit]);
+      var_optConfig = _parseValue(var_optConfig.runtimeType, [lit]) as String;
     
     case "-verbose" || "-v":
       if (!cut) {
         lit = "true";
         
       }
-      var_optVerbose = _parseValue(var_optVerbose.runtimeType, [lit]);
+      var_optVerbose = _parseValue(var_optVerbose.runtimeType, [lit]) as bool;
     
     default:
       throw Exception("unknown option ${optName}");
@@ -125,7 +127,7 @@ CLI_Fetch_Input _resolve_CLI_Fetch_Input(List<String> restArgs) {
   if (arguments.length <= 0 - 1) {
     throw Exception("too few arguments");
   }
-  List<String> var_argTables = _parseValue(List<String>, arguments.sublist(0));
+  List<String> var_argTables = _parseValue(List<String>, arguments.sublist(0)) as List<String>;
   
 
   
@@ -185,7 +187,7 @@ CLI_List_Input _resolve_CLI_List_Input(List<String> restArgs) {
          throw Exception("value is not specified to option ${optName}");
         
       }
-      var_optConfig = _parseValue(var_optConfig.runtimeType, [lit]);
+      var_optConfig = _parseValue(var_optConfig.runtimeType, [lit]) as String;
     
     default:
       throw Exception("unknown option ${optName}");
