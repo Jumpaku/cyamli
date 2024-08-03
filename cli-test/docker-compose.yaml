@@ -7,6 +7,7 @@ services:
     working_dir: /workspace
     volumes:
       - ./dart:/workspace
+      - ./entrypoint.sh:/workspace/entrypoint.sh
     command: ['sh', '/workspace/entrypoint.sh']
 
   test-golang:
@@ -14,6 +15,7 @@ services:
     working_dir: /workspace
     volumes:
       - ./golang:/workspace
+      - ./entrypoint.sh:/workspace/entrypoint.sh
     command: ['sh', '/workspace/entrypoint.sh']
 
   test-python3:
@@ -21,4 +23,5 @@ services:
     working_dir: /workspace
     volumes:
       - ./python3:/workspace
+      - ./entrypoint.sh:/workspace/entrypoint.sh
     command: ['sh', '/workspace/entrypoint.sh']

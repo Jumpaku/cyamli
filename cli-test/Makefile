@@ -19,6 +19,6 @@ testcases: ## Generates testcases
 
 .PHONY: run_test
 run_test: ## Run tests
-	docker compose up test-dart
-	docker compose up test-golang
-	docker compose up test-python3
+	docker compose up --exit-code-from=test-dart --abort-on-container-exit test-dart
+	docker compose up --exit-code-from=test-golang --abort-on-container-exit test-golang
+	docker compose up --exit-code-from=test-python3 --abort-on-container-exit test-python3
