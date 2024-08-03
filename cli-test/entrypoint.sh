@@ -9,4 +9,5 @@ for TESTCASE in */testcases.sh; do
     cat test.log
     exit 1
   fi
+  cat test.log
 done
