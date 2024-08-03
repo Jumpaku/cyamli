@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// generator: github.com/Jumpaku/cyamli v1.1.5
+// generator: github.com/Jumpaku/cyamli v1.1.6
 
 // ignore_for_file: unused_local_variable
 
