@@ -19,11 +19,12 @@ class {{.CLIInputClassName}}:
     pass
 
 
+FuncType_{{.CLIClassName}} = typing.Callable[[None,list[str],{{.CLIInputClassName}},Exception],None]
 class {{.CLIClassName}}:
     {{range $Index, $Subcommand := .Subcommands -}}
     {{$Subcommand.SubcommandFieldName}}: {{$Subcommand.SubcommandFieldType}} = {{$Subcommand.SubcommandFieldType}}(){{"\n    "}}
     {{- end}}
-    FUNC: typing.Callable[[None,list[str],{{.CLIInputClassName}},Exception],None] = None
+    FUNC: FuncType_{{.CLIClassName}} = None
 
 
 def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}:
@@ -64,6 +65,7 @@ def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}
 
 {{- /* Root command */}}
 {{with .Program}}
+
 @dataclass
 class {{.CLIInputClassName}}:
     {{range $Index, $Option := .Options -}}
@@ -75,11 +77,12 @@ class {{.CLIInputClassName}}:
     pass
 
 
+FuncType_{{.CLIClassName}} = typing.Callable[[None,list[str],{{.CLIInputClassName}},Exception],None]
 class {{.CLIClassName}}:
     {{range $Index, $Subcommand := .Subcommands -}}
     {{$Subcommand.SubcommandFieldName}}: {{$Subcommand.SubcommandFieldType}} = {{$Subcommand.SubcommandFieldType}}(){{"\n    "}}
     {{- end}}
-    FUNC: typing.Callable[[None,list[str],{{.CLIInputClassName}},Exception],None] = None
+    FUNC: FuncType_{{.CLIClassName}} = None
 
 
 def resolve_{{.CLIInputClassName}}(rest_args: list[str])->{{.CLIInputClassName}}:
@@ -134,6 +137,7 @@ def run(cli: CLI, args: list[str]):
         except Exception as e:
             ex = e
         cli.{{.CLIFuncMethodChain}}(subcommand_path, input, ex)
+        return
     {{end}}
     {{range .Commands}}
     if joined_subcommand == {{.FullPathLiteral}}:
@@ -146,6 +150,7 @@ def run(cli: CLI, args: list[str]):
         except Exception as e:
             ex = e
         cli.{{.CLIFuncMethodChain}}(subcommand_path, input, ex)
+        return
     {{end}}
     raise Exception("subcommand not found: " + joined_subcommand)
 
