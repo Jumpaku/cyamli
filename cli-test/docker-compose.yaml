@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+
+  test-dart:
+    image: dart:3.4.4
+    working_dir: /workspace
+    volumes:
+      - ./dart:/workspace
+    command: ['sh', '/workspace/entrypoint.sh']
+
+  test-golang:
+    image: golang:1.22.5-alpine3.20
+    working_dir: /workspace
+    volumes:
+      - ./golang:/workspace
+    command: ['sh', '/workspace/entrypoint.sh']
+
+  test-python3:
+    image: python:3.9.2-alpine3.13
+    working_dir: /workspace
+    volumes:
+      - ./python3:/workspace
+    command: ['sh', '/workspace/entrypoint.sh']

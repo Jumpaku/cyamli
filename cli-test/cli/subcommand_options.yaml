@@ -1,0 +1,12 @@
+subcommands:
+  sub:
+    options:
+      -opt-integer:
+        short: -i
+        type: integer
+      -opt-boolean:
+        short: -b
+        type: boolean
+      -opt-string:
+        short: -s
+        type: string
