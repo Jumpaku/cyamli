@@ -518,7 +518,7 @@ func TestProgram_validate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.program.validate()
+			err := tt.program.validate(false)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {
@@ -732,7 +732,7 @@ func TestCommand_validate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.cmd.validate([]string{})
+			err := tt.cmd.validate([]string{}, false)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {
@@ -804,7 +804,7 @@ func TestCommand_validate_DuplicateOptionName(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.cmd.validate(tt.propagatedOptions)
+			err := tt.cmd.validate(tt.propagatedOptions, false)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {

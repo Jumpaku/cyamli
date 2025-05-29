@@ -14,7 +14,19 @@ import (
 )
 
 type Schema struct {
-	Program Program
+	optionPropagated bool
+	Program          Program
+}
+
+// PropagateOptions creates a deep copy of the Schema.
+func (s Schema) PropagateOptions() Schema {
+	if s.optionPropagated {
+		return s
+	}
+	return Schema{
+		optionPropagated: true,
+		Program:          s.Program.propagateOptions(),
+	}
 }
 
 // Load loads a CLI schema from a JSON data.
@@ -55,7 +67,7 @@ func (s Schema) Validate() error {
 		return fmt.Errorf(`fail to validate schema based on JSON schema: %w`, err)
 	}
 
-	if err := s.Program.validate(); err != nil {
+	if err := s.Program.validate(s.optionPropagated); err != nil {
 		return fmt.Errorf(`fail to validate program: %w`, err)
 	}
 	return nil
@@ -112,8 +124,18 @@ type Program struct {
 	Command `yaml:",inline"`
 }
 
-func (p Program) validate() error {
-	if err := p.Command.validate([]string{}); err != nil {
+// propagateOptions creates a deep copy of the Program.
+func (p Program) propagateOptions() Program {
+	clone := Program{
+		Name:    p.Name,
+		Version: p.Version,
+		Command: p.Command.propagateOptions(map[string]Option{}),
+	}
+	return clone
+}
+
+func (p Program) validate(propagated bool) error {
+	if err := p.Command.validate([]string{}, propagated); err != nil {
 		return fmt.Errorf("invalid command: %w", err)
 	}
 	return nil
@@ -141,7 +163,50 @@ type Command struct {
 	Subcommands map[string]Command `json:"subcommands,omitempty" yaml:"subcommands,omitempty"`
 }
 
-func (cmd Command) validate(propagatedOptions []string) error {
+// propagateOptions creates a deep copy of the Command.
+func (cmd Command) propagateOptions(propagatedOptions map[string]Option) (propagated Command) {
+	propagated = Command{
+		Description: cmd.Description,
+	}
+
+	propagatedOptionsClone := make(map[string]Option)
+	for k, v := range propagatedOptions {
+		propagatedOptionsClone[k] = v
+	}
+
+	if cmd.Options != nil || len(propagatedOptionsClone) > 0 {
+		propagated.Options = make(map[string]Option)
+	}
+	for k, v := range propagatedOptions {
+		propagated.Options[k] = v
+	}
+	if cmd.Options != nil {
+		for k, v := range cmd.Options {
+			propagated.Options[k] = v
+			if v.Propagates {
+				propagatedOptionsClone[k] = v
+			}
+		}
+	}
+
+	if cmd.Arguments != nil {
+		propagated.Arguments = make([]Argument, len(cmd.Arguments))
+		for i, arg := range cmd.Arguments {
+			propagated.Arguments[i] = arg
+		}
+	}
+
+	if cmd.Subcommands != nil {
+		propagated.Subcommands = make(map[string]Command)
+		for k, v := range cmd.Subcommands {
+			propagated.Subcommands[k] = v.propagateOptions(propagatedOptionsClone)
+		}
+	}
+
+	return propagated
+}
+
+func (cmd Command) validate(propagatedOptions []string, propagated bool) error {
 	propagatedOptions = append([]string{}, propagatedOptions...)
 
 	// Validate options
@@ -165,11 +230,13 @@ func (cmd Command) validate(propagatedOptions []string) error {
 			return fmt.Errorf("invalid option %q: %w", name, err)
 		}
 
-		if opt.Propagates {
-			// If the option propagates, add it to the propagated options
-			propagatedOptions = append(propagatedOptions, name)
-			if opt.Short != "" {
-				propagatedOptions = append(propagatedOptions, opt.Short)
+		if !propagated {
+			if opt.Propagates {
+				// If the option propagates, add it to the propagated options
+				propagatedOptions = append(propagatedOptions, name)
+				if opt.Short != "" {
+					propagatedOptions = append(propagatedOptions, opt.Short)
+				}
 			}
 		}
 	}
@@ -192,8 +259,8 @@ func (cmd Command) validate(propagatedOptions []string) error {
 	}
 
 	// Validate subcommands
-	for name, subcmd := range cmd.Subcommands {
-		if err := subcmd.validate(propagatedOptions); err != nil {
+	for name, sub := range cmd.Subcommands {
+		if err := sub.validate(propagatedOptions, propagated); err != nil {
 			return fmt.Errorf("invalid subcommand %q: %w", name, err)
 		}
 	}

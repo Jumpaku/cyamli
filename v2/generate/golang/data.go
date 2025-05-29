@@ -5,7 +5,6 @@ import (
 	"github.com/Jumpaku/cyamli/v2/docs"
 	"github.com/Jumpaku/cyamli/v2/name"
 	"github.com/Jumpaku/cyamli/v2/schema"
-	"github.com/emirpasic/gods/trees/redblacktree"
 	"github.com/samber/lo"
 	"slices"
 	"strconv"
@@ -141,20 +140,10 @@ func primitiveType(t schema.Type) string {
 }
 
 func ConstructData(s schema.Schema, packageName, generatorName string) Data {
-	commands := listCommands(s)
-	commandList := lo.Map(commands, func(cmd pathCommand, _ int) CommandData {
+	commands := s.PropagateOptions().ListCommand()
+	commandList := lo.Map(commands, func(cmd schema.PathCommand, _ int) CommandData {
 		options := []OptionData{}
 		for option, o := range cmd.Command.Options {
-			options = append(options, OptionData{
-				Option:       option,
-				ShortOption:  o.Short,
-				Name:         name.New(option),
-				Type:         o.Type,
-				Repeated:     o.Repeated,
-				DefaultValue: o.Default,
-			})
-		}
-		for option, o := range cmd.PropagatedOptions {
 			options = append(options, OptionData{
 				Option:       option,
 				ShortOption:  o.Short,
@@ -197,45 +186,4 @@ func ConstructData(s schema.Schema, packageName, generatorName string) Data {
 	}
 
 	return data
-}
-
-type pathCommand struct {
-	Path              []string
-	Command           schema.Command
-	PropagatedOptions map[string]schema.Option
-}
-
-func listCommands(s schema.Schema) (commands []pathCommand) {
-	tree := redblacktree.NewWith(func(a, b interface{}) int {
-		return slices.Compare(a.([]string), b.([]string))
-	})
-
-	for _, cmd := range s.ListCommand() {
-		tree.Put(cmd.Path, &pathCommand{
-			Path:              cmd.Path,
-			Command:           cmd.Command,
-			PropagatedOptions: make(map[string]schema.Option),
-		})
-	}
-
-	itr := tree.Iterator()
-	for itr.Next() {
-		path := itr.Key().([]string)
-		cmd := itr.Value().(*pathCommand)
-		if len(path) > 0 {
-			parentCmd, _ := tree.Get(path[:len(path)-1])
-			for name, option := range parentCmd.(*pathCommand).Command.Options {
-				if option.Propagates {
-					cmd.PropagatedOptions[name] = option
-				}
-			}
-			for name, option := range parentCmd.(*pathCommand).PropagatedOptions {
-				cmd.PropagatedOptions[name] = option
-			}
-		}
-
-		commands = append(commands, *cmd)
-	}
-
-	return commands
 }
