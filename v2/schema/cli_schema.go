@@ -9,6 +9,8 @@ import (
 	"github.com/samber/lo"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"io"
+	"slices"
+	"strconv"
 )
 
 type Schema struct {
@@ -22,7 +24,9 @@ func Load(reader io.Reader) (Schema, error) {
 	if err := decoder.Decode(&schema.Program); err != nil {
 		return Schema{}, fmt.Errorf(`fail to unmarshal yaml as schema: %w`, err)
 	}
-
+	if err := schema.Validate(); err != nil {
+		return Schema{}, fmt.Errorf(`fail to validate schema: %w`, err)
+	}
 	return schema, nil
 }
 
@@ -57,6 +61,22 @@ func (s Schema) Validate() error {
 	return nil
 }
 
+type PathCommand struct {
+	Path    []string
+	Command Command
+}
+
+func (s Schema) ListCommand() (commands []PathCommand) {
+	_ = s.Program.Walk([]string{}, func(cmd Command, path []string) error {
+		commands = append(commands, PathCommand{Path: path, Command: cmd})
+		return nil
+	})
+
+	slices.SortFunc(commands, func(a, b PathCommand) int { return slices.Compare(a.Path, b.Path) })
+
+	return commands
+}
+
 // Type represents a type of a value that can be assigned to an option or an argument.
 // One of "string", "integer", or "boolean" is available.
 type Type string
@@ -82,14 +102,14 @@ func (t Type) validate() error {
 type Program struct {
 	// Name of the program.
 	// The default value is an empty string.
-	Name string `json:"name,omitempty"`
+	Name string `json:"name,omitempty" yaml:"name,omitempty"`
 
 	// Version of the program.
 	// The default value is an empty string.
-	Version string `json:"version,omitempty"`
+	Version string `json:"version,omitempty" yaml:"version,omitempty"`
 
 	// Embedded Command fields
-	Command
+	Command `yaml:",inline"`
 }
 
 func (p Program) validate() error {
@@ -104,21 +124,21 @@ func (p Program) validate() error {
 type Command struct {
 	// Description of the command.
 	// The default value is an empty string.
-	Description string `json:"description,omitempty"`
+	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 
 	// A collection of options, which is a mapping from option names to options.
 	// The default value is an empty object.
 	// A property name is a name of an option, which must match the regular expression `^(-[a-z][a-z0-9]*)+$` and be unique in options of the command.
-	Options map[string]Option `json:"options,omitempty"`
+	Options map[string]Option `json:"options,omitempty" yaml:"options,omitempty"`
 
 	// A list of arguments.
 	// The default value is an empty array.
-	Arguments []Argument `json:"arguments,omitempty"`
+	Arguments []Argument `json:"arguments,omitempty" yaml:"arguments,omitempty"`
 
 	// A collection of subcommands, which is a mapping from subcommand names to child commands.
 	// The default value is an empty object.
 	// A property name is a name of a subcommand, which must match the regular expression `^[a-z][a-z0-9]*$` and be unique in subcommands of the command.
-	Subcommands map[string]Command `json:"subcommands,omitempty"`
+	Subcommands map[string]Command `json:"subcommands,omitempty" yaml:"subcommands,omitempty"`
 }
 
 func (cmd Command) validate(propagatedOptions []string) error {
@@ -141,7 +161,7 @@ func (cmd Command) validate(propagatedOptions []string) error {
 			options[opt.Short] = true
 		}
 
-		if err := opt.Validate(); err != nil {
+		if err := opt.validate(); err != nil {
 			return fmt.Errorf("invalid option %q: %w", name, err)
 		}
 
@@ -199,15 +219,15 @@ func (cmd Command) Walk(path []string, f func(cmd Command, path []string) error)
 type Option struct {
 	// Short name of the option, which must match the regular expression `^-[a-z]$` and be unique in options of the command which the option belongs to.
 	// If short is not specified then short name for this option is not available.
-	Short string `json:"short,omitempty"`
+	Short string `json:"short,omitempty" yaml:"short,omitempty"`
 
 	// Description of the option.
 	// The default value is an empty string.
-	Description string `json:"description,omitempty"`
+	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 
 	// Type of the value that is assignable to this option.
 	// The default value is "string".
-	Type Type `json:"type,omitempty"`
+	Type Type `json:"type,omitempty" yaml:"type,omitempty"`
 
 	// String value representing the default value of the option.
 	// It must be a string that can be parsed as a value of the option type.
@@ -215,15 +235,35 @@ type Option struct {
 	// - boolean: "false"
 	// - string: ""
 	// - integer: "0"
-	Default string `json:"default,omitempty"`
+	Default string `json:"default,omitempty" yaml:"default,omitempty"`
 
 	// Whether the option propagates to subcommands.
 	// If true then the option is available in all subcommands of the command which the option belongs to.
 	// The default value is false.
-	Propagates bool `json:"propagates,omitempty"`
+	Propagates bool `json:"propagates,omitempty" yaml:"propagates,omitempty"`
+
+	// Whether the option can be specified multiple times.
+	// If true then the option can be specified multiple times in the command line arguments.
+	// The default value is false.
+	Repeated bool `json:"repeated,omitempty" yaml:"repeated,omitempty"`
 }
 
-func (o Option) Validate() error {
+func (o Option) validate() error {
+	if o.Default != "" {
+		if o.Repeated {
+			return fmt.Errorf("default value cannot be specified when repeated is true")
+		}
+		switch o.Type {
+		case TypeInteger:
+			if _, err := strconv.ParseInt(o.Default, 0, 64); err != nil {
+				return fmt.Errorf(`fail to parse default value as integer: %s: %w`, o.Default, err)
+			}
+		case TypeBoolean:
+			if _, err := strconv.ParseBool(o.Default); err != nil {
+				return fmt.Errorf(`fail to parse default value as boolean: %s: %w`, o.Default, err)
+			}
+		}
+	}
 	if err := o.Type.validate(); err != nil {
 		return fmt.Errorf("invalid type %q: %w", o.Type, err)
 	}
@@ -234,20 +274,20 @@ func (o Option) Validate() error {
 type Argument struct {
 	// Name of the argument, which must match the regular expression `^[a-z][a-z0-9]*$` and be unique in arguments of the command which the argument belongs to.
 	// This property is required.
-	Name string `json:"name"`
+	Name string `json:"name,omitempty" yaml:"name,omitempty"`
 
 	// Description of the argument.
 	// The default value is an empty string.
-	Description string `json:"description,omitempty"`
+	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 
 	// Type of the value that is assignable to the argument.
 	// The default value is "string".
-	Type Type `json:"type,omitempty"`
+	Type Type `json:"type,omitempty" yaml:"type,omitempty"`
 
 	// Whether the argument is variadic (i.e. can have zero or more values).
 	// It can be true only if this argument is the last argument in the arguments of the belonging command.
 	// The default value is false.
-	Variadic bool `json:"variadic,omitempty"`
+	Variadic bool `json:"variadic,omitempty" yaml:"variadic,omitempty"`
 }
 
 func (arg Argument) validate() error {

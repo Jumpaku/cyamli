@@ -92,14 +92,20 @@ $defs:
           Type of the value that is assignable to this option.
           The default value is "string".
         $ref: '#/$defs/Type'
+      repeated:
+        description: |
+          Whether the option can be specified multiple times.
+          If true then the option can be specified multiple times in the command line arguments.
+          The default value is false.
+        type: boolean
       default:
         description: |
-          String value representing the default value of the option.
+          String value representing the default value of the non-repeated option.
           It must be a string that can be parsed as a value of the option type.
           If not specified, the following values corresponding to the option type.
-          - boolean: "false"
-          - string: ""
-          - integer: "0"
+          - boolean (not repeated): "false"
+          - string (not repeated): ""
+          - integer (not repeated): "0"
         type: string
       propagates:
         description: |

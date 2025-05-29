@@ -2,6 +2,7 @@ package name
 
 import (
 	"github.com/samber/lo"
+	"slices"
 	"strings"
 )
 
@@ -9,6 +10,11 @@ type Name struct {
 	words []string
 }
 
+func Words(words []string) Name {
+	return Name{
+		words: lo.Map(words, func(w string, _ int) string { return strings.TrimSpace(w) }),
+	}
+}
 func New(s string) Name {
 	rs := []rune(strings.Join(strings.Fields(s), " "))
 	ws := [][]rune{}
@@ -84,6 +90,10 @@ func (n Name) RemoveIf(f func(w string) bool) Name {
 
 func (n Name) Len() int {
 	return len(n.words)
+}
+
+func (n Name) Cmp(other Name) int {
+	return slices.Compare(n.words, other.words)
 }
 
 func (n Name) Slice(begin, end int) Name {
