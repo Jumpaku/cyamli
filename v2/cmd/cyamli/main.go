@@ -133,7 +133,7 @@ func (c cli) Run_GenerateKotlin(input Input_GenerateKotlin) error {
 	defer w.Close()
 
 	if err := kotlin.Generate(s, input.Opt_Package, generator(), w); err != nil {
-		return fmt.Errorf("fail to generate Dart3 code: %w", err)
+		return fmt.Errorf("fail to generate Kotlin code: %w", err)
 	}
 
 	return nil
