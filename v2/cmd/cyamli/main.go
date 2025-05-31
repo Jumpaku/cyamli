@@ -155,7 +155,7 @@ func (c cli) Run_GeneratePython3(input Input_GeneratePython3) error {
 	defer w.Close()
 
 	if err := python3.Generate(s, generator(), w); err != nil {
-		return fmt.Errorf("fail to generate Dart3 code: %w", err)
+		return fmt.Errorf("fail to generate Python3 code: %w", err)
 	}
 
 	return nil
