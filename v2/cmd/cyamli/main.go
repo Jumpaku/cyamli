@@ -177,7 +177,7 @@ func (c cli) Run_GenerateTypescript(input Input_GenerateTypescript) error {
 	defer w.Close()
 
 	if err := typescript.Generate(s, generator(), w); err != nil {
-		return fmt.Errorf("fail to generate Dart3 code: %w", err)
+		return fmt.Errorf("fail to generate Typescript code: %w", err)
 	}
 
 	return nil
