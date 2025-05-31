@@ -111,7 +111,7 @@ func (c cli) Run_GenerateGolang(input Input_GenerateGolang) error {
 	defer w.Close()
 
 	if err := golang.Generate(s, input.Opt_Package, generator(), w); err != nil {
-		return fmt.Errorf("fail to generate Dart3 code: %w", err)
+		return fmt.Errorf("fail to generate Golang code: %w", err)
 	}
 
 	return nil
