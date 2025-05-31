@@ -33,6 +33,8 @@ export async function run(handler: CLIHandler, args: string[]): Promise<void> {
       return handler.{{.HandlerMethodName}}(input);
     }
 {{end}}
+  default:
+    throw new Error();
   }
 }
 
@@ -47,45 +49,45 @@ export class {{$Command.HandlerInputType}} {
    * {{$Option.Option}} option.
    * @type { ({{$Option.InputFieldType}}) }
    */
-  {{$Option.InputFieldName}}: {{$Option.InputFieldType}} = {{$Option.InputFieldInit}};
+  public {{$Option.InputFieldName}}: {{$Option.InputFieldType}} = {{$Option.InputFieldInit}};
 {{end}}
 {{range $Index, $Argument := $Command.Arguments}}
   /**
    * Argument of type {{$Argument.InputFieldType}}.
    * @type { ({{$Argument.InputFieldType}}) }
    */
-  {{$Argument.InputFieldName}}: {{$Argument.InputFieldType}} = {{if eq $Argument.InputFieldType "string"}}""{{else if eq $Argument.InputFieldType "boolean"}}false{{else if eq $Argument.InputFieldType "number"}}0{{else if eq $Argument.InputFieldType "string[]"}}[]{{else if eq $Argument.InputFieldType "boolean[]"}}[]{{else if eq $Argument.InputFieldType "number[]"}}[]{{else}}undefined as any{{end}};
+  public {{$Argument.InputFieldName}}: {{$Argument.InputFieldType}} = {{if eq $Argument.InputFieldType "string"}}""{{else if eq $Argument.InputFieldType "boolean"}}false{{else if eq $Argument.InputFieldType "number"}}0{{else if eq $Argument.InputFieldType "string[]"}}[]{{else if eq $Argument.InputFieldType "boolean[]"}}[]{{else if eq $Argument.InputFieldType "number[]"}}[]{{else}}undefined as any{{end}};
 {{end}}
 
   /**
    * Subcommand path.
    * @type {(string[])}
    */
-  subcommand: string[] = [];
+  public subcommand: string[] = [];
 
   /**
    * Options provided in the command.
    * @type {(string[])}
    */
-  options: string[] = [];
+  public options: string[] = [];
 
   /**
    * Positional arguments provided in the command.
    * @type {(string[])}
    */
-  arguments: string[] = [];
+  public arguments: string[] = [];
 
   /**
    * Error message if input resolution fails.
    * @type {(string | null)}
    */
-  errorMessage: string | null = null;
+  public errorMessage: string | null = null;
 
   /**
    * Converts the input to a string representation.
    * @returns {(string)} A string representation of the input.
    */
-  toString(): string {
+  public toString(): string {
     const lines: string[] = [];
     lines.push(`Subcommand: [${this.subcommand.join(' ')}]`);
     lines.push(`Options: [${this.options.join(', ')}]`);

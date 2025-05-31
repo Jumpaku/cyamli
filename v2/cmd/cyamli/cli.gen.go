@@ -15,6 +15,7 @@ type CLIHandler interface {
 	Run_GenerateGolang(input Input_GenerateGolang) error
 	Run_GenerateKotlin(input Input_GenerateKotlin) error
 	Run_GeneratePython3(input Input_GeneratePython3) error
+	Run_GenerateTypescript(input Input_GenerateTypescript) error
 	Run_Version(input Input_Version) error
 }
 
@@ -55,6 +56,11 @@ func Run(handler CLIHandler, args []string) error {
 		var input Input_GeneratePython3
 		input.resolveInput(restArgs)
 		return handler.Run_GeneratePython3(input)
+
+	case "generate typescript":
+		var input Input_GenerateTypescript
+		input.resolveInput(restArgs)
+		return handler.Run_GenerateTypescript(input)
 
 	case "version":
 		var input Input_Version
@@ -580,6 +586,78 @@ func (input *Input_GeneratePython3) resolveInput(restArgs []string) {
 	func(...any) {}(expectedArgs)
 }
 
+type Input_GenerateTypescript struct {
+	Opt_Help       bool
+	Opt_OutPath    string
+	Opt_SchemaPath string
+	Subcommand     []string
+	Options        []string
+	Arguments      []string
+
+	ErrorMessage string
+}
+
+func (input *Input_GenerateTypescript) resolveInput(restArgs []string) {
+	*input = Input_GenerateTypescript{Opt_Help: false,
+		Opt_OutPath:    "",
+		Opt_SchemaPath: "",
+		Subcommand:     strings.Split("generate typescript", " "),
+	}
+
+	for idx, arg := range restArgs {
+		if arg == "--" {
+			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
+			break
+		}
+		if strings.HasPrefix(arg, "-") {
+			input.Options = append(input.Options, arg)
+		} else {
+			input.Arguments = append(input.Arguments, arg)
+		}
+	}
+	for _, arg := range input.Options {
+		optName, lit, cut := strings.Cut(arg, "=")
+		func(...any) {}(optName, lit, cut)
+
+		switch optName {
+		case "-help", "-h":
+			if !cut {
+				lit = "true"
+			}
+			if err := parseValue(&input.Opt_Help, lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			}
+
+		case "-out-path":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			}
+
+		case "-schema-path":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			}
+		default:
+			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
+			return
+		}
+	}
+
+	expectedArgs := 0
+	func(...any) {}(expectedArgs)
+}
+
 type Input_Version struct {
 	Opt_Help   bool
 	Subcommand []string
@@ -632,7 +710,7 @@ func resolveSubcommand(args []string) (subcommandPath []string, restArgs []strin
 		panic("command line arguments are too few")
 	}
 	subcommandSet := map[string]bool{
-		"": true, "generate": true, "generate dart3": true, "generate docs": true, "generate golang": true, "generate kotlin": true, "generate python3": true, "version": true,
+		"": true, "generate": true, "generate dart3": true, "generate docs": true, "generate golang": true, "generate kotlin": true, "generate python3": true, "generate typescript": true, "version": true,
 	}
 
 	for _, arg := range args[1:] {
@@ -705,7 +783,7 @@ func GetDoc(subcommands []string) string {
 		return "cyamli \n\n    Description:\n        A command line tool to generate CLI for your app from YAML-based schema.\n\n    Syntax:\n        $ cyamli  [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n    Subcommands:\n        generate:\n            holds subcommands to generate CLI code.\n\n        version:\n            shows version of this app.\n\n\n"
 
 	case "generate":
-		return "cyamli generate\n\n    Description:\n        holds subcommands to generate CLI code.\n\n    Syntax:\n        $ cyamli generate [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n    Subcommands:\n        dart3:\n            generates CLI for your app written in Dart.\n\n        docs:\n            generates documentation for your CLI app.\n\n        golang:\n            generates CLI for your app written in Go.\n\n        kotlin:\n            generates CLI for your app written in Kotlin.\n\n        python3:\n            generates CLI for your app written in Python3.\n\n\n"
+		return "cyamli generate\n\n    Description:\n        holds subcommands to generate CLI code.\n\n    Syntax:\n        $ cyamli generate [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n    Subcommands:\n        dart3:\n            generates CLI for your app written in Dart.\n\n        docs:\n            generates documentation for your CLI app.\n\n        golang:\n            generates CLI for your app written in Go.\n\n        kotlin:\n            generates CLI for your app written in Kotlin.\n\n        python3:\n            generates CLI for your app written in Python3.\n\n        typescript:\n            generates CLI for your app written in TypeScript.\n\n\n"
 
 	case "generate dart3":
 		return "cyamli generate dart3\n\n    Description:\n        generates CLI for your app written in Dart.\n\n    Syntax:\n        $ cyamli generate dart3 [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
@@ -721,6 +799,9 @@ func GetDoc(subcommands []string) string {
 
 	case "generate python3":
 		return "cyamli generate python3\n\n    Description:\n        generates CLI for your app written in Python3.\n\n    Syntax:\n        $ cyamli generate python3 [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
+
+	case "generate typescript":
+		return "cyamli generate typescript\n\n    Description:\n        generates CLI for your app written in TypeScript.\n\n    Syntax:\n        $ cyamli generate typescript [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
 
 	case "version":
 		return "cyamli version\n\n    Description:\n        shows version of this app.\n\n    Syntax:\n        $ cyamli version [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n\n"

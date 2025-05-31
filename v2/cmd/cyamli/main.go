@@ -8,6 +8,7 @@ import (
 	"github.com/Jumpaku/cyamli/v2/generate/golang"
 	"github.com/Jumpaku/cyamli/v2/generate/kotlin"
 	"github.com/Jumpaku/cyamli/v2/generate/python3"
+	"github.com/Jumpaku/cyamli/v2/generate/typescript"
 	"github.com/Jumpaku/cyamli/v2/schema"
 	"io"
 	"os"
@@ -154,6 +155,28 @@ func (c cli) Run_GeneratePython3(input Input_GeneratePython3) error {
 	defer w.Close()
 
 	if err := python3.Generate(s, generator(), w); err != nil {
+		return fmt.Errorf("fail to generate Dart3 code: %w", err)
+	}
+
+	return nil
+}
+
+func (c cli) Run_GenerateTypescript(input Input_GenerateTypescript) error {
+	exitIfErrorMessage(input.ErrorMessage, input.Subcommand)
+	help(input.Opt_Help, input.Subcommand)
+
+	s, err := loadSchema(input.Opt_SchemaPath)
+	if err != nil {
+		return fmt.Errorf("fail to load schema: %w", err)
+	}
+
+	w, err := outputWriter(input.Opt_OutPath)
+	if err != nil {
+		return fmt.Errorf("fail to create output writer: %w", err)
+	}
+	defer w.Close()
+
+	if err := typescript.Generate(s, generator(), w); err != nil {
 		return fmt.Errorf("fail to generate Dart3 code: %w", err)
 	}
 

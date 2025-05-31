@@ -35,6 +35,8 @@ subcommands:
         options:
           -package:
             description: package name where the generated file will be placed.
+      typescript:
+        description: generates CLI for your app written in TypeScript.
       docs:
         description: generates documentation for your CLI app.
         options:
