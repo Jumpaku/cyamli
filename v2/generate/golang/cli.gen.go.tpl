@@ -66,9 +66,6 @@ func (input *{{$Command.HandlerInputType}}) resolveInput(restArgs []string) {
 		func(...any) {}(optName, lit, cut)
 
 		switch optName {
-		default:
-			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
-			return
 		{{- range $Index, $Option := $Command.Options}}
 		case "{{$Option.Option}}"{{if $Option.ShortOption}}, "{{$Option.ShortOption}}"{{end}}:
 			if !cut {
@@ -93,6 +90,9 @@ func (input *{{$Command.HandlerInputType}}) resolveInput(restArgs []string) {
 			}
 			{{- end}}
 		{{end -}}
+		default:
+			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
+			return
 		}
 	}
 
@@ -192,11 +192,11 @@ func parseValue(dstPtr any, strValue ...string) error {
 {{/* Documents */}}
 func GetDoc(subcommands []string) string {
 	switch strings.Join(subcommands, " ") {
-	default:
-		panic(fmt.Sprintf(`invalid subcommands: %v`, subcommands))
 {{- range .CommandList}}
 	case {{.PathLiteral}}:
 		return {{.DocText}}
 {{end -}}
+	default:
+		panic(fmt.Sprintf(`invalid subcommands: %v`, subcommands))
 	}
 }
