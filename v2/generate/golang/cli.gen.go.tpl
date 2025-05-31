@@ -189,7 +189,12 @@ func parseValue(dstPtr any, strValue ...string) error {
 	return nil
 }
 
-{{/* Documents */}}
+func GetVersion() string {
+	return "{{.Program.Version}}"
+}
+func GetProgram() string {
+	return "{{.Program.Name}}"
+}
 func GetDoc(subcommands []string) string {
 	switch strings.Join(subcommands, " ") {
 {{- range .CommandList}}

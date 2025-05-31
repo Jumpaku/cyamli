@@ -230,6 +230,15 @@ dynamic parseValue(String strValue, String typeName) {
   }
 }
 
+/// Returns the version of the program.
+String getVersion() {
+  return '{{.Program.Version}}';
+}
+/// Returns the program name.
+String getProgram() {
+  return '{{.Program.Name}}';
+}
+
 /// Gets documentation for a subcommand
 String getDoc(List<String> subcommands) {
   switch (subcommands.join(' ')) {

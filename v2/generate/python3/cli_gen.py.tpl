@@ -176,6 +176,12 @@ def run(handler: CLIHandler, args: List[str]) -> None:
     else:
         return
 
+def get_version() -> str:
+    return "{{.Program.Version}}"
+
+def get_program() -> str:
+    return "{{.Program.Name}}"
+
 def get_doc(subcommands: List[str]) -> str:
     """Get documentation for a command."""
     subcommand_str = " ".join(subcommands)

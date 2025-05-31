@@ -13,8 +13,8 @@ import (
 var cliGenDartTemplate string
 var executor = template.Must(template.New("cli.gen.dart.tpl").Parse(cliGenDartTemplate))
 
-func Generate(schema schema.Schema, packageName, generator string, out io.Writer) error {
-	d := ConstructData(schema, packageName, generator)
+func Generate(schema schema.Schema, generator string, out io.Writer) error {
+	d := ConstructData(schema, generator)
 
 	buf := bytes.NewBuffer(nil)
 	if err := executor.Execute(buf, d); err != nil {

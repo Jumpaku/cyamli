@@ -198,7 +198,12 @@ internal fun parseArrayLong(strValues: List<String>): List<Long> {
 internal fun parseArrayString(strValues: List<String>): List<String> {
     return strValues.map { parseString(it) }
 }
-
+fun getVersion(): String {
+    return "{{.Program.Version}}"
+}
+fun getProgram(): String {
+    return "{{.Program.Name}}"
+}
 // Gets documentation for a subcommand
 fun getDoc(subcommands: List<String>): String {
     return when (subcommands.joinToString(" ")) {

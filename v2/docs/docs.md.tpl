@@ -60,7 +60,7 @@
 {{- if .Subcommands -}}
 ### Subcommands{{"\n"}}
 {{- range $Index, $Subcommand := .Subcommands -}}
-    {{"\n"}}* {{$Subcommand.Name.LowerSnake}}:{{"  \n"}}
+    {{"\n"}}* {{$Subcommand.Name}}:{{"  \n"}}
     {{- range $Index, $Line := $Subcommand.DescriptionLines -}}
         {{"  "}}{{$Line}}{{"  \n"}}
     {{- end -}}
