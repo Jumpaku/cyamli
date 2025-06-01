@@ -29,7 +29,7 @@
                                     {{- else -}}=<{{$Option.Type}}>
                                     {{- end -}}
                                 </code>
-                            {{- end }} (default=<code>{{$Option.Default}}</code>):
+                            {{- end }} (default=<code>{{$Option.Default}}</code>){{ if $Option.Negation -}}, <br><code>{{$Option.NegatedOption}}[=<{{$Option.Type}}>]</code>{{ end }}:
                         </h4>
                         <p>
                             {{ range $Index, $Line := $Option.DescriptionLines }}{{$Line}}

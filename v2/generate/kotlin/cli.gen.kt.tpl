@@ -10,13 +10,13 @@ interface CLIHandler {
 
 // Entry point for the CLI application
 fun execute(handler: CLIHandler, args: Array<String>) {
-    val (subcommandPath, restArgs) = resolveSubcommand(args)
+    val (subcommandPath, options, arguments) = resolveSubcommand(args)
 
     when (subcommandPath.joinToString(" ")) {
 {{range .CommandList}}
         {{.PathLiteral}} -> {
             val input = {{.HandlerInputType}}()
-            input.resolveInput(restArgs)
+            input.resolveInput(subcommandPath, options, arguments)
             handler.{{.HandlerMethodName}}(input)
         }
 {{end}}
@@ -41,29 +41,10 @@ data class {{.HandlerInputType}}(
     var errorMessage: String = ""
 ) {
     // Resolves input from command line arguments
-    internal fun resolveInput(restArgs: List<String>) {
-        subcommand = {{.PathLiteral}}.run { if (isEmpty()) listOf() else split(" ") }
-
-        val tempOptions = mutableListOf<String>()
-        val tempArguments = mutableListOf<String>()
-
-        var idx = 0
-        while (idx < restArgs.size) {
-            val arg = restArgs[idx]
-            if (arg == "--") {
-                tempArguments.addAll(restArgs.subList(idx + 1, restArgs.size))
-                break
-            }
-            if (arg.startsWith("-")) {
-                tempOptions.add(arg)
-            } else {
-                tempArguments.add(arg)
-            }
-            idx++
-        }
-
-        options = tempOptions
-        arguments = tempArguments
+    internal fun resolveInput(subcommand: List<String>, options: List<String>, arguments: List<String>) {
+        this.subcommand = subcommand
+        this.options = options
+        this.arguments = arguments
 
         for (arg in options) {
             val parts = arg.split("=", limit = 2)
@@ -75,8 +56,8 @@ data class {{.HandlerInputType}}(
 {{range .Options}}
                 "{{.Option}}"{{if .ShortOption}}, "{{.ShortOption}}"{{end}} -> {
                     if (!hasValue) {
-                        {{if eq .InputFieldType "Boolean" -}}
-                        {{.InputFieldName}} = true
+                        {{if or (eq .InputFieldType "Boolean") (eq .InputFieldType "List<Boolean>") -}}
+                        {{if .Repeated -}}{{.InputFieldName}} += listOf(true){{else}}{{.InputFieldName}} = true{{end}}
                         {{- else -}}
                         errorMessage = "Value is not specified to option \"$optName\""
                         return
@@ -84,7 +65,10 @@ data class {{.HandlerInputType}}(
                     } else {
                         {{if .Repeated -}}
                         try {
-                            val v = parseString(lit)
+                            val v = {{if eq .InputFieldType "List<Boolean>" -}}parseBoolean(lit)
+                            {{- else if eq .InputFieldType "List<Long>" -}}parseLong(lit)
+                            {{- else -}}parseString(lit)
+                            {{- end}}
                             {{.InputFieldName}} = {{.InputFieldName}} + listOf(v)
                         } catch (e: Exception) {
                             errorMessage = "Value \"$lit\" is not assignable to option \"$optName\""
@@ -100,6 +84,32 @@ data class {{.HandlerInputType}}(
                         {{- end}}
                     }
                 }
+                {{if .Negation}}"-no{{.Option}}" -> {
+                    if (!hasValue) {
+                        {{if .Repeated -}}{{.InputFieldName}} += listOf(false){{else}}{{.InputFieldName}} = false{{end}}
+                    } else {
+                        {{if .Repeated -}}
+                        try {
+                            val v = {{if eq .InputFieldType "List<Boolean>" -}}parseBoolean(lit)
+                            {{- else if eq .InputFieldType "List<Long>" -}}parseLong(lit)
+                            {{- else -}}parseString(lit)
+                            {{- end}}
+                            {{.InputFieldName}} = {{.InputFieldName}} + listOf(!v)
+                        } catch (e: Exception) {
+                            errorMessage = "Value \"$lit\" is not assignable to option \"$optName\""
+                            return
+                        }
+                        {{- else -}}
+                        try {
+                            {{.InputFieldName}} = !parse{{.InputFieldType}}(lit)
+                        } catch (e: Exception) {
+                            errorMessage = "Value \"$lit\" is not assignable to option \"$optName\""
+                            return
+                        }
+                        {{- end}}
+                    }
+                }
+                {{end}}
 {{end}}
                 else -> {
                     errorMessage = "Unknown option \"$optName\""
@@ -146,7 +156,7 @@ data class {{.HandlerInputType}}(
 {{end}}
 
 // Resolves the subcommand from arguments
-internal fun resolveSubcommand(args: Array<String>): Pair<List<String>, List<String>> {
+internal fun resolveSubcommand(args: Array<String>): Triple<List<String>, List<String>, List<String>> {
     val subcommandSet = mapOf(
 {{range .CommandList}}
         {{.PathLiteral}} to true,
@@ -166,12 +176,34 @@ internal fun resolveSubcommand(args: Array<String>): Pair<List<String>, List<Str
         subcommandPath.add(arg)
     }
 
-    return Pair(subcommandPath, args.drop(subcommandPath.size))
+    val restArgs = args.drop(subcommandPath.size)
+    val options = mutableListOf<String>()
+    val arguments = mutableListOf<String>()
+    var idx = 0
+    while (idx < restArgs.size) {
+        val arg = restArgs[idx]
+        if (arg == "--") {
+            arguments.addAll(restArgs.subList(idx + 1, restArgs.size))
+            break
+        }
+        if (arg.startsWith("-")) {
+            options.add(arg)
+        } else {
+            arguments.add(arg)
+        }
+        idx++
+    }
+
+    return Triple(subcommandPath, options, arguments)
 }
 
 // Parses a string value to Boolean
 internal fun parseBoolean(strValue: String): Boolean {
-    return strValue.toBoolean()
+    return when(strValue) {
+        "true", "1", "t" -> true
+        "false", "0", "f" -> false
+        else -> throw IllegalArgumentException("Invalid boolean value: $strValue")
+    }
 }
 
 // Parses a string value to Long

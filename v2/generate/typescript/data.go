@@ -60,6 +60,7 @@ type OptionData struct {
 	Type         schema.Type
 	Repeated     bool
 	DefaultValue string
+	Negation     bool
 }
 
 func (d OptionData) InputFieldName() string {
@@ -81,14 +82,16 @@ func (d OptionData) InputFieldInit() string {
 	}
 	switch typ {
 	case "boolean":
-		if d.DefaultValue == "" {
+		switch strings.ToLower(d.DefaultValue) {
+		default:
+			panic(fmt.Sprintf("failed to parse %q as bool", d.DefaultValue))
+		case "":
+			return "false"
+		case "true", "True", "1":
+			return "true"
+		case "false", "False", "0":
 			return "false"
 		}
-		v, err := strconv.ParseBool(d.DefaultValue)
-		if err != nil {
-			panic(fmt.Sprintf("failed to parse %q as boolean", d.DefaultValue))
-		}
-		return fmt.Sprintf("%t", v)
 	case "string":
 		if d.DefaultValue == "" {
 			return `""`
@@ -150,6 +153,7 @@ func ConstructData(s schema.Schema, generatorName string) Data {
 				Type:         o.Type,
 				Repeated:     o.Repeated,
 				DefaultValue: o.Default,
+				Negation:     o.Negation,
 			})
 		}
 		slices.SortFunc(options, func(a, b OptionData) int { return a.Name.Cmp(b.Name) })

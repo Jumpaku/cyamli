@@ -92,6 +92,12 @@ $defs:
           Type of the value that is assignable to this option.
           The default value is "string".
         $ref: '#/$defs/Type'
+      negation:
+        description: |
+          Whether the option of typed boolean has a negated version.
+          If true then the option can be specified with a negation prefix `-no` in the command line arguments.
+          The default value is false.
+        type: boolean
       repeated:
         description: |
           Whether the option can be specified multiple times.
@@ -113,7 +119,6 @@ $defs:
           If true then the option is available in all subcommands of the command which the option belongs to.
           The default value is false.
         type: boolean
-
   Argument:
     description: |
       Argument represents a positional required argument in command line arguments.

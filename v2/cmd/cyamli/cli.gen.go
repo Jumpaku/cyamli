@@ -20,51 +20,51 @@ type CLIHandler interface {
 }
 
 func Run(handler CLIHandler, args []string) error {
-	subcommandPath, restArgs := resolveSubcommand(args)
+	subcommandPath, options, arguments := resolveArgs(args)
 	switch strings.Join(subcommandPath, " ") {
 	case "":
 		var input Input
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run(input)
 
 	case "generate":
 		var input Input_Generate
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_Generate(input)
 
 	case "generate dart3":
 		var input Input_GenerateDart3
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_GenerateDart3(input)
 
 	case "generate docs":
 		var input Input_GenerateDocs
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_GenerateDocs(input)
 
 	case "generate golang":
 		var input Input_GenerateGolang
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_GenerateGolang(input)
 
 	case "generate kotlin":
 		var input Input_GenerateKotlin
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_GenerateKotlin(input)
 
 	case "generate python3":
 		var input Input_GeneratePython3
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_GeneratePython3(input)
 
 	case "generate typescript":
 		var input Input_GenerateTypescript
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_GenerateTypescript(input)
 
 	case "version":
 		var input Input_Version
-		input.resolveInput(restArgs)
+		input.resolveInput(options, arguments)
 		return handler.Run_Version(input)
 	}
 	return nil
@@ -79,22 +79,13 @@ type Input struct {
 	ErrorMessage string
 }
 
-func (input *Input) resolveInput(restArgs []string) {
+func (input *Input) resolveInput(options, arguments []string) {
 	*input = Input{Opt_Help: false,
 		Subcommand: strings.Split("", " "),
+		Options:    options,
+		Arguments:  arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -104,10 +95,13 @@ func (input *Input) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -129,24 +123,15 @@ type Input_Generate struct {
 	ErrorMessage string
 }
 
-func (input *Input_Generate) resolveInput(restArgs []string) {
+func (input *Input_Generate) resolveInput(options, arguments []string) {
 	*input = Input_Generate{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
 		Subcommand:     strings.Split("generate", " "),
+		Options:        options,
+		Arguments:      arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -156,9 +141,11 @@ func (input *Input_Generate) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
 
 		case "-out-path":
@@ -166,9 +153,11 @@ func (input *Input_Generate) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_OutPath = v.(string)
 			}
 
 		case "-schema-path":
@@ -176,10 +165,13 @@ func (input *Input_Generate) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -201,24 +193,15 @@ type Input_GenerateDart3 struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateDart3) resolveInput(restArgs []string) {
+func (input *Input_GenerateDart3) resolveInput(options, arguments []string) {
 	*input = Input_GenerateDart3{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
 		Subcommand:     strings.Split("generate dart3", " "),
+		Options:        options,
+		Arguments:      arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -228,9 +211,11 @@ func (input *Input_GenerateDart3) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
 
 		case "-out-path":
@@ -238,9 +223,11 @@ func (input *Input_GenerateDart3) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_OutPath = v.(string)
 			}
 
 		case "-schema-path":
@@ -248,10 +235,13 @@ func (input *Input_GenerateDart3) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -274,25 +264,16 @@ type Input_GenerateDocs struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateDocs) resolveInput(restArgs []string) {
+func (input *Input_GenerateDocs) resolveInput(options, arguments []string) {
 	*input = Input_GenerateDocs{Opt_Format: "text",
 		Opt_Help:       false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
 		Subcommand:     strings.Split("generate docs", " "),
+		Options:        options,
+		Arguments:      arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -303,18 +284,22 @@ func (input *Input_GenerateDocs) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_Format, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Format = v.(string)
 			}
 
 		case "-help", "-h":
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
 
 		case "-out-path":
@@ -322,9 +307,11 @@ func (input *Input_GenerateDocs) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_OutPath = v.(string)
 			}
 
 		case "-schema-path":
@@ -332,10 +319,13 @@ func (input *Input_GenerateDocs) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -358,25 +348,16 @@ type Input_GenerateGolang struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateGolang) resolveInput(restArgs []string) {
+func (input *Input_GenerateGolang) resolveInput(options, arguments []string) {
 	*input = Input_GenerateGolang{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_Package:    "main",
 		Opt_SchemaPath: "",
 		Subcommand:     strings.Split("generate golang", " "),
+		Options:        options,
+		Arguments:      arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -386,9 +367,11 @@ func (input *Input_GenerateGolang) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
 
 		case "-out-path":
@@ -396,9 +379,11 @@ func (input *Input_GenerateGolang) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_OutPath = v.(string)
 			}
 
 		case "-package":
@@ -406,9 +391,11 @@ func (input *Input_GenerateGolang) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_Package, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Package = v.(string)
 			}
 
 		case "-schema-path":
@@ -416,10 +403,13 @@ func (input *Input_GenerateGolang) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -442,25 +432,16 @@ type Input_GenerateKotlin struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateKotlin) resolveInput(restArgs []string) {
+func (input *Input_GenerateKotlin) resolveInput(options, arguments []string) {
 	*input = Input_GenerateKotlin{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_Package:    "",
 		Opt_SchemaPath: "",
 		Subcommand:     strings.Split("generate kotlin", " "),
+		Options:        options,
+		Arguments:      arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -470,9 +451,11 @@ func (input *Input_GenerateKotlin) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
 
 		case "-out-path":
@@ -480,9 +463,11 @@ func (input *Input_GenerateKotlin) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_OutPath = v.(string)
 			}
 
 		case "-package":
@@ -490,9 +475,11 @@ func (input *Input_GenerateKotlin) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_Package, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Package = v.(string)
 			}
 
 		case "-schema-path":
@@ -500,10 +487,13 @@ func (input *Input_GenerateKotlin) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -525,24 +515,15 @@ type Input_GeneratePython3 struct {
 	ErrorMessage string
 }
 
-func (input *Input_GeneratePython3) resolveInput(restArgs []string) {
+func (input *Input_GeneratePython3) resolveInput(options, arguments []string) {
 	*input = Input_GeneratePython3{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
 		Subcommand:     strings.Split("generate python3", " "),
+		Options:        options,
+		Arguments:      arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -552,9 +533,11 @@ func (input *Input_GeneratePython3) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
 
 		case "-out-path":
@@ -562,9 +545,11 @@ func (input *Input_GeneratePython3) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_OutPath = v.(string)
 			}
 
 		case "-schema-path":
@@ -572,10 +557,13 @@ func (input *Input_GeneratePython3) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -597,24 +585,15 @@ type Input_GenerateTypescript struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateTypescript) resolveInput(restArgs []string) {
+func (input *Input_GenerateTypescript) resolveInput(options, arguments []string) {
 	*input = Input_GenerateTypescript{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
 		Subcommand:     strings.Split("generate typescript", " "),
+		Options:        options,
+		Arguments:      arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -624,9 +603,11 @@ func (input *Input_GenerateTypescript) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
 
 		case "-out-path":
@@ -634,9 +615,11 @@ func (input *Input_GenerateTypescript) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_OutPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_OutPath = v.(string)
 			}
 
 		case "-schema-path":
@@ -644,10 +627,13 @@ func (input *Input_GenerateTypescript) resolveInput(restArgs []string) {
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 			}
-			if err := parseValue(&input.Opt_SchemaPath, lit); err != nil {
+			if v, err := parseValue("string", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -667,22 +653,13 @@ type Input_Version struct {
 	ErrorMessage string
 }
 
-func (input *Input_Version) resolveInput(restArgs []string) {
+func (input *Input_Version) resolveInput(options, arguments []string) {
 	*input = Input_Version{Opt_Help: false,
 		Subcommand: strings.Split("version", " "),
+		Options:    options,
+		Arguments:  arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -692,10 +669,13 @@ func (input *Input_Version) resolveInput(restArgs []string) {
 			if !cut {
 				lit = "true"
 			}
-			if err := parseValue(&input.Opt_Help, lit); err != nil {
+			if v, err := parseValue("bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				input.Opt_Help = v.(bool)
 			}
+
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
 			return
@@ -705,7 +685,7 @@ func (input *Input_Version) resolveInput(restArgs []string) {
 	expectedArgs := 0
 	func(...any) {}(expectedArgs)
 }
-func resolveSubcommand(args []string) (subcommandPath []string, restArgs []string) {
+func resolveArgs(args []string) (subcommandPath []string, options []string, arguments []string) {
 	if len(args) == 0 {
 		panic("command line arguments are too few")
 	}
@@ -724,51 +704,74 @@ func resolveSubcommand(args []string) (subcommandPath []string, restArgs []strin
 		subcommandPath = append(subcommandPath, arg)
 	}
 
-	return subcommandPath, args[1+len(subcommandPath):]
+	restArgs := args[1+len(subcommandPath):]
+	for idx, arg := range restArgs {
+		if arg == "--" {
+			arguments = append(arguments, restArgs[idx+1:]...)
+			break
+		}
+		if strings.HasPrefix(arg, "-") {
+			options = append(options, arg)
+		} else {
+			arguments = append(arguments, arg)
+		}
+	}
+
+	return subcommandPath, options, arguments
 }
 
-func parseValue(dstPtr any, strValue ...string) error {
-	switch dstPtr := dstPtr.(type) {
-	case *[]bool:
+func parseValue(typ string, strValue ...string) (dst any, err error) {
+	switch typ {
+	case "[]bool":
 		val := make([]bool, len(strValue))
 		for idx, str := range strValue {
-			if err := parseValue(&val[idx], str); err != nil {
-				return fmt.Errorf("fail to parse %#v as []bool: %w", str, err)
+			var v any
+			if v, err = parseValue("bool", str); err != nil {
+				return nil, fmt.Errorf("fail to parse %#v as []bool: %w", str, err)
 			}
+			val[idx] = v.(bool)
 		}
-		*dstPtr = val
-	case *[]int64:
+		return val, nil
+	case "[]int64":
 		val := make([]int64, len(strValue))
 		for idx, str := range strValue {
-			if err := parseValue(&val[idx], str); err != nil {
-				return fmt.Errorf("fail to parse %#v as []int64: %w", str, err)
+			var v any
+			if v, err = parseValue("int64", str); err != nil {
+				return nil, fmt.Errorf("fail to parse %#v as []int64: %w", str, err)
 			}
+			val[idx] = v.(int64)
 		}
-		*dstPtr = val
-	case *[]string:
+		return val, nil
+	case "[]string":
 		val := make([]string, len(strValue))
 		for idx, str := range strValue {
-			if err := parseValue(&val[idx], str); err != nil {
-				return fmt.Errorf("fail to parse %#v as []string: %w", str, err)
+			var v any
+			if v, err = parseValue("string", str); err != nil {
+				return nil, fmt.Errorf("fail to parse %#v as []string: %w", str, err)
 			}
+			val[idx] = v.(string)
 		}
-		*dstPtr = val
-	case *bool:
-		val, err := strconv.ParseBool(strValue[0])
-		if err != nil {
-			return fmt.Errorf("fail to parse %q as bool: %w", strValue[0], err)
+		return val, nil
+	case "bool":
+		switch strings.ToLower(strValue[0]) {
+		default:
+			return nil, fmt.Errorf("fail to parse %q as bool: unknown value", strValue[0])
+		case "true", "1", "t":
+			return true, nil
+		case "false", "0", "f":
+			return false, nil
 		}
-		*dstPtr = val
-	case *int64:
+	case "int64":
 		val, err := strconv.ParseInt(strValue[0], 0, 64)
 		if err != nil {
-			return fmt.Errorf("fail to parse %q as int64: %w", strValue[0], err)
+			return nil, fmt.Errorf("fail to parse %q as int64: %w", strValue[0], err)
 		}
-		*dstPtr = val
-	case *string:
-		*dstPtr = strValue[0]
+		return val, nil
+	case "string":
+		return strValue[0], nil
 	}
-	return nil
+
+	return nil, fmt.Errorf("unknown type %q", typ)
 }
 
 func GetVersion() string {

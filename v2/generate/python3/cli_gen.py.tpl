@@ -27,25 +27,14 @@ class {{$Command.HandlerInputType}}:
 
         self.error_message: Optional[str] = None
 
-    def resolve_input(self, rest_args: List[str]) -> None:
+    def resolve_input(self, subcommand: List[str], options: List[str], arguments: List[str]) -> None:
         # Initialize default values
         {{- range $Index, $Option := $Command.Options}}
         self.{{$Option.InputFieldName}} = {{$Option.InputFieldInit}}
         {{end -}}
-        self.subcommand = {{$Command.PathLiteral}}.split(" ") if {{$Command.PathLiteral}} else []
-
-        # Process arguments
-        i = 0
-        while i < len(rest_args):
-            arg = rest_args[i]
-            if arg == "--":
-                self.arguments.extend(rest_args[i+1:])
-                break
-            elif arg.startswith("-"):
-                self.options.append(arg)
-            else:
-                self.arguments.append(arg)
-            i += 1
+        self.subcommand = subcommand
+        self.options = options
+        self.arguments = arguments
 
         # Process options
         for arg in self.options:
@@ -61,7 +50,7 @@ class {{$Command.HandlerInputType}}:
             {{- range $Index, $Option := $Command.Options}}
             if opt_name in ["{{$Option.Option}}"{{if $Option.ShortOption}}, "{{$Option.ShortOption}}"{{end}}]:
                 if not cut:
-                    {{if eq $Option.InputFieldType "bool" -}}
+                    {{if or (eq $Option.InputFieldType "bool") (eq $Option.InputFieldType "List[bool]") -}}
                     lit = "True"
                     {{- else -}}
                     self.error_message = "value is not specified to option " + repr(opt_name)
@@ -69,18 +58,32 @@ class {{$Command.HandlerInputType}}:
                     {{- end}}
 
                 try:
-                    {{if $Option.Repeated -}}
                     v = parse_value(lit, "{{$Option.InputFieldType}}")
-                    if self.{{$Option.InputFieldName}} is None:
-                        self.{{$Option.InputFieldName}} = []
+                    {{if $Option.Repeated -}}
                     self.{{$Option.InputFieldName}} += v
                     {{- else -}}
-                    self.{{$Option.InputFieldName}} = parse_value(lit, "{{$Option.InputFieldType}}")
+                    self.{{$Option.InputFieldName}} = v
                     {{- end}}
                 except ValueError as e:
                     self.error_message = "value " + repr(lit) + " is not assignable to option " + repr(opt_name)
                     return
                 continue
+            {{if $Option.Negation -}}
+            elif opt_name == "-no{{$Option.Option}}":
+                if not cut:
+                    lit = "True"
+                try:
+                    v = parse_value(lit, "{{$Option.InputFieldType}}")
+                    {{if $Option.Repeated -}}
+                    self.{{$Option.InputFieldName}} += [not vi for vi in v]
+                    {{- else -}}
+                    self.{{$Option.InputFieldName}} = not v
+                    {{- end}}
+                except ValueError as e:
+                    self.error_message = "value " + repr(lit) + " is not assignable to option " + repr(opt_name)
+                    return
+                continue
+            {{- end}}
             {{end}}
             self.error_message = "unknown option " + repr(opt_name)
             return
@@ -113,7 +116,7 @@ class {{$Command.HandlerInputType}}:
         {{end -}}
 {{end}}
 
-def resolve_subcommand(args: List[str]) -> Tuple[List[str], List[str]]:
+def resolve_args(args: List[str]) -> Tuple[List[str], List[str], List[str]]:
     if not args:
         raise ValueError("command line arguments are too few")
 
@@ -133,7 +136,23 @@ def resolve_subcommand(args: List[str]) -> Tuple[List[str], List[str]]:
 
         subcommand_path.append(arg)
 
-    return subcommand_path, args[1+len(subcommand_path):]
+    rest_args = args[1+len(subcommand_path):]
+
+    i = 0
+    options = []
+    arguments = []
+    while i < len(rest_args):
+        arg = rest_args[i]
+        if arg == "--":
+            arguments.extend(rest_args[i+1:])
+            break
+        elif arg.startswith("-"):
+            options.append(arg)
+        else:
+            arguments.append(arg)
+        i += 1
+
+    return subcommand_path, options, arguments
 
 def parse_value(value: str, type_name: str) -> Any:
     """Parse a string value into the specified type."""
@@ -164,13 +183,13 @@ def parse_value(value: str, type_name: str) -> Any:
 
 def run(handler: CLIHandler, args: List[str]) -> None:
     """Entry point for the CLI application."""
-    subcommand_path, rest_args = resolve_subcommand(args)
+    subcommand_path, options, arguments = resolve_args(args)
     subcommand_str = " ".join(subcommand_path)
 
     {{- range .CommandList}}
     if subcommand_str == {{.PathLiteral}}:
         input_obj = {{.HandlerInputType}}()
-        input_obj.resolve_input(rest_args)
+        input_obj.resolve_input(subcommand_path, options, arguments)
         handler.{{.HandlerMethodName}}(input_obj)
     {{end -}}
     else:

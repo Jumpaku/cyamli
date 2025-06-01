@@ -296,6 +296,11 @@ type Option struct {
 	// The default value is "string".
 	Type Type `json:"type,omitempty" yaml:"type,omitempty"`
 
+	// Whether the option of typed boolean has a negated version.
+	// If true then the option can be specified with a negation prefix `-no` in the command line arguments.
+	// The default value is false.
+	Negation bool `json:"negation,omitempty" yaml:"negation,omitempty"`
+
 	// String value representing the default value of the option.
 	// It must be a string that can be parsed as a value of the option type.
 	// If not specified, the following values corresponding to the option type.
@@ -304,15 +309,15 @@ type Option struct {
 	// - integer: "0"
 	Default string `json:"default,omitempty" yaml:"default,omitempty"`
 
-	// Whether the option propagates to subcommands.
-	// If true then the option is available in all subcommands of the command which the option belongs to.
-	// The default value is false.
-	Propagates bool `json:"propagates,omitempty" yaml:"propagates,omitempty"`
-
 	// Whether the option can be specified multiple times.
 	// If true then the option can be specified multiple times in the command line arguments.
 	// The default value is false.
 	Repeated bool `json:"repeated,omitempty" yaml:"repeated,omitempty"`
+
+	// Whether the option propagates to subcommands.
+	// If true then the option is available in all subcommands of the command which the option belongs to.
+	// The default value is false.
+	Propagates bool `json:"propagates,omitempty" yaml:"propagates,omitempty"`
 }
 
 func (o Option) validate() error {
@@ -329,6 +334,11 @@ func (o Option) validate() error {
 			if _, err := strconv.ParseBool(o.Default); err != nil {
 				return fmt.Errorf(`fail to parse default value as boolean: %s: %w`, o.Default, err)
 			}
+		}
+	}
+	if o.Type != TypeBoolean {
+		if o.Negation {
+			return fmt.Errorf("negation is only available for boolean type options")
 		}
 	}
 	if err := o.Type.validate(); err != nil {

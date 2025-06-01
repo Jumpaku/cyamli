@@ -54,6 +54,7 @@ type OptionData struct {
 	Type        schema.Type
 	Repeated    bool
 	Default     string
+	Negation    bool
 }
 
 func (d OptionData) DescriptionLines() []string {
@@ -66,6 +67,13 @@ func (d OptionData) Options() (options []string) {
 		options = append(options, d.ShortOption)
 	}
 	return options
+}
+
+func (d OptionData) NegatedOption() (option string) {
+	if d.Negation {
+		return "-no" + d.Option
+	}
+	panic(fmt.Sprintf("Option %q cannot not be negated", d.Option))
 }
 
 type ArgumentData struct {
@@ -108,6 +116,7 @@ func Construct(program string, path []string, cmd schema.Command) CommandData {
 				Type:        option.Type,
 				Repeated:    option.Repeated,
 				Default:     option.Default,
+				Negation:    option.Negation,
 			}
 
 			switch option.Type {

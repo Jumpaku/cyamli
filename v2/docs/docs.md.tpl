@@ -30,7 +30,8 @@
         {{- else -}}=<{{$Option.Type}}>
         {{- end -}}`
     {{- end -}}
-    {{"  "}}(default=`{{$Option.Default}}`):{{"  \n"}}
+    {{"  "}}(default=`{{$Option.Default}}`)
+    {{- if $Option.Negation -}},{{"  \n  "}}`{{$Option.NegatedOption}}[=<{{$Option.Type}}>]`{{- end -}}:{{"  \n"}}
     {{- range $Index, $Line := $Option.DescriptionLines -}}
         {{"  "}}{{$Line}}{{"  \n"}}
     {{- end -}}

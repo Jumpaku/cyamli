@@ -15,12 +15,12 @@ type CLIHandler interface {
 
 {{/* Entry point */}}
 func Run(handler CLIHandler, args []string) error {
-	subcommandPath, restArgs := resolveSubcommand(args)
+	subcommandPath, options, arguments := resolveArgs(args)
 	switch strings.Join(subcommandPath, " ") {
 	{{- range .CommandList}}
 	case {{.PathLiteral}}:
 		var input {{.HandlerInputType}}
-		input.resolveInput(restArgs)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.{{.HandlerMethodName}}(input)
 	{{end -}}
 	}
@@ -42,25 +42,16 @@ type {{$Command.HandlerInputType}} struct {
 
 	ErrorMessage string
 }
-func (input *{{$Command.HandlerInputType}}) resolveInput(restArgs []string) {
+func (input *{{$Command.HandlerInputType}}) resolveInput(subcommand, options, arguments []string) {
 	*input = {{.HandlerInputType}}{
 		{{- range $Index, $Option := $Command.Options -}}
 		{{$Option.InputFieldName}}: {{$Option.InputFieldInit}},
 		{{end -}}
-		Subcommand: strings.Split({{$Command.PathLiteral}}, " "),
+		Subcommand: subcommand,
+		Options:    options,
+		Arguments:  arguments,
 	}
 
-	for idx, arg := range restArgs {
-		if arg == "--" {
-			input.Arguments = append(input.Arguments, restArgs[idx+1:]...)
-			break
-		}
-		if strings.HasPrefix(arg, "-") {
-			input.Options = append(input.Options, arg)
-		} else {
-			input.Arguments = append(input.Arguments, arg)
-		}
-	}
 	for _, arg := range input.Options {
 		optName, lit, cut := strings.Cut(arg, "=")
 		func(...any) {}(optName, lit, cut)
@@ -69,26 +60,38 @@ func (input *{{$Command.HandlerInputType}}) resolveInput(restArgs []string) {
 		{{- range $Index, $Option := $Command.Options}}
 		case "{{$Option.Option}}"{{if $Option.ShortOption}}, "{{$Option.ShortOption}}"{{end}}:
 			if !cut {
-				{{if eq $Option.InputFieldType "bool" -}}
+				{{if or (eq $Option.InputFieldType "bool") (eq $Option.InputFieldType "[]bool") -}}
 				lit = "true"
 				{{- else -}}
 				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
 				return
 				{{- end}}
 			}
-			{{if $Option.Repeated -}}
-			var v {{$Option.InputFieldType}}
-			if err := parseValue(&v, lit); err != nil {
+			if v, err := parseValue("{{$Option.InputFieldType}}", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				{{if $Option.Repeated -}}
+				input.{{$Option.InputFieldName}} = append(input.{{$Option.InputFieldName}}, v.({{$Option.InputFieldType}})[0])
+				{{- else -}}
+				input.{{$Option.InputFieldName}} = v.({{$Option.InputFieldType}})
+				{{- end}}
 			}
-			input.{{$Option.InputFieldName}} = append(input.{{$Option.InputFieldName}}, v...)
-			{{- else -}}
-			if err := parseValue(&input.{{$Option.InputFieldName}}, lit); err != nil {
+		{{if $Option.Negation}}case "-no{{$Option.Option}}":
+			if !cut {
+				lit = "true"
+			}
+			if v, err := parseValue("{{$Option.InputFieldType}}", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
+			} else {
+				{{if $Option.Repeated -}}
+				input.{{$Option.InputFieldName}} = append(input.{{$Option.InputFieldName}}, !v.({{$Option.InputFieldType}})[0])
+				{{- else -}}
+				input.{{$Option.InputFieldName}} = !v.({{$Option.InputFieldType}})
+				{{- end}}
 			}
-			{{- end}}
+		{{end}}
 		{{end -}}
 		default:
 			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
@@ -105,25 +108,30 @@ func (input *{{$Command.HandlerInputType}}) resolveInput(restArgs []string) {
 		input.ErrorMessage = fmt.Sprintf("too few arguments: required at least %d, got %d", expectedArgs-1, len(input.Arguments))
 		return
 	}
-	if err := parseValue(&input.{{$Argument.InputFieldName}}, input.Arguments[{{$Index}}:]...); err != nil {
+
+	if v, err := parseValue("{{$Argument.InputFieldType}}", input.Arguments[{{$Index}}:]...); err != nil {
 		input.ErrorMessage = fmt.Sprintf("values [%s] are not assignable to arguments at [%d:]", strings.Join(input.Arguments[{{$Index}}:], " "), {{$Index}})
 		return
+	} else {
+		input.{{$Argument.InputFieldName}} = v.({{$Argument.InputFieldType}})
 	}
 	{{- else -}}
 	if len(input.Arguments) <= {{$Index}} {
 		input.ErrorMessage = fmt.Sprintf("too few arguments: required %d, got %d", expectedArgs, len(input.Arguments))
 		return
 	}
-	if err := parseValue(&input.{{$Argument.InputFieldName}}, input.Arguments[{{$Index}}]); err != nil {
+	if v, err := parseValue("{{$Argument.InputFieldType}}", input.Arguments[{{$Index}}:]...); err != nil {
 		input.ErrorMessage = fmt.Sprintf("value %q is not assignable to argument at [%d]", input.Arguments[{{$Index}}], {{$Index}})
 		return
+	} else {
+		input.{{$Argument.InputFieldName}} = v.({{$Argument.InputFieldType}})
 	}
 	{{- end}}
 	{{end -}}
 }
 {{end -}}
 
-func resolveSubcommand(args []string) (subcommandPath []string, restArgs []string) {
+func resolveArgs(args []string) (subcommandPath []string, options []string, arguments []string) {
 	if len(args) == 0 {
 		panic("command line arguments are too few")
 	}
@@ -142,51 +150,74 @@ func resolveSubcommand(args []string) (subcommandPath []string, restArgs []strin
 		subcommandPath = append(subcommandPath, arg)
 	}
 
-	return subcommandPath, args[1+len(subcommandPath):]
+	restArgs := args[1+len(subcommandPath):]
+	for idx, arg := range restArgs {
+		if arg == "--" {
+			arguments = append(arguments, restArgs[idx+1:]...)
+			break
+		}
+		if strings.HasPrefix(arg, "-") {
+			options = append(options, arg)
+		} else {
+			arguments = append(arguments, arg)
+		}
+	}
+
+	return subcommandPath, options, arguments
 }
 
-func parseValue(dstPtr any, strValue ...string) error {
-	switch dstPtr := dstPtr.(type) {
-	case *[]bool:
+func parseValue(typ string, strValue ...string) (dst any, err error) {
+	switch typ {
+	case "[]bool":
 		val := make([]bool, len(strValue))
 		for idx, str := range strValue {
-			if err := parseValue(&val[idx], str); err != nil {
-				return fmt.Errorf("fail to parse %#v as []bool: %w", str, err)
+			var v any
+			if v, err = parseValue("bool", str); err != nil {
+				return nil, fmt.Errorf("fail to parse %#v as []bool: %w", str, err)
 			}
+			val[idx] = v.(bool)
 		}
-		*dstPtr = val
-	case *[]int64:
+		return val, nil
+	case "[]int64":
 		val := make([]int64, len(strValue))
 		for idx, str := range strValue {
-			if err := parseValue(&val[idx], str); err != nil {
-				return fmt.Errorf("fail to parse %#v as []int64: %w", str, err)
+			var v any
+			if v, err = parseValue("int64", str); err != nil {
+				return nil, fmt.Errorf("fail to parse %#v as []int64: %w", str, err)
 			}
+			val[idx] = v.(int64)
 		}
-		*dstPtr = val
-	case *[]string:
+		return val, nil
+	case "[]string":
 		val := make([]string, len(strValue))
 		for idx, str := range strValue {
-			if err := parseValue(&val[idx], str); err != nil {
-				return fmt.Errorf("fail to parse %#v as []string: %w", str, err)
+			var v any
+			if v, err = parseValue("string", str); err != nil {
+				return nil, fmt.Errorf("fail to parse %#v as []string: %w", str, err)
 			}
+			val[idx] = v.(string)
 		}
-		*dstPtr = val
-	case *bool:
-		val, err := strconv.ParseBool(strValue[0])
-		if err != nil {
-			return fmt.Errorf("fail to parse %q as bool: %w", strValue[0], err)
+		return val, nil
+	case "bool":
+		switch strings.ToLower(strValue[0]) {
+		default:
+			return nil, fmt.Errorf("fail to parse %q as bool: unknown value", strValue[0])
+		case "true", "1", "t":
+			return true, nil
+		case "false", "0", "f":
+			return false, nil
 		}
-		*dstPtr = val
-	case *int64:
+	case "int64":
 		val, err := strconv.ParseInt(strValue[0], 0, 64)
 		if err != nil {
-			return fmt.Errorf("fail to parse %q as int64: %w", strValue[0], err)
+			return nil, fmt.Errorf("fail to parse %q as int64: %w", strValue[0], err)
 		}
-		*dstPtr = val
-	case *string:
-		*dstPtr = strValue[0]
+		return val, nil
+	case "string":
+		return strValue[0], nil
 	}
-	return nil
+
+	return nil, fmt.Errorf("unknown type %q", typ)
 }
 
 func GetVersion() string {
