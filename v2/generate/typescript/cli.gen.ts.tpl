@@ -91,27 +91,6 @@ export class {{$Command.HandlerInputType}} {
   public errorMessage: string | null = null;
 
   /**
-   * Converts the input to a string representation.
-   * @returns {(string)} A string representation of the input.
-   */
-  public toString(): string {
-    const lines: string[] = [];
-    lines.push(`Subcommand: [${this.subcommand.join(' ')}]`);
-    lines.push(`Options: [${this.options.join(', ')}]`);
-    lines.push(`Arguments: [${this.arguments.join(', ')}]`);
-{{range $Index, $Option := $Command.Options}}
-    lines.push(`{{$Option.InputFieldName}}: ${this.{{$Option.InputFieldName}}}`);
-{{end}}
-{{range $Index, $Argument := $Command.Arguments}}
-    lines.push(`{{$Argument.InputFieldName}}: ${this.{{$Argument.InputFieldName}}}`);
-{{end}}
-    if (this.errorMessage) {
-      lines.push(`Error: ${this.errorMessage}`);
-    }
-    return lines.join('\n');
-  }
-
-  /**
    * Resolves input from command-line arguments.
    * @param {(string[])} subcommand - The subcommand in command-line arguments.
    * @param {(string[])} options - The options in command-line arguments.
