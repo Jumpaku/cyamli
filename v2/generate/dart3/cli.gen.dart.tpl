@@ -224,7 +224,7 @@ List<dynamic> parseValues(List<String> strValue, String typeName) {
     case 'List<bool>':
       return strValue.map((s) => parseValue(s, 'bool') as bool).toList();
     case 'List<int>':
-      return strValue.map((s) => parseValue(s, 'int') as bool).toList();
+      return strValue.map((s) => parseValue(s, 'int') as int).toList();
     case 'List<String>':
       return strValue.map((s) => parseValue(s, 'String') as bool).toList();
     default:
