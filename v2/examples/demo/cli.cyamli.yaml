@@ -1,0 +1,19 @@
+name: demo
+options:
+  -config:
+    description: path to the config file.
+    propagates: true
+subcommands:
+  tables:
+    description: list tables from the database.
+  schema:
+    description: fetch schema of the specified table from the database.
+    arguments:
+      - name: table
+  data:
+    description: dump data from the specified table from the database.
+    options:
+      -where:
+        description: filter data by the condition.
+    arguments:
+      - name: table

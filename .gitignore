@@ -26,3 +26,4 @@ cmd/tmp
 
 bin/
 playground/
+playground.go

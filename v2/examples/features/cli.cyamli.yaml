@@ -1,0 +1,41 @@
+name: features
+version: 1.2.3
+description: This is root command, which is a command with name and version.
+options:
+  -option:
+    description: |
+      option can have:
+        a description,
+        a type of string, integer, or boolean,
+        a short name,
+        and a default value.
+    short: -o
+    type: integer
+    default: "123"
+  -propagation-option:
+    description: this option is available with the descendant commands.
+    propagates: true
+  -repeatable-option:
+    description: this option can be repeated multiple times.
+  -negation-option:
+    description: this option's negated version `-no-negation-option` can be available.
+    type: boolean
+arguments:
+  - name: first_arg
+    description: first argument with type boolean
+    type: boolean
+  - name: second_arg
+    description: second argument with type boolean
+    type: integer
+  - name: third_arg
+    description: third argument, which can take multiple values.
+    variadic: true
+subcommands:
+  sub1:
+    description: this is a child command.
+    subcommands:
+      sub2:
+        description: this is a grandchild command.
+        subcommands:
+          sub3:
+            description: this is a great-grandchild command.
