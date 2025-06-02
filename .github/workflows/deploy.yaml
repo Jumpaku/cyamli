@@ -49,7 +49,8 @@ jobs:
           GITHUB_REF_NAME: ${{ env.GITHUB_REF_NAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          go build -o "cyamli-${GOOS}-${GOARCH}" -ldflags "-s -w" -trimpath ./v2/cmd/cyamli
+          cd v2
+          go build -o "cyamli-${GOOS}-${GOARCH}" -ldflags "-s -w" -trimpath ./cmd/cyamli
           zip "cyamli-${GOOS}-${GOARCH}.zip" "cyamli-${GOOS}-${GOARCH}"
           gh release upload --clobber "${GITHUB_REF_NAME}" "cyamli-${GOOS}-${GOARCH}.zip"
           
