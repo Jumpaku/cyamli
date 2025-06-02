@@ -775,7 +775,7 @@ func parseValue(typ string, strValue ...string) (dst any, err error) {
 }
 
 func GetVersion() string {
-	return "v2.0.0-alpha.1"
+	return "v2.0.0-alpha.2"
 }
 func GetProgram() string {
 	return "cyamli"
