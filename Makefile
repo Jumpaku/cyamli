@@ -29,3 +29,8 @@ docs: install ## Generates documentation for cyamli CLI tool.
 	cyamli generate docs -format=text -schema-path=v2/cmd/cyamli/cli.cyamli.yaml -out-path=docs/cyamli-docs.text
 	cyamli generate docs -format=html -schema-path=v2/cmd/cyamli/cli.cyamli.yaml -out-path=docs/cyamli-docs.html
 	cyamli generate docs -format=markdown -schema-path=v2/cmd/cyamli/cli.cyamli.yaml -out-path=docs/cyamli-docs.md
+	cp README.md v2/README.md
+
+.PHONY: examples
+examples: install ## Generates example console apps using cyamli.
+	cd v2 && go test -v ./examples/...

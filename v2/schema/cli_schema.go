@@ -225,6 +225,13 @@ func (cmd Command) validate(propagatedOptions []string, propagated bool) error {
 			}
 			options[opt.Short] = true
 		}
+		if opt.Negation {
+			negatedName := "-no" + name
+			if _, ok := options[negatedName]; ok {
+				return fmt.Errorf("duplicate negated option name %q", negatedName)
+			}
+			options[negatedName] = true
+		}
 
 		if err := opt.validate(); err != nil {
 			return fmt.Errorf("invalid option %q: %w", name, err)
@@ -236,6 +243,9 @@ func (cmd Command) validate(propagatedOptions []string, propagated bool) error {
 				propagatedOptions = append(propagatedOptions, name)
 				if opt.Short != "" {
 					propagatedOptions = append(propagatedOptions, opt.Short)
+				}
+				if opt.Negation {
+					propagatedOptions = append(propagatedOptions, "-no"+name)
 				}
 			}
 		}
