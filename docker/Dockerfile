@@ -2,7 +2,7 @@
 FROM golang:1.22.4-alpine3.20 AS builder
 
 ARG CYAMLI_VERSION=latest
-RUN go install "github.com/Jumpaku/cyamli@$CYAMLI_VERSION"
+RUN go install "github.com/Jumpaku/cyamli/v2/cmd/cyamli@$CYAMLI_VERSION"
 
 
 FROM busybox:stable-musl
