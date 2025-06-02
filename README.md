@@ -7,7 +7,7 @@ A command line tool to generate interfaces for command line tools from YAML-base
 Console app development involves defining and parsing command line interfaces (CLIs) such as command line arguments, which consist of subcommands, options, and positional arguments.
 
 `cyamli` is a schema-based code generator that generates APIs (Application Programming Interfaces, such as types and functions) to handle typed CLIs.
-The schema of a typed CLI can be written in YAML according to the JSON Schema which is available at https://github.com/Jumpaku/cyamli/blob/main/v2/docs/cyamli-cli.schema.json .
+The schema of a typed CLI can be written in YAML according to the JSON Schema which is available at https://github.com/Jumpaku/cyamli/blob/main/docs/cyamli-cli.schema.json .
 
 ## Motivation
 
