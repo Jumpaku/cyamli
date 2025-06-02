@@ -24,47 +24,47 @@ func Run(handler CLIHandler, args []string) error {
 	switch strings.Join(subcommandPath, " ") {
 	case "":
 		var input Input
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run(input)
 
 	case "generate":
 		var input Input_Generate
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_Generate(input)
 
 	case "generate dart3":
 		var input Input_GenerateDart3
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_GenerateDart3(input)
 
 	case "generate docs":
 		var input Input_GenerateDocs
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_GenerateDocs(input)
 
 	case "generate golang":
 		var input Input_GenerateGolang
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_GenerateGolang(input)
 
 	case "generate kotlin":
 		var input Input_GenerateKotlin
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_GenerateKotlin(input)
 
 	case "generate python3":
 		var input Input_GeneratePython3
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_GeneratePython3(input)
 
 	case "generate typescript":
 		var input Input_GenerateTypescript
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_GenerateTypescript(input)
 
 	case "version":
 		var input Input_Version
-		input.resolveInput(options, arguments)
+		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_Version(input)
 	}
 	return nil
@@ -79,9 +79,9 @@ type Input struct {
 	ErrorMessage string
 }
 
-func (input *Input) resolveInput(options, arguments []string) {
+func (input *Input) resolveInput(subcommand, options, arguments []string) {
 	*input = Input{Opt_Help: false,
-		Subcommand: strings.Split("", " "),
+		Subcommand: subcommand,
 		Options:    options,
 		Arguments:  arguments,
 	}
@@ -123,11 +123,11 @@ type Input_Generate struct {
 	ErrorMessage string
 }
 
-func (input *Input_Generate) resolveInput(options, arguments []string) {
+func (input *Input_Generate) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_Generate{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
-		Subcommand:     strings.Split("generate", " "),
+		Subcommand:     subcommand,
 		Options:        options,
 		Arguments:      arguments,
 	}
@@ -193,11 +193,11 @@ type Input_GenerateDart3 struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateDart3) resolveInput(options, arguments []string) {
+func (input *Input_GenerateDart3) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_GenerateDart3{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
-		Subcommand:     strings.Split("generate dart3", " "),
+		Subcommand:     subcommand,
 		Options:        options,
 		Arguments:      arguments,
 	}
@@ -264,12 +264,12 @@ type Input_GenerateDocs struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateDocs) resolveInput(options, arguments []string) {
+func (input *Input_GenerateDocs) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_GenerateDocs{Opt_Format: "text",
 		Opt_Help:       false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
-		Subcommand:     strings.Split("generate docs", " "),
+		Subcommand:     subcommand,
 		Options:        options,
 		Arguments:      arguments,
 	}
@@ -348,12 +348,12 @@ type Input_GenerateGolang struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateGolang) resolveInput(options, arguments []string) {
+func (input *Input_GenerateGolang) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_GenerateGolang{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_Package:    "main",
 		Opt_SchemaPath: "",
-		Subcommand:     strings.Split("generate golang", " "),
+		Subcommand:     subcommand,
 		Options:        options,
 		Arguments:      arguments,
 	}
@@ -432,12 +432,12 @@ type Input_GenerateKotlin struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateKotlin) resolveInput(options, arguments []string) {
+func (input *Input_GenerateKotlin) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_GenerateKotlin{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_Package:    "",
 		Opt_SchemaPath: "",
-		Subcommand:     strings.Split("generate kotlin", " "),
+		Subcommand:     subcommand,
 		Options:        options,
 		Arguments:      arguments,
 	}
@@ -515,11 +515,11 @@ type Input_GeneratePython3 struct {
 	ErrorMessage string
 }
 
-func (input *Input_GeneratePython3) resolveInput(options, arguments []string) {
+func (input *Input_GeneratePython3) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_GeneratePython3{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
-		Subcommand:     strings.Split("generate python3", " "),
+		Subcommand:     subcommand,
 		Options:        options,
 		Arguments:      arguments,
 	}
@@ -585,11 +585,11 @@ type Input_GenerateTypescript struct {
 	ErrorMessage string
 }
 
-func (input *Input_GenerateTypescript) resolveInput(options, arguments []string) {
+func (input *Input_GenerateTypescript) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_GenerateTypescript{Opt_Help: false,
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
-		Subcommand:     strings.Split("generate typescript", " "),
+		Subcommand:     subcommand,
 		Options:        options,
 		Arguments:      arguments,
 	}
@@ -653,9 +653,9 @@ type Input_Version struct {
 	ErrorMessage string
 }
 
-func (input *Input_Version) resolveInput(options, arguments []string) {
+func (input *Input_Version) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_Version{Opt_Help: false,
-		Subcommand: strings.Split("version", " "),
+		Subcommand: subcommand,
 		Options:    options,
 		Arguments:  arguments,
 	}
@@ -775,7 +775,7 @@ func parseValue(typ string, strValue ...string) (dst any, err error) {
 }
 
 func GetVersion() string {
-	return "v1.1.7"
+	return "2.0.0-alpha.1"
 }
 func GetProgram() string {
 	return "cyamli"

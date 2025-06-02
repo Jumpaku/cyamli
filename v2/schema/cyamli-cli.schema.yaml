@@ -1,12 +1,12 @@
 $schema: https://json-schema.org/draft/2020-12/schema
-$id: https://github.com/Jumpaku/cyamli/raw/v1.1.7/schema/cli.schema.json
+$id: https://github.com/Jumpaku/cyamli/raw/v2.0.0/v2/docs/cyamli-cli.schema.json
 title: cyamli CLI schema
 description: CLI schema for cyamli.
 
-$ref: '#/$defs/program'
+$ref: '#/$defs/Program'
 
 $defs:
-  program:
+  Program:
     description: |
       Program is a root command that may have a name and a version.
       It consists of commands recursively.
@@ -23,16 +23,16 @@ $defs:
               Version of the program.
               The default value is an empty string.
             type: string
-      - $ref: '#/$defs/command'
+      - $ref: '#/$defs/Command'
 
-  type:
+  Type:
     description: |
       Type represents a type of a value that can be assigned to an option or an argument.
-      One of "string", "integer", "boolean", or "float" is available.
+      One of "string", "integer", or "boolean" is available.
     type: string
-    enum: ["", string, integer, boolean, float]
+    enum: ["", string, integer, boolean]
 
-  command:
+  Command:
     description: |
       Command represents a root command or a subcommand of the program.
       It may have options, arguments, and subcommands recursively.
@@ -50,7 +50,7 @@ $defs:
           A property name is a name of an option, which must match the regular expression `^(-[a-z][a-z0-9]*)+$` and be unique in options of the command.
         type: object
         additionalProperties:
-          $ref: '#/$defs/option'
+          $ref: '#/$defs/Option'
         propertyNames:
           pattern: "^(-[a-z][a-z0-9]*)+$"
       arguments:
@@ -59,7 +59,7 @@ $defs:
           The default value is an empty array.
         type: array
         items:
-          $ref: '#/$defs/argument'
+          $ref: '#/$defs/Argument'
       subcommands:
         description: |
           A collection of subcommands, which is a mapping from subcommand names to child commands.
@@ -67,11 +67,11 @@ $defs:
           A property name is a name of a subcommand, which must match the regular expression `^[a-z][a-z0-9]*$` and be unique in subcommands of the command.
         type: object
         additionalProperties:
-          $ref: '#/$defs/command'
+          $ref: '#/$defs/Command'
         propertyNames:
           pattern: "^[a-z][a-z0-9]*$"
 
-  option:
+  Option:
     description: |
       Option represents an optional argument in command line arguments.
     type: object
@@ -91,19 +91,35 @@ $defs:
         description: |
           Type of the value that is assignable to this option.
           The default value is "string".
-        $ref: '#/$defs/type'
+        $ref: '#/$defs/Type'
+      negation:
+        description: |
+          Whether the option of typed boolean has a negated version.
+          If true then the option can be specified with a negation prefix `-no` in the command line arguments.
+          The default value is false.
+        type: boolean
+      repeated:
+        description: |
+          Whether the option can be specified multiple times.
+          If true then the option can be specified multiple times in the command line arguments.
+          The default value is false.
+        type: boolean
       default:
         description: |
-          String value representing the default value of the option.
+          String value representing the default value of the non-repeated option.
           It must be a string that can be parsed as a value of the option type.
           If not specified, the following values corresponding to the option type.
-          - boolean: "false"
-          - string: ""
-          - integer: "0"
-          - float: "0.0"
+          - boolean (not repeated): "false"
+          - string (not repeated): ""
+          - integer (not repeated): "0"
         type: string
-
-  argument:
+      propagates:
+        description: |
+          Whether the option propagates to subcommands.
+          If true then the option is available in all subcommands of the command which the option belongs to.
+          The default value is false.
+        type: boolean
+  Argument:
     description: |
       Argument represents a positional required argument in command line arguments.
     type: object
@@ -123,7 +139,7 @@ $defs:
         description: |
           Type of the value that is assignable to the argument.
           The default value is "string".
-        $ref: '#/$defs/type'
+        $ref: '#/$defs/Type'
       variadic:
         description: |
           Whether the argument is variadic (i.e. can have zero or more values).

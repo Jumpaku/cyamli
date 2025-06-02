@@ -42,7 +42,7 @@ func Load(reader io.Reader) (Schema, error) {
 	return schema, nil
 }
 
-//go:embed cli.schema.json
+//go:embed cyamli-cli.schema.json
 var cliSchemaJSON string
 var cliJSONSchema *jsonschema.Schema = lo.Must1(jsonschema.CompileString("", cliSchemaJSON))
 
