@@ -67,7 +67,7 @@ name: demo
 options:
   -config:
     description: path to the config file, which can be available in subcommands.
-    properties: true
+    propagates: true
 subcommands:
   tables:
     description: list tables from the database.

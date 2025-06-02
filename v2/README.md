@@ -66,8 +66,8 @@ The following YAML file, `cli.yaml`, defines a CLI for the example console app.
 name: demo
 options:
   -config:
-    description: path to the config file, which can available in the subcommands.
-    properties: true
+    description: path to the config file, which can be available in subcommands.
+    propagates: true
 subcommands:
   tables:
     description: list tables from the database.
