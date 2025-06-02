@@ -16,13 +16,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push Docker Image
+        env:
+          GITHUB_REF_NAME: ${{ env.GITHUB_REF_NAME }}
         run: |
+          cd docker
           docker buildx create --use --name=multiplatformbuild
           docker buildx build \
             --platform 'linux/amd64,linux/arm64' \
             --tag ghcr.io/jumpaku/cyamli:latest \
-            --tag ghcr.io/jumpaku/cyamli:$(cat info/version.txt) \
-            --build-arg CYAMLI_VERSION=$(cat info/version.txt) \
+            --tag ghcr.io/jumpaku/cyamli:${GITHUB_REF_NAME} \
+            --build-arg CYAMLI_VERSION=${GITHUB_REF_NAME} \
             --push \
             .
 
@@ -46,7 +49,8 @@ jobs:
           GITHUB_REF_NAME: ${{ env.GITHUB_REF_NAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          GOOS=${GOOS} GOARCH=${GOARCH} make build
+          go build -o "cyamli-${GOOS}-${GOARCH}" -ldflags "-s -w" -trimpath　./v2/cmd/cyamli
+          zip "cyamli-${GOOS}-${GOARCH}.zip" "cyamli-${GOOS}-${GOARCH}"
           gh release upload --clobber "${GITHUB_REF_NAME}" "cyamli-${GOOS}-${GOARCH}.zip"
           
           

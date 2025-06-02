@@ -1,4 +1,5 @@
-# cyamli (v1.1.7)
+# cyamli (2.0.0-alpha.1)
+
 
 ## cyamli
 
@@ -9,7 +10,7 @@ A command line tool to generate CLI for your app from YAML-based schema.
 ### Syntax
 
 ```shell
-cyamli  [<option>]...
+cyamli [<option>]...
 ```
 
 ### Options
@@ -17,19 +18,15 @@ cyamli  [<option>]...
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
   shows description of this app.  
 
-* `-version[=<boolean>]`, `-v[=<boolean>]`  (default=`false`):  
-  shows version of this app.  
-
 ### Subcommands
 
 * generate:  
   holds subcommands to generate CLI code.  
 
-* list:  
-  shows subcommands  
+* version:  
+  shows version of this app.  
 
-* validate:  
-  validates CLI schema.  
+
 
 
 ## cyamli generate
@@ -47,11 +44,17 @@ cyamli generate [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of generate subcommand.  
+  shows description of this app.  
+
+* `-out-path=<string>`  (default=`""`):  
+  if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
+
+* `-schema-path=<string>`  (default=`""`):  
+  if specified then reads schema file from the path, otherwise reads from stdin.  
 
 ### Subcommands
 
-* dart:  
+* dart3:  
   generates CLI for your app written in Dart.  
 
 * docs:  
@@ -60,11 +63,19 @@ cyamli generate [<option>]...
 * golang:  
   generates CLI for your app written in Go.  
 
+* kotlin:  
+  generates CLI for your app written in Kotlin.  
+
 * python3:  
   generates CLI for your app written in Python3.  
 
+* typescript:  
+  generates CLI for your app written in TypeScript.  
 
-## cyamli generate dart
+
+
+
+## cyamli generate dart3
 
 ### Description
 
@@ -73,19 +84,21 @@ generates CLI for your app written in Dart.
 ### Syntax
 
 ```shell
-cyamli generate dart [<option>]...
+cyamli generate dart3 [<option>]...
 ```
 
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of dart subcommand.  
+  shows description of this app.  
 
 * `-out-path=<string>`  (default=`""`):  
   if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
 
 * `-schema-path=<string>`  (default=`""`):  
   if specified then reads schema file from the path, otherwise reads from stdin.  
+
+
 
 
 ## cyamli generate docs
@@ -97,30 +110,24 @@ generates documentation for your CLI app.
 ### Syntax
 
 ```shell
-cyamli generate docs [<option>|<argument>]... [-- [<argument>]...]
+cyamli generate docs [<option>]...
 ```
 
 ### Options
-
-* `-all[=<boolean>]`, `-a[=<boolean>]`  (default=`false`):  
-  if specified then outputs documentation for all subcommands, otherwise in text format.  
 
 * `-format=<string>`, `-f=<string>`  (default=`"text"`):  
   specifies output format of the documentation in text or markdown.  
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of docs subcommand.  
+  shows description of this app.  
 
 * `-out-path=<string>`  (default=`""`):  
-  if specified then creates a file at the path and writes generated documentation, otherwise outputs to stdout.  
+  if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
 
 * `-schema-path=<string>`  (default=`""`):  
   if specified then reads schema file from the path, otherwise reads from stdin.  
 
-### Arguments
 
-1. `[<subcommands:string>]...`  
-  selects subcommand for which the documentation is output.  
 
 
 ## cyamli generate golang
@@ -138,7 +145,7 @@ cyamli generate golang [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of golang subcommand.  
+  shows description of this app.  
 
 * `-out-path=<string>`  (default=`""`):  
   if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
@@ -148,6 +155,37 @@ cyamli generate golang [<option>]...
 
 * `-schema-path=<string>`  (default=`""`):  
   if specified then reads schema file from the path, otherwise reads from stdin.  
+
+
+
+
+## cyamli generate kotlin
+
+### Description
+
+generates CLI for your app written in Kotlin.
+
+### Syntax
+
+```shell
+cyamli generate kotlin [<option>]...
+```
+
+### Options
+
+* `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
+  shows description of this app.  
+
+* `-out-path=<string>`  (default=`""`):  
+  if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
+
+* `-package=<string>`  (default=`""`):  
+  package name where the generated file will be placed.  
+
+* `-schema-path=<string>`  (default=`""`):  
+  if specified then reads schema file from the path, otherwise reads from stdin.  
+
+
 
 
 ## cyamli generate python3
@@ -165,7 +203,7 @@ cyamli generate python3 [<option>]...
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of python3 subcommand.  
+  shows description of this app.  
 
 * `-out-path=<string>`  (default=`""`):  
   if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
@@ -174,45 +212,51 @@ cyamli generate python3 [<option>]...
   if specified then reads schema file from the path, otherwise reads from stdin.  
 
 
-## cyamli list
+
+
+## cyamli generate typescript
 
 ### Description
 
-shows subcommands
+generates CLI for your app written in TypeScript.
 
 ### Syntax
 
 ```shell
-cyamli list [<option>]...
+cyamli generate typescript [<option>]...
 ```
 
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of list subcommand.  
+  shows description of this app.  
+
+* `-out-path=<string>`  (default=`""`):  
+  if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.  
 
 * `-schema-path=<string>`  (default=`""`):  
   if specified then reads schema file from the path, otherwise reads from stdin.  
 
 
-## cyamli validate
+
+
+## cyamli version
 
 ### Description
 
-validates CLI schema.
+shows version of this app.
 
 ### Syntax
 
 ```shell
-cyamli validate [<option>]...
+cyamli version [<option>]...
 ```
 
 ### Options
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
-  shows description of validates subcommand.  
+  shows description of this app.  
 
-* `-schema-path=<string>`  (default=`""`):  
-  if specified then reads schema file from the path, otherwise reads from stdin.  
+
 
 

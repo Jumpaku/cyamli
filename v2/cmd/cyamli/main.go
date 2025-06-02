@@ -15,6 +15,7 @@ import (
 	"strings"
 )
 
+//go:generate go run github.com/Jumpaku/cyamli/v2/cmd/cyamli generate golang -schema-path=cli.cyamli.yaml -out-path=cli.gen.go
 func main() {
 	if err := Run(cli{}, os.Args); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "error: %v\n", err)

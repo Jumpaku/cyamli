@@ -1,0 +1,679 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>cyamli (2.0.0-alpha.1)</title>
+</head>
+<body>
+<main>
+    <h1>cyamli (2.0.0-alpha.1)</h1>
+    
+        
+        <section>
+            <h2>cyamli</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                A command line tool to generate CLI for your app from YAML-based schema.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+            <h3>Subcommands</h3>
+            <ul>
+                
+                    <li>
+                        <h4>generate</h4>
+                        <p>
+                            holds subcommands to generate CLI code.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>version</h4>
+                        <p>
+                            shows version of this app.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                holds subcommands to generate CLI code.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+            <h3>Subcommands</h3>
+            <ul>
+                
+                    <li>
+                        <h4>dart3</h4>
+                        <p>
+                            generates CLI for your app written in Dart.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>docs</h4>
+                        <p>
+                            generates documentation for your CLI app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>golang</h4>
+                        <p>
+                            generates CLI for your app written in Go.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>kotlin</h4>
+                        <p>
+                            generates CLI for your app written in Kotlin.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>python3</h4>
+                        <p>
+                            generates CLI for your app written in Python3.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>typescript</h4>
+                        <p>
+                            generates CLI for your app written in TypeScript.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate dart3</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in Dart.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate dart3 [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate docs</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates documentation for your CLI app.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate docs [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -format=&lt;string></code>, 
+                                <code>
+                                    -f=&lt;string></code> (default=<code>&#34;text&#34;</code>):
+                        </h4>
+                        <p>
+                            specifies output format of the documentation in text or markdown.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate golang</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in Go.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate golang [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -package=&lt;string></code> (default=<code>&#34;main&#34;</code>):
+                        </h4>
+                        <p>
+                            package name where the generated file will be placed.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate kotlin</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in Kotlin.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate kotlin [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -package=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            package name where the generated file will be placed.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate python3</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in Python3.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate python3 [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate typescript</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in TypeScript.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate typescript [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli version</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                shows version of this app.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli version [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+</main>
+</body>
+</html>
