@@ -9,7 +9,7 @@ version: ## make version VERSION=v2.0.0
 	sed -e 's|^version: .*|version: $(VERSION)|g' v2/cmd/cyamli/cli.cyamli.yaml \
 		> v2/cmd/cyamli/cli.cyamli.yaml.new \
 		&& mv v2/cmd/cyamli/cli.cyamli.yaml.new v2/cmd/cyamli/cli.cyamli.yaml
-	sed -e 's|^$id: .*|$id: https://github.com/Jumpaku/cyamli/raw/$(VERSION)/v2/docs/cyamli-cli.schema.json|g' v2/schema/cyamli-cli.schema.yaml \
+	sed -e 's|^\$$id: .*|$$id: https://github.com/Jumpaku/cyamli/raw/$(VERSION)/docs/cyamli-cli.schema.json|g' v2/schema/cyamli-cli.schema.yaml \
 		> v2/schema/cyamli-cli.schema.yaml.new \
 		&& mv v2/schema/cyamli-cli.schema.yaml.new v2/schema/cyamli-cli.schema.yaml
 	make install
