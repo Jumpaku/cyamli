@@ -21,7 +21,7 @@ The schema of a typed CLI can be written in YAML according to the JSON Schema wh
 ### Using Go
 
 ```shell
-go install github.com/Jumpaku/cyamli@latest
+go install github.com/Jumpaku/cyamli/v2/cmd/cyamli@latest
 ```
 
 
