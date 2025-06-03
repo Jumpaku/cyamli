@@ -20,7 +20,12 @@ type CommandData struct {
 }
 
 func (d CommandData) Path() string {
-	return d.Name.Prepend(d.Program).Join(" ", "", "")
+	path := d.Program
+	if d.Name.Len() > 0 {
+		path += " "
+	}
+	path += d.Name.Join(" ", "", "")
+	return path
 }
 
 func (d CommandData) Syntax() string {
