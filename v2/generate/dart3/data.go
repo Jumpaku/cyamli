@@ -34,6 +34,14 @@ type CommandData struct {
 	Arguments []ArgumentData
 }
 
+func (d CommandData) Path() []string {
+	path := []string{}
+	for i := 0; i < d.Name.Len(); i++ {
+		path = append(path, d.Name.Get(i).LowerCamel())
+	}
+	return path
+}
+
 func (d CommandData) PathLiteral() string {
 	return fmt.Sprintf("%q", d.Name.Map(strings.ToLower).Join(" ", "", ""))
 }
