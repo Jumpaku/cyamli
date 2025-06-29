@@ -32,3 +32,31 @@ func Generate(schema schema.Schema, packageName, generator string, out io.Writer
 	}
 	return nil
 }
+
+//go:embed cli.gen_test.go.tpl
+var cliGenTestGoTemplate string
+var executorTest = template.Must(template.New("cli.gen_test.go.tpl").Parse(cliGenTestGoTemplate))
+
+func GenerateTest(schema schema.Schema, packageName, generator string, out io.Writer) error {
+	d := ConstructData(schema, packageName, generator)
+
+	buf := bytes.NewBuffer(nil)
+	if err := executorTest.Execute(buf, d); err != nil {
+		return fmt.Errorf("fail to execute template: %w", err)
+	}
+	/*
+		b, err := format.Source(buf.Bytes())
+		if err != nil {
+			return fmt.Errorf("fail to format generated code: %w", err)
+		}
+
+		if _, err := out.Write(b); err != nil {
+			return fmt.Errorf("fail to write generated code: %w", err)
+		}
+		return nil
+	*/
+	if _, err := out.Write(buf.Bytes()); err != nil {
+		return fmt.Errorf("fail to write generated code: %w", err)
+	}
+	return nil
+}
