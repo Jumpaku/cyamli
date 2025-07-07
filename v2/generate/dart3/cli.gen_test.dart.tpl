@@ -2,144 +2,189 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:test/test.dart';
-import 'cli.gen.dart';
+import '{{.CliSourceFile}}';
 
 class CLIHandlerMock implements CLIHandler {
   dynamic gotInput;
-  {{ range $Index, $Command := .CommandList -}}
+
+{{ range $Index, $Command := .CommandList -}}
   @override
   Future<void> {{$Command.HandlerMethodName}}({{$Command.HandlerInputType}} input) async {
     gotInput = input;
   }
-  {{end -}}
+{{end}}
 }
 
 void main() {
-  group('Run', () {
-    {{- range $Index, $Command := .CommandList }}
-    test('{{.PathLiteral}} command-line-arguments', () async {
-      final mock = CLIHandlerMock();
-      final args = [
-        {{range $Command.Path}}'{{.}}',{{end}}
-        {{- range $Index, $Option := $Command.Options }}'{{$Option.Option}}=0',{{end}}
-        '--',
-        {{- range $Index, $Argument := $Command.Arguments }}'0',{{end}}
-      ];
-      final wantInput = {{$Command.HandlerInputType}}()
+  {{ range $Index, $Command := .CommandList}}
+  group('{{$Command.HandlerMethodName}}', () {
+    final testcases = [
+      {
+        'name': 'command-line-arguments',
+        'args': [
+          {{range $Command.Path }}'{{.}}', {{end}}
         {{- range $Index, $Option := $Command.Options }}
-        ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}<int>[0]{{else}}0{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Option.Repeated}}<String>['0']{{else}}'0'{{end}}{{end}}
+          '{{$Option.Option}}=0',
+        {{- end }}
+          '--',
+        {{- range $Index, $Argument := $Command.Arguments }}
+          '0',
+        {{- end }}
+        ],
+        'wantInput': {{$Command.HandlerInputType}}()
+        {{- range $Index, $Option := $Command.Options }}
+          ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer" -}}{{if $Option.Repeated}}[0]{{else}}0{{end}}
+          {{- else if eq $Option.Type "boolean"}}{{if $Option.Repeated -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Option.Repeated}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
         {{- range $Index, $Argument := $Command.Arguments }}
-        ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer"}}{{if $Argument.Variadic}}<int>[0]{{else}}0{{end}}{{else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Argument.Variadic}}<String>['0']{{else}}'0'{{end}}{{end}}
+          ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer" -}}{{if $Argument.Variadic}}[0]{{else}}0{{end}}
+          {{- else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Argument.Variadic}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
-        ..subcommand = [{{range $Command.Path}}'{{.}}',{{end}}]
-        ..options = [{{range $Index, $Option := $Command.Options}}'{{$Option.Option}}=0',{{end}}]
-        ..arguments = [{{range $Command.Arguments}}'0',{{end}}];
-      await run(mock, args);
-      expect(mock.gotInput.toString(), wantInput.toString());
-    });
-    test('{{.PathLiteral}} default-options', () async {
-      final mock = CLIHandlerMock();
-      final args = [
-        {{range $Command.Path}}'{{.}}', {{end}}'--', {{range $Command.Arguments}}'0', {{end}}
-      ];
-      final wantInput = {{$Command.HandlerInputType}}()
+      },
+      {
+        'name': 'default-options',
+        'args': [
+          {{range $Command.Path }}'{{.}}', {{end}}
+          '--',
+        {{- range $Index, $Argument := $Command.Arguments }}
+          '0',
+        {{- end }}
+        ],
+        'wantInput': {{$Command.HandlerInputType}}()
         {{- range $Index, $Option := $Command.Options }}
-        ..{{$Option.InputFieldName}} = {{$Option.InputFieldInit}}
+          ..{{$Option.InputFieldName}} = {{$Option.InputFieldInit}}
         {{- end }}
         {{- range $Index, $Argument := $Command.Arguments }}
-        ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer"}}{{if $Argument.Variadic}}<int>[0]{{else}}0{{end}}{{else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Argument.Variadic}}<String>['0']{{else}}'0'{{end}}{{end}}
+          ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer" -}}{{if $Argument.Variadic}}[0]{{else}}0{{end}}
+          {{- else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Argument.Variadic}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
-        ..subcommand = [{{range $Command.Path}}'{{.}}',{{end}}]
-        ..options = []
-        ..arguments = [{{range $Command.Arguments}}'0',{{end}}];
-      await run(mock, args);
-      expect(mock.gotInput.toString(), wantInput.toString());
-    });
-    test('{{.PathLiteral}} short-options', () async {
-      final mock = CLIHandlerMock();
-      final args = [
-        {{range $Command.Path}}'{{.}}', {{end}}
-        {{- range $Index, $Option := $Command.Options }}'{{if $Option.ShortOption}}{{$Option.ShortOption}}{{else}}{{$Option.Option}}{{end}}=0',{{end}}
-        '--',
-        {{- range $Index, $Argument := $Command.Arguments }}'0',{{end}}
-      ];
-      final wantInput = {{$Command.HandlerInputType}}()
+      },
+      {
+        'name': 'short-options',
+        'args': [
+          {{range $Command.Path }}'{{.}}', {{end}}
         {{- range $Index, $Option := $Command.Options }}
-        ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}<int>[0]{{else}}0{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Option.Repeated}}<String>['0']{{else}}'0'{{end}}{{end}}
+          '{{if $Option.ShortOption}}{{$Option.ShortOption}}{{else}}{{$Option.Option}}{{end}}=0',
+        {{- end }}
+          '--',
+        {{- range $Index, $Argument := $Command.Arguments }}
+          '0',
+        {{- end }}
+        ],
+        'wantInput': {{$Command.HandlerInputType}}()
+        {{- range $Index, $Option := $Command.Options }}
+          ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer" -}}{{if $Option.Repeated}}[0]{{else}}0{{end}}
+          {{- else if eq $Option.Type "boolean"}}{{if $Option.Repeated -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Option.Repeated}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
         {{- range $Index, $Argument := $Command.Arguments }}
-        ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer"}}{{if $Argument.Variadic}}<int>[0]{{else}}0{{end}}{{else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Argument.Variadic}}<String>['0']{{else}}'0'{{end}}{{end}}
+          ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer" -}}{{if $Argument.Variadic}}[0]{{else}}0{{end}}
+          {{- else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Argument.Variadic}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
-        ..subcommand = [{{range $Command.Path}}'{{.}}',{{end}}]
-        ..options = [{{range $Index, $Option := $Command.Options}}'{{if $Option.ShortOption}}{{$Option.ShortOption}}{{else}}{{$Option.Option}}{{end}}=0',{{end}}]
-        ..arguments = [{{range $Command.Arguments}}'0',{{end}}];
-      await run(mock, args);
-      expect(mock.gotInput.toString(), wantInput.toString());
-    });
-    test('{{.PathLiteral}} negated-options', () async {
-      final mock = CLIHandlerMock();
-      final args = [
-        {{range $Command.Path}}'{{.}}', {{end}}
-        {{- range $Index, $Option := $Command.Options }}'{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',{{end}}
-        '--',
-        {{- range $Index, $Argument := $Command.Arguments }}'0',{{end}}
-      ];
-      final wantInput = {{$Command.HandlerInputType}}()
+      },
+      {
+        'name': 'negated-options',
+        'args': [
+          {{range $Command.Path }}'{{.}}', {{end}}
         {{- range $Index, $Option := $Command.Options }}
-        ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}<int>[0]{{else}}0{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Option.Repeated}}<String>['0']{{else}}'0'{{end}}{{end}}
+          '{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',
+        {{- end }}
+          '--',
+        {{- range $Index, $Argument := $Command.Arguments }}
+          '0',
+        {{- end }}
+        ],
+        'wantInput': {{$Command.HandlerInputType}}()
+        {{- range $Index, $Option := $Command.Options }}
+          ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer" -}}{{if $Option.Repeated}}[0]{{else}}0{{end}}
+          {{- else if eq $Option.Type "boolean"}}{{if $Option.Repeated -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Option.Repeated}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
         {{- range $Index, $Argument := $Command.Arguments }}
-        ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer"}}{{if $Argument.Variadic}}<int>[0]{{else}}0{{end}}{{else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Argument.Variadic}}<String>['0']{{else}}'0'{{end}}{{end}}
+          ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer" -}}{{if $Argument.Variadic}}[0]{{else}}0{{end}}
+          {{- else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Argument.Variadic}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
-        ..subcommand = [{{range $Command.Path}}'{{.}}',{{end}}]
-        ..options = [{{range $Index, $Option := $Command.Options}}'{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',{{end}}]
-        ..arguments = [{{range $Command.Arguments}}'0',{{end}}];
-      await run(mock, args);
-      expect(mock.gotInput.toString(), wantInput.toString());
-    });
-    test('{{.PathLiteral}} variadic-arguments-zero', () async {
-      final mock = CLIHandlerMock();
-      final args = [
-        {{range $Command.Path}}'{{.}}', {{end}}
-        {{- range $Index, $Option := $Command.Options }}'{{$Option.Option}}=0',{{end}}
-        '--',
-        {{- range $Index, $Argument := $Command.Arguments }}{{if not $Argument.Variadic}}'0',{{end}}{{end}}
-      ];
-      final wantInput = {{$Command.HandlerInputType}}()
+      },
+      {
+        'name': 'variadic-arguments-zero',
+        'args': [
+          {{range $Command.Path }}'{{.}}', {{end}}
         {{- range $Index, $Option := $Command.Options }}
-        ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}<int>[0]{{else}}0{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Option.Repeated}}<String>['0']{{else}}'0'{{end}}{{end}}
+          '{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',
+        {{- end }}
+          '--',
+        {{- range $Index, $Argument := $Command.Arguments }}
+          {{if not $Argument.Variadic}}'0',{{end}}
+        {{- end }}
+        ],
+        'wantInput': {{$Command.HandlerInputType}}()
+        {{- range $Index, $Option := $Command.Options }}
+          ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer" -}}{{if $Option.Repeated}}[0]{{else}}0{{end}}
+          {{- else if eq $Option.Type "boolean"}}{{if $Option.Repeated -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Option.Repeated}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
         {{- range $Index, $Argument := $Command.Arguments }}
-        ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer"}}{{if $Argument.Variadic}}<int>[]{{else}}0{{end}}{{else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic}}<bool>[]{{else}}false{{end}}{{else}}{{if $Argument.Variadic}}<String>[]{{else}}'0'{{end}}{{end}}
+          ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer" -}}{{if $Argument.Variadic}}<int>[]{{else}}0{{end}}
+          {{- else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic -}}<bool>[]{{else}}false{{end}}
+          {{- else}}{{if $Argument.Variadic}}<String>[]{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
-        ..subcommand = [{{range $Command.Path}}'{{.}}',{{end}}]
-        ..options = [{{range $Index, $Option := $Command.Options}}'{{$Option.Option}}=0',{{end}}]
-        ..arguments = [{{range $Index, $Argument := $Command.Arguments}}{{if not $Argument.Variadic}}'0',{{end}}{{end}}];
-      await run(mock, args);
-      expect(mock.gotInput.toString(), wantInput.toString());
-    });
-    test('{{.PathLiteral}} variadic-arguments-two', () async {
-      final mock = CLIHandlerMock();
-      final args = [
-        {{range $Command.Path}}'{{.}}', {{end}}
-        {{- range $Index, $Option := $Command.Options }}'{{$Option.Option}}=0',{{end}}
-        '--',
-        {{- range $Index, $Argument := $Command.Arguments }}'0',{{if $Argument.Variadic}}'0',{{end}}{{end}}
-      ];
-      final wantInput = {{$Command.HandlerInputType}}()
+      },
+      {
+        'name': 'variadic-arguments-two',
+        'args': [
+          {{range $Command.Path }}'{{.}}', {{end}}
         {{- range $Index, $Option := $Command.Options }}
-        ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}<int>[0]{{else}}0{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}<bool>[false]{{else}}false{{end}}{{else}}{{if $Option.Repeated}}<String>['0']{{else}}'0'{{end}}{{end}}
+          '{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',
+        {{- end }}
+          '--',
+        {{- range $Index, $Argument := $Command.Arguments }}
+          '0'{{if $Argument.Variadic}}, '0'{{end}},
+        {{- end }}
+        ],
+        'wantInput': {{$Command.HandlerInputType}}()
+        {{- range $Index, $Option := $Command.Options }}
+          ..{{$Option.InputFieldName}} = {{if eq $Option.Type "integer" -}}{{if $Option.Repeated}}[0]{{else}}0{{end}}
+          {{- else if eq $Option.Type "boolean"}}{{if $Option.Repeated -}}[false]{{else}}false{{end}}
+          {{- else}}{{if $Option.Repeated}}['0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
         {{- range $Index, $Argument := $Command.Arguments }}
-        ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer"}}{{if $Argument.Variadic}}<int>[0, 0]{{else}}0{{end}}{{else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic}}<bool>[false, false]{{else}}false{{end}}{{else}}{{if $Argument.Variadic}}<String>['0', '0']{{else}}'0'{{end}}{{end}}
+          ..{{$Argument.InputFieldName}} = {{if eq $Argument.Type "integer" -}}{{if $Argument.Variadic}}[0, 0]{{else}}0{{end}}
+          {{- else if eq $Argument.Type "boolean"}}{{if $Argument.Variadic -}}[false, false]{{else}}false{{end}}
+          {{- else}}{{if $Argument.Variadic}}['0', '0']{{else}}'0'{{end}}
+          {{- end}}
         {{- end }}
-        ..subcommand = [{{range $Command.Path}}'{{.}}',{{end}}]
-        ..options = [{{range $Index, $Option := $Command.Options}}'{{$Option.Option}}=0',{{end}}]
-        ..arguments = [{{range $Index, $Argument := $Command.Arguments}}'0'{{if $Argument.Variadic}},'0'{{end}},{{end}}];
-      await run(mock, args);
-      expect(mock.gotInput.toString(), wantInput.toString());
-    });
-    {{- end }}
+      },
+    ];
+
+    for (final tc in testcases) {
+      test(tc['name'] as String, () async {
+        final mock = CLIHandlerMock();
+        await run(mock, tc['args'] as List<String>);
+        final got = mock.gotInput as {{$Command.HandlerInputType}};
+        final want = tc['wantInput'] as {{$Command.HandlerInputType}};
+        {{range $Index, $Option := $Command.Options }}
+        expect(got.{{$Option.InputFieldName}}, equals(want.{{$Option.InputFieldName}}), reason: 'unexpected input for option: {{$Option.Option}}');
+        {{- end}}
+        {{range $Index, $Argument := $Command.Arguments }}
+        expect(got.{{$Argument.InputFieldName}}, equals(want.{{$Argument.InputFieldName}}), reason: 'unexpected input for argument: {{$Argument.Name}}');
+        {{- end}}
+      });
+    }
   });
+  {{end}}
 }

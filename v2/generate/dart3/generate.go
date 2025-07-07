@@ -18,7 +18,7 @@ var cliGenTestDartTemplate string
 var executorTest = template.Must(template.New("cli.gen_test.dart.tpl").Parse(cliGenTestDartTemplate))
 
 func Generate(schema schema.Schema, generator string, out io.Writer) error {
-	d := ConstructData(schema, generator)
+	d := ConstructData(schema, "", generator)
 
 	buf := bytes.NewBuffer(nil)
 	if err := executor.Execute(buf, d); err != nil {
@@ -31,8 +31,8 @@ func Generate(schema schema.Schema, generator string, out io.Writer) error {
 	return nil
 }
 
-func GenerateTest(schema schema.Schema, generator string, out io.Writer) error {
-	d := ConstructData(schema, generator)
+func GenerateTest(schema schema.Schema, cliSourceFile, generator string, out io.Writer) error {
+	d := ConstructData(schema, cliSourceFile, generator)
 
 	buf := bytes.NewBuffer(nil)
 	if err := executorTest.Execute(buf, d); err != nil {
