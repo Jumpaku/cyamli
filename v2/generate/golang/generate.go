@@ -14,8 +14,8 @@ import (
 var cliGenGoTemplate string
 var executor = template.Must(template.New("cli.gen.go.tpl").Parse(cliGenGoTemplate))
 
-func Generate(schema schema.Schema, moduleName, packageName, generator string, out io.Writer) error {
-	d := ConstructData(schema, moduleName, packageName, generator)
+func Generate(schema schema.Schema, packageName, generator string, out io.Writer) error {
+	d := ConstructData(schema, "", packageName, generator)
 
 	buf := bytes.NewBuffer(nil)
 	if err := executor.Execute(buf, d); err != nil {
