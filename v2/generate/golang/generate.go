@@ -44,18 +44,12 @@ func GenerateTest(schema schema.Schema, moduleName, packageName, generator strin
 	if err := executorTest.Execute(buf, d); err != nil {
 		return fmt.Errorf("fail to execute template: %w", err)
 	}
-	/*
-		b, err := format.Source(buf.Bytes())
-		if err != nil {
-			return fmt.Errorf("fail to format generated code: %w", err)
-		}
+	b, err := format.Source(buf.Bytes())
+	if err != nil {
+		return fmt.Errorf("fail to format generated code: %w", err)
+	}
 
-		if _, err := out.Write(b); err != nil {
-			return fmt.Errorf("fail to write generated code: %w", err)
-		}
-		return nil
-	*/
-	if _, err := out.Write(buf.Bytes()); err != nil {
+	if _, err := out.Write(b); err != nil {
 		return fmt.Errorf("fail to write generated code: %w", err)
 	}
 	return nil
