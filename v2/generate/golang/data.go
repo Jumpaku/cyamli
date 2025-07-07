@@ -12,6 +12,7 @@ import (
 )
 
 type Data struct {
+	Module      string
 	Package     string
 	Generator   string
 	Program     ProgramData
@@ -150,7 +151,7 @@ func primitiveType(t schema.Type) string {
 	}
 }
 
-func ConstructData(s schema.Schema, packageName, generatorName string) Data {
+func ConstructData(s schema.Schema, moduleName, packageName, generatorName string) Data {
 	commands := s.PropagateOptions().ListCommand()
 	commandList := lo.Map(commands, func(cmd schema.PathCommand, _ int) CommandData {
 		options := []OptionData{}
@@ -188,6 +189,7 @@ func ConstructData(s schema.Schema, packageName, generatorName string) Data {
 	slices.SortFunc(commandList, func(a, b CommandData) int { return a.Name.Cmp(b.Name) })
 
 	data := Data{
+		Module:    moduleName,
 		Package:   packageName,
 		Generator: generatorName,
 		Program: ProgramData{
