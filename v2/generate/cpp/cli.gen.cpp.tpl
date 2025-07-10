@@ -228,8 +228,9 @@ void {{.HandlerInputType}}::resolveInput(std::vector<std::string> const &subcomm
         return;
     }
     {{- end}}
-    {{end -}}
+    {{end}}
 }
+
 {{end -}}
 
 std::string GetVersion() {
