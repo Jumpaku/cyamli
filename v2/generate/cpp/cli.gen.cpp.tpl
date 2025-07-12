@@ -28,10 +28,6 @@ std::string join(std::vector<std::string> const &v, std::string const &sep) {
     return result;
 }
 
-bool starts_with(std::string const &s, std::string const &prefix) {
-    return s.size() >= prefix.size() && s.substr(0, prefix.size()) == prefix;
-}
-
 template <typename T, typename ...Args>
 T parseValue(Args const &...strValue);
 
@@ -114,7 +110,7 @@ resolveArgs(std::vector<std::string> const &args) {
             arguments.insert(arguments.end(), restArgs.begin() + idx + 1, restArgs.end());
             break;
         }
-        if (starts_with(arg, "-")) {
+        if (arg.size() > 0 && arg[0] == '-') {
             options.emplace_back(arg);
         } else {
             arguments.emplace_back(arg);
