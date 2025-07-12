@@ -13,7 +13,7 @@ namespace {
 // Helper functions
 std::string to_lower(std::string const &s) {
     std::string r = s;
-    std::transform(r.begin(), r.end(), r.begin(), [](auto c){ return std::tolower(c); });
+    std::transform(r.begin(), r.end(), r.begin(), [](char const c){ return std::tolower(c); });
     return r;
 }
 
@@ -122,7 +122,7 @@ resolveArgs(std::vector<std::string> const &args) {
     }
     return std::make_tuple(subcommandPath, options, arguments);
 };
-void Run(CLIHandler& handler, int argc, char *argv[]) {
+void Run(CLIHandler& handler, int argc, const char *argv[]) {
     std::vector<std::string> args;
     for (int i = 0; i < argc; ++i) {
         args.emplace_back(argv[i]);

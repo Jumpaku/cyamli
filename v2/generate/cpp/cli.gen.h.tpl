@@ -33,6 +33,6 @@ public:
     {{end}}
 };
 
-void Run(CLIHandler &handler, int argc, char *argv[]);
+void Run(CLIHandler &handler, int argc, const char *argv[]);
 
 } // namespace
