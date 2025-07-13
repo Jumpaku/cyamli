@@ -18,7 +18,7 @@ func GenerateCpp(schema schema.Schema, headerFile, namespace, generator string, 
 
 	buf := bytes.NewBuffer(nil)
 	if err := executorCpp.Execute(buf, d); err != nil {
-		return fmt.Errorf("fail to execute template: %w", err)
+		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {
@@ -36,7 +36,7 @@ func GenerateH(schema schema.Schema, namespace, generator string, out io.Writer)
 
 	buf := bytes.NewBuffer(nil)
 	if err := executorH.Execute(buf, d); err != nil {
-		return fmt.Errorf("fail to execute template: %w", err)
+		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {
@@ -54,7 +54,7 @@ func GenerateTestCpp(schema schema.Schema, headerFile, namespace, generator stri
 
 	buf := bytes.NewBuffer(nil)
 	if err := executorTest.Execute(buf, d); err != nil {
-		return fmt.Errorf("fail to execute template: %w", err)
+		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {

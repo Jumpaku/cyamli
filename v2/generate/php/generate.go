@@ -30,7 +30,7 @@ func Generate(schema schema.Schema, namespace, generator string, out NamedWriter
 	{
 		buf := bytes.NewBuffer(nil)
 		if err := executorCyamli.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 
 		if _, err := out.Write("Cyamli.php", buf.Bytes()); err != nil {
@@ -40,7 +40,7 @@ func Generate(schema schema.Schema, namespace, generator string, out NamedWriter
 	{
 		buf := bytes.NewBuffer(nil)
 		if err := executorCliHandler.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 
 		if _, err := out.Write("CliHandler.php", buf.Bytes()); err != nil {
@@ -50,7 +50,7 @@ func Generate(schema schema.Schema, namespace, generator string, out NamedWriter
 	for _, d := range d.CommandList {
 		buf := bytes.NewBuffer(nil)
 		if err := executorInput.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 
 		if _, err := out.Write(d.HandlerInputType()+".php", buf.Bytes()); err != nil {
@@ -73,7 +73,7 @@ func GenerateTest(schema schema.Schema, namespace, generator string, out NamedWr
 	{
 		buf := bytes.NewBuffer(nil)
 		if err := executorMock.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 
 		if _, err := out.Write("CLIHandlerMock.php", buf.Bytes()); err != nil {
@@ -83,7 +83,7 @@ func GenerateTest(schema schema.Schema, namespace, generator string, out NamedWr
 	for _, d := range d.CommandList {
 		buf := bytes.NewBuffer(nil)
 		if err := executorTest.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 
 		if _, err := out.Write(d.HandlerMethodName()+"_Test.php", buf.Bytes()); err != nil {

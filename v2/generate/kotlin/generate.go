@@ -18,7 +18,7 @@ func Generate(schema schema.Schema, packageName, generator string, out io.Writer
 
 	buf := bytes.NewBuffer(nil)
 	if err := executor.Execute(buf, d); err != nil {
-		return fmt.Errorf("fail to execute template: %w", err)
+		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
 	// Write the generated code without any post-processing
@@ -37,7 +37,7 @@ func GenerateTest(schema schema.Schema, packageName, generator string, out io.Wr
 
 	buf := bytes.NewBuffer(nil)
 	if err := executorTest.Execute(buf, d); err != nil {
-		return fmt.Errorf("fail to execute template: %w", err)
+		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
 	// Write the generated code without any post-processing
