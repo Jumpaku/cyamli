@@ -1,4 +1,4 @@
-package python3
+package csharp
 
 import (
 	"bytes"
@@ -9,12 +9,12 @@ import (
 	"text/template"
 )
 
-//go:embed cli_gen.py.tpl
-var cliGenPyTemplate string
-var executor = template.Must(template.New("cli_gen.py.tpl").Parse(cliGenPyTemplate))
+//go:embed cli.gen.cs.tpl
+var cliGenGoTemplate string
+var executor = template.Must(template.New("cli.gen.cs.tpl").Parse(cliGenGoTemplate))
 
-func Generate(schema schema.Schema, generator string, out io.Writer) error {
-	d := ConstructData(schema, "", generator)
+func Generate(schema schema.Schema, namespace, generator string, out io.Writer) error {
+	d := ConstructData(schema, namespace, generator)
 
 	buf := bytes.NewBuffer(nil)
 	if err := executor.Execute(buf, d); err != nil {
@@ -27,12 +27,12 @@ func Generate(schema schema.Schema, generator string, out io.Writer) error {
 	return nil
 }
 
-//go:embed test_cli_gen.py.tpl
-var testCliGenPyTemplate string
-var executorTest = template.Must(template.New("test_cli_gen.py.tpl").Parse(testCliGenPyTemplate))
+//go:embed cli_test.gen.cs.tpl
+var cliTestGenGoTemplate string
+var executorTest = template.Must(template.New("cli_test.gen.cs.tpl").Parse(cliTestGenGoTemplate))
 
-func GenerateTest(schema schema.Schema, moduleName, generator string, out io.Writer) error {
-	d := ConstructData(schema, moduleName, generator)
+func GenerateTest(schema schema.Schema, namespace, generator string, out io.Writer) error {
+	d := ConstructData(schema, namespace, generator)
 
 	buf := bytes.NewBuffer(nil)
 	if err := executorTest.Execute(buf, d); err != nil {

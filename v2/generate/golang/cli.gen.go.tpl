@@ -139,6 +139,7 @@ func resolveArgs(args []string) (subcommandPath []string, options []string, argu
 	{{range .CommandList}}	{{.PathLiteral}}: true,{{end}}
 	}
 
+	subcommandPath, options, arguments = []string{}, []string{}, []string{}
 	for _, arg := range args[1:] {
 		if arg == "--" {
 			break

@@ -12,6 +12,7 @@ import (
 )
 
 type Data struct {
+	ModuleFile  string
 	Generator   string
 	Program     ProgramData
 	CommandList []CommandData
@@ -28,6 +29,14 @@ type CommandData struct {
 	Name      name.Name
 	Options   []OptionData
 	Arguments []ArgumentData
+}
+
+func (d CommandData) Path() []string {
+	path := []string{}
+	for i := 0; i < d.Name.Len(); i++ {
+		path = append(path, d.Name.Get(i).LowerCamel())
+	}
+	return path
 }
 
 func (d CommandData) PathLiteral() string {
@@ -141,7 +150,7 @@ func primitiveType(t schema.Type) string {
 	}
 }
 
-func ConstructData(s schema.Schema, generatorName string) Data {
+func ConstructData(s schema.Schema, moduleFile, generatorName string) Data {
 	commands := s.PropagateOptions().ListCommand()
 	commandList := lo.Map(commands, func(cmd schema.PathCommand, _ int) CommandData {
 		options := []OptionData{}
@@ -179,7 +188,8 @@ func ConstructData(s schema.Schema, generatorName string) Data {
 	slices.SortFunc(commandList, func(a, b CommandData) int { return a.Name.Cmp(b.Name) })
 
 	data := Data{
-		Generator: generatorName,
+		ModuleFile: moduleFile,
+		Generator:  generatorName,
 		Program: ProgramData{
 			Name:    s.Program.Name,
 			Version: s.Program.Version,

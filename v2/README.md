@@ -190,6 +190,9 @@ The following programming languages are currently supported:
 * Dart3
 * Kotlin
 * TypeScript
+* C#
+* C++ 11
+* PHP 7.4
 * Documentation in text, HTML, and Markdown
 
 

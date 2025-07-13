@@ -1,5 +1,5 @@
 name: cyamli
-version: v2.0.0-alpha.4
+version: v2.0.0-alpha.5
 description: A command line tool to generate CLI for your app from YAML-based schema.
 options:
   -help:
@@ -16,9 +16,6 @@ subcommands:
       -schema-path:
         description: if specified then reads schema file from the path, otherwise reads from stdin.
         propagates: true
-      -out-path:
-        description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
-        propagates: true
     subcommands:
       golang:
         description: generates CLI for your app written in Go.
@@ -26,17 +23,53 @@ subcommands:
           -package:
             description: package name where the generated file will be placed.
             default: main
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
       python3:
         description: generates CLI for your app written in Python3.
+        options:
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
       dart3:
         description: generates CLI for your app written in Dart.
+        options:
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
       kotlin:
         description: generates CLI for your app written in Kotlin.
         options:
           -package:
             description: package name where the generated file will be placed.
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
       typescript:
         description: generates CLI for your app written in TypeScript.
+        options:
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+      csharp:
+        description: generates CLI for your app written in C#.
+        options:
+          -namespace:
+            description: namespace where the generated file will be placed.
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+      php:
+        description: generates CLI for your app written in PHP 7.4.
+        options:
+          -namespace:
+            description: namespace where the generated file will be placed.
+          -out-dir:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+      cpp:
+        description: generates CLI for your app written in C++ 11.
+        options:
+          -namespace:
+            description: namespace where the generated file will be placed.
+          -out-source-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+          -out-header-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
       docs:
         description: generates documentation for your CLI app.
         options:
@@ -44,3 +77,5 @@ subcommands:
             description: specifies output format of the documentation in text or markdown.
             short: -f
             default: text
+          -out-path:
+            description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.

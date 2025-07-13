@@ -1,11 +1,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>cyamli (v2.0.0-alpha.4)</title>
+    <title>cyamli (v2.0.0-alpha.5)</title>
 </head>
 <body>
 <main>
-    <h1>cyamli (v2.0.0-alpha.4)</h1>
+    <h1>cyamli (v2.0.0-alpha.5)</h1>
     
         
         <section>
@@ -110,18 +110,6 @@
                         <h4>
                             
                                 <code>
-                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
-                        </h4>
-                        <p>
-                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
-                            
-                        </p>
-                    </li>
-                
-                    <li>
-                        <h4>
-                            
-                                <code>
                                     -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
                         </h4>
                         <p>
@@ -138,6 +126,22 @@
             
             <h3>Subcommands</h3>
             <ul>
+                
+                    <li>
+                        <h4>cpp</h4>
+                        <p>
+                            generates CLI for your app written in C&#43;&#43; 11.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>csharp</h4>
+                        <p>
+                            generates CLI for your app written in C#.
+                            
+                        </p>
+                    </li>
                 
                     <li>
                         <h4>dart3</h4>
@@ -172,6 +176,14 @@
                     </li>
                 
                     <li>
+                        <h4>php</h4>
+                        <p>
+                            generates CLI for your app written in PHP 7.4.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
                         <h4>python3</h4>
                         <p>
                             generates CLI for your app written in Python3.
@@ -188,6 +200,176 @@
                     </li>
                 
             </ul>
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate cpp</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in C&#43;&#43; 11.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate cpp [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -namespace=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            namespace where the generated file will be placed.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-header-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-source-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate csharp</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in C#.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate csharp [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -namespace=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            namespace where the generated file will be placed.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
             
         </section>
     
@@ -473,6 +655,85 @@
                         </h4>
                         <p>
                             package name where the generated file will be placed.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -schema-path=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then reads schema file from the path, otherwise reads from stdin.
+                            
+                        </p>
+                    </li>
+                
+            </ul>
+            
+
+            
+
+            
+        </section>
+    
+        
+        <section>
+            <h2>cyamli generate php</h2>
+
+            
+            <h3>Description</h3>
+            <p>
+                generates CLI for your app written in PHP 7.4.
+                
+            </p>
+            
+
+            <h3>Syntax</h3>
+            <p>
+                <code>cyamli generate php [&lt;option&gt;]...</code>
+            </p>
+
+            
+            <h3>Options</h3>
+            <ul>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -help[=&lt;boolean>]</code>, 
+                                <code>
+                                    -h[=&lt;boolean>]</code> (default=<code>false</code>):
+                        </h4>
+                        <p>
+                            shows description of this app.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -namespace=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            namespace where the generated file will be placed.
+                            
+                        </p>
+                    </li>
+                
+                    <li>
+                        <h4>
+                            
+                                <code>
+                                    -out-dir=&lt;string></code> (default=<code>&#34;&#34;</code>):
+                        </h4>
+                        <p>
+                            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
                             
                         </p>
                     </li>

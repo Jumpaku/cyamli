@@ -1,4 +1,4 @@
-package golang
+package php
 
 import (
 	"fmt"
@@ -12,8 +12,7 @@ import (
 )
 
 type Data struct {
-	Module      string
-	Package     string
+	Namespace   string
 	Generator   string
 	Program     ProgramData
 	CommandList []CommandData
@@ -26,6 +25,10 @@ type ProgramData struct {
 
 type CommandData struct {
 	schema.Command
+
+	Namespace string
+	Generator string
+
 	Program   string
 	Name      name.Name
 	Options   []OptionData
@@ -78,9 +81,16 @@ func (d OptionData) InputFieldName() string {
 }
 
 func (d OptionData) InputFieldType() string {
+	if d.Repeated {
+		return "array"
+	}
+	return primitiveType(d.Type)
+}
+
+func (d OptionData) InputFieldDocType() string {
 	typ := primitiveType(d.Type)
 	if d.Repeated {
-		return "[]" + typ
+		return typ + "[]"
 	}
 	return typ
 }
@@ -88,7 +98,7 @@ func (d OptionData) InputFieldType() string {
 func (d OptionData) InputFieldInit() string {
 	typ := primitiveType(d.Type)
 	if d.Repeated {
-		return "[]" + typ + "{}"
+		return "[]"
 	}
 	switch typ {
 	case "bool":
@@ -107,7 +117,7 @@ func (d OptionData) InputFieldInit() string {
 			return `""`
 		}
 		return fmt.Sprintf("%q", d.DefaultValue)
-	case "int64":
+	case "int":
 		if d.DefaultValue == "" {
 			return "0"
 		}
@@ -131,9 +141,16 @@ func (d ArgumentData) InputFieldName() string {
 }
 
 func (d ArgumentData) InputFieldType() string {
+	if d.Variadic {
+		return "array"
+	}
+	return primitiveType(d.Type)
+}
+
+func (d ArgumentData) InputFieldDocType() string {
 	typ := primitiveType(d.Type)
 	if d.Variadic {
-		return "[]" + typ
+		return typ + "[]"
 	}
 	return typ
 }
@@ -143,7 +160,7 @@ func primitiveType(t schema.Type) string {
 	case schema.TypeString, schema.TypeEmpty:
 		return "string"
 	case schema.TypeInteger:
-		return "int64"
+		return "int"
 	case schema.TypeBoolean:
 		return "bool"
 	default:
@@ -151,7 +168,7 @@ func primitiveType(t schema.Type) string {
 	}
 }
 
-func ConstructData(s schema.Schema, moduleName, packageName, generatorName string) Data {
+func ConstructData(s schema.Schema, namespace, generatorName string) Data {
 	commands := s.PropagateOptions().ListCommand()
 	commandList := lo.Map(commands, func(cmd schema.PathCommand, _ int) CommandData {
 		options := []OptionData{}
@@ -179,8 +196,10 @@ func ConstructData(s schema.Schema, moduleName, packageName, generatorName strin
 		slices.SortFunc(arguments, func(a, b ArgumentData) int { return a.Name.Cmp(b.Name) })
 
 		return CommandData{
-			Program:   s.Program.Name,
 			Command:   cmd.Command,
+			Namespace: namespace,
+			Generator: generatorName,
+			Program:   s.Program.Name,
 			Name:      name.Words(cmd.Path),
 			Options:   options,
 			Arguments: arguments,
@@ -189,8 +208,7 @@ func ConstructData(s schema.Schema, moduleName, packageName, generatorName strin
 	slices.SortFunc(commandList, func(a, b CommandData) int { return a.Name.Cmp(b.Name) })
 
 	data := Data{
-		Module:    moduleName,
-		Package:   packageName,
+		Namespace: namespace,
 		Generator: generatorName,
 		Program: ProgramData{
 			Name:    s.Program.Name,

@@ -1,4 +1,4 @@
-package golang
+package csharp
 
 import (
 	"fmt"
@@ -12,8 +12,7 @@ import (
 )
 
 type Data struct {
-	Module      string
-	Package     string
+	Namespace   string
 	Generator   string
 	Program     ProgramData
 	CommandList []CommandData
@@ -151,7 +150,7 @@ func primitiveType(t schema.Type) string {
 	}
 }
 
-func ConstructData(s schema.Schema, moduleName, packageName, generatorName string) Data {
+func ConstructData(s schema.Schema, namespace, generatorName string) Data {
 	commands := s.PropagateOptions().ListCommand()
 	commandList := lo.Map(commands, func(cmd schema.PathCommand, _ int) CommandData {
 		options := []OptionData{}
@@ -189,8 +188,7 @@ func ConstructData(s schema.Schema, moduleName, packageName, generatorName strin
 	slices.SortFunc(commandList, func(a, b CommandData) int { return a.Name.Cmp(b.Name) })
 
 	data := Data{
-		Module:    moduleName,
-		Package:   packageName,
+		Namespace: namespace,
 		Generator: generatorName,
 		Program: ProgramData{
 			Name:    s.Program.Name,

@@ -10,10 +10,13 @@ import (
 type CLIHandler interface {
 	Run(input Input) error
 	Run_Generate(input Input_Generate) error
+	Run_GenerateCpp(input Input_GenerateCpp) error
+	Run_GenerateCsharp(input Input_GenerateCsharp) error
 	Run_GenerateDart3(input Input_GenerateDart3) error
 	Run_GenerateDocs(input Input_GenerateDocs) error
 	Run_GenerateGolang(input Input_GenerateGolang) error
 	Run_GenerateKotlin(input Input_GenerateKotlin) error
+	Run_GeneratePhp(input Input_GeneratePhp) error
 	Run_GeneratePython3(input Input_GeneratePython3) error
 	Run_GenerateTypescript(input Input_GenerateTypescript) error
 	Run_Version(input Input_Version) error
@@ -31,6 +34,16 @@ func Run(handler CLIHandler, args []string) error {
 		var input Input_Generate
 		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_Generate(input)
+
+	case "generate cpp":
+		var input Input_GenerateCpp
+		input.resolveInput(subcommandPath, options, arguments)
+		return handler.Run_GenerateCpp(input)
+
+	case "generate csharp":
+		var input Input_GenerateCsharp
+		input.resolveInput(subcommandPath, options, arguments)
+		return handler.Run_GenerateCsharp(input)
 
 	case "generate dart3":
 		var input Input_GenerateDart3
@@ -51,6 +64,11 @@ func Run(handler CLIHandler, args []string) error {
 		var input Input_GenerateKotlin
 		input.resolveInput(subcommandPath, options, arguments)
 		return handler.Run_GenerateKotlin(input)
+
+	case "generate php":
+		var input Input_GeneratePhp
+		input.resolveInput(subcommandPath, options, arguments)
+		return handler.Run_GeneratePhp(input)
 
 	case "generate python3":
 		var input Input_GeneratePython3
@@ -114,7 +132,6 @@ func (input *Input) resolveInput(subcommand, options, arguments []string) {
 
 type Input_Generate struct {
 	Opt_Help       bool
-	Opt_OutPath    string
 	Opt_SchemaPath string
 	Subcommand     []string
 	Options        []string
@@ -125,6 +142,163 @@ type Input_Generate struct {
 
 func (input *Input_Generate) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_Generate{Opt_Help: false,
+		Opt_SchemaPath: "",
+		Subcommand:     subcommand,
+		Options:        options,
+		Arguments:      arguments,
+	}
+
+	for _, arg := range input.Options {
+		optName, lit, cut := strings.Cut(arg, "=")
+		func(...any) {}(optName, lit, cut)
+
+		switch optName {
+		case "-help", "-h":
+			if !cut {
+				lit = "true"
+			}
+			if v, err := parseValue("bool", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_Help = v.(bool)
+			}
+
+		case "-schema-path":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
+			}
+
+		default:
+			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
+			return
+		}
+	}
+
+	expectedArgs := 0
+	func(...any) {}(expectedArgs)
+}
+
+type Input_GenerateCpp struct {
+	Opt_Help          bool
+	Opt_Namespace     string
+	Opt_OutHeaderPath string
+	Opt_OutSourcePath string
+	Opt_SchemaPath    string
+	Subcommand        []string
+	Options           []string
+	Arguments         []string
+
+	ErrorMessage string
+}
+
+func (input *Input_GenerateCpp) resolveInput(subcommand, options, arguments []string) {
+	*input = Input_GenerateCpp{Opt_Help: false,
+		Opt_Namespace:     "",
+		Opt_OutHeaderPath: "",
+		Opt_OutSourcePath: "",
+		Opt_SchemaPath:    "",
+		Subcommand:        subcommand,
+		Options:           options,
+		Arguments:         arguments,
+	}
+
+	for _, arg := range input.Options {
+		optName, lit, cut := strings.Cut(arg, "=")
+		func(...any) {}(optName, lit, cut)
+
+		switch optName {
+		case "-help", "-h":
+			if !cut {
+				lit = "true"
+			}
+			if v, err := parseValue("bool", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_Help = v.(bool)
+			}
+
+		case "-namespace":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_Namespace = v.(string)
+			}
+
+		case "-out-header-path":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_OutHeaderPath = v.(string)
+			}
+
+		case "-out-source-path":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_OutSourcePath = v.(string)
+			}
+
+		case "-schema-path":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
+			}
+
+		default:
+			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
+			return
+		}
+	}
+
+	expectedArgs := 0
+	func(...any) {}(expectedArgs)
+}
+
+type Input_GenerateCsharp struct {
+	Opt_Help       bool
+	Opt_Namespace  string
+	Opt_OutPath    string
+	Opt_SchemaPath string
+	Subcommand     []string
+	Options        []string
+	Arguments      []string
+
+	ErrorMessage string
+}
+
+func (input *Input_GenerateCsharp) resolveInput(subcommand, options, arguments []string) {
+	*input = Input_GenerateCsharp{Opt_Help: false,
+		Opt_Namespace:  "",
 		Opt_OutPath:    "",
 		Opt_SchemaPath: "",
 		Subcommand:     subcommand,
@@ -146,6 +320,18 @@ func (input *Input_Generate) resolveInput(subcommand, options, arguments []strin
 				return
 			} else {
 				input.Opt_Help = v.(bool)
+			}
+
+		case "-namespace":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_Namespace = v.(string)
 			}
 
 		case "-out-path":
@@ -504,6 +690,90 @@ func (input *Input_GenerateKotlin) resolveInput(subcommand, options, arguments [
 	func(...any) {}(expectedArgs)
 }
 
+type Input_GeneratePhp struct {
+	Opt_Help       bool
+	Opt_Namespace  string
+	Opt_OutDir     string
+	Opt_SchemaPath string
+	Subcommand     []string
+	Options        []string
+	Arguments      []string
+
+	ErrorMessage string
+}
+
+func (input *Input_GeneratePhp) resolveInput(subcommand, options, arguments []string) {
+	*input = Input_GeneratePhp{Opt_Help: false,
+		Opt_Namespace:  "",
+		Opt_OutDir:     "",
+		Opt_SchemaPath: "",
+		Subcommand:     subcommand,
+		Options:        options,
+		Arguments:      arguments,
+	}
+
+	for _, arg := range input.Options {
+		optName, lit, cut := strings.Cut(arg, "=")
+		func(...any) {}(optName, lit, cut)
+
+		switch optName {
+		case "-help", "-h":
+			if !cut {
+				lit = "true"
+			}
+			if v, err := parseValue("bool", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_Help = v.(bool)
+			}
+
+		case "-namespace":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_Namespace = v.(string)
+			}
+
+		case "-out-dir":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_OutDir = v.(string)
+			}
+
+		case "-schema-path":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_SchemaPath = v.(string)
+			}
+
+		default:
+			input.ErrorMessage = fmt.Sprintf("unknown option %q", optName)
+			return
+		}
+	}
+
+	expectedArgs := 0
+	func(...any) {}(expectedArgs)
+}
+
 type Input_GeneratePython3 struct {
 	Opt_Help       bool
 	Opt_OutPath    string
@@ -690,9 +960,10 @@ func resolveArgs(args []string) (subcommandPath []string, options []string, argu
 		panic("command line arguments are too few")
 	}
 	subcommandSet := map[string]bool{
-		"": true, "generate": true, "generate dart3": true, "generate docs": true, "generate golang": true, "generate kotlin": true, "generate python3": true, "generate typescript": true, "version": true,
+		"": true, "generate": true, "generate cpp": true, "generate csharp": true, "generate dart3": true, "generate docs": true, "generate golang": true, "generate kotlin": true, "generate php": true, "generate python3": true, "generate typescript": true, "version": true,
 	}
 
+	subcommandPath, options, arguments = []string{}, []string{}, []string{}
 	for _, arg := range args[1:] {
 		if arg == "--" {
 			break
@@ -775,7 +1046,7 @@ func parseValue(typ string, strValue ...string) (dst any, err error) {
 }
 
 func GetVersion() string {
-	return "v2.0.0-alpha.4"
+	return "v2.0.0-alpha.5"
 }
 func GetProgram() string {
 	return "cyamli"
@@ -786,7 +1057,13 @@ func GetDoc(subcommands []string) string {
 		return "cyamli \n\n    Description:\n        A command line tool to generate CLI for your app from YAML-based schema.\n\n    Syntax:\n        $ cyamli  [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n    Subcommands:\n        generate:\n            holds subcommands to generate CLI code.\n\n        version:\n            shows version of this app.\n\n\n"
 
 	case "generate":
-		return "cyamli generate\n\n    Description:\n        holds subcommands to generate CLI code.\n\n    Syntax:\n        $ cyamli generate [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n    Subcommands:\n        dart3:\n            generates CLI for your app written in Dart.\n\n        docs:\n            generates documentation for your CLI app.\n\n        golang:\n            generates CLI for your app written in Go.\n\n        kotlin:\n            generates CLI for your app written in Kotlin.\n\n        python3:\n            generates CLI for your app written in Python3.\n\n        typescript:\n            generates CLI for your app written in TypeScript.\n\n\n"
+		return "cyamli generate\n\n    Description:\n        holds subcommands to generate CLI code.\n\n    Syntax:\n        $ cyamli generate [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n    Subcommands:\n        cpp:\n            generates CLI for your app written in C++ 11.\n\n        csharp:\n            generates CLI for your app written in C#.\n\n        dart3:\n            generates CLI for your app written in Dart.\n\n        docs:\n            generates documentation for your CLI app.\n\n        golang:\n            generates CLI for your app written in Go.\n\n        kotlin:\n            generates CLI for your app written in Kotlin.\n\n        php:\n            generates CLI for your app written in PHP 7.4.\n\n        python3:\n            generates CLI for your app written in Python3.\n\n        typescript:\n            generates CLI for your app written in TypeScript.\n\n\n"
+
+	case "generate cpp":
+		return "cyamli generate cpp\n\n    Description:\n        generates CLI for your app written in C++ 11.\n\n    Syntax:\n        $ cyamli generate cpp [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -namespace=<string>  (default=\"\"):\n            namespace where the generated file will be placed.\n\n        -out-header-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -out-source-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
+
+	case "generate csharp":
+		return "cyamli generate csharp\n\n    Description:\n        generates CLI for your app written in C#.\n\n    Syntax:\n        $ cyamli generate csharp [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -namespace=<string>  (default=\"\"):\n            namespace where the generated file will be placed.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
 
 	case "generate dart3":
 		return "cyamli generate dart3\n\n    Description:\n        generates CLI for your app written in Dart.\n\n    Syntax:\n        $ cyamli generate dart3 [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
@@ -799,6 +1076,9 @@ func GetDoc(subcommands []string) string {
 
 	case "generate kotlin":
 		return "cyamli generate kotlin\n\n    Description:\n        generates CLI for your app written in Kotlin.\n\n    Syntax:\n        $ cyamli generate kotlin [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -package=<string>  (default=\"\"):\n            package name where the generated file will be placed.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
+
+	case "generate php":
+		return "cyamli generate php\n\n    Description:\n        generates CLI for your app written in PHP 7.4.\n\n    Syntax:\n        $ cyamli generate php [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -namespace=<string>  (default=\"\"):\n            namespace where the generated file will be placed.\n\n        -out-dir=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
 
 	case "generate python3":
 		return "cyamli generate python3\n\n    Description:\n        generates CLI for your app written in Python3.\n\n    Syntax:\n        $ cyamli generate python3 [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
