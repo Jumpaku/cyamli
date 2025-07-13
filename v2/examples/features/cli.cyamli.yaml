@@ -20,6 +20,7 @@ options:
   -negation-option:
     description: this option's negated version `-no-negation-option` can be available.
     type: boolean
+    negation: true
 arguments:
   - name: first_arg
     description: first argument with type boolean

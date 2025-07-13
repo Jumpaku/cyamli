@@ -1,4 +1,4 @@
-package golang
+package cpp
 
 import (
 	"fmt"
@@ -12,8 +12,8 @@ import (
 )
 
 type Data struct {
-	Module      string
-	Package     string
+	HeaderFile  string
+	Namespace   string
 	Generator   string
 	Program     ProgramData
 	CommandList []CommandData
@@ -80,7 +80,7 @@ func (d OptionData) InputFieldName() string {
 func (d OptionData) InputFieldType() string {
 	typ := primitiveType(d.Type)
 	if d.Repeated {
-		return "[]" + typ
+		return "std::vector<" + typ + ">"
 	}
 	return typ
 }
@@ -88,7 +88,7 @@ func (d OptionData) InputFieldType() string {
 func (d OptionData) InputFieldInit() string {
 	typ := primitiveType(d.Type)
 	if d.Repeated {
-		return "[]" + typ + "{}"
+		return "std::vector<" + typ + ">{}"
 	}
 	switch typ {
 	case "bool":
@@ -102,12 +102,12 @@ func (d OptionData) InputFieldInit() string {
 		case "false", "False", "0":
 			return "false"
 		}
-	case "string":
+	case "std::string":
 		if d.DefaultValue == "" {
-			return `""`
+			return `std::string("")`
 		}
 		return fmt.Sprintf("%q", d.DefaultValue)
-	case "int64":
+	case "std::int64_t":
 		if d.DefaultValue == "" {
 			return "0"
 		}
@@ -133,7 +133,7 @@ func (d ArgumentData) InputFieldName() string {
 func (d ArgumentData) InputFieldType() string {
 	typ := primitiveType(d.Type)
 	if d.Variadic {
-		return "[]" + typ
+		return "std::vector<" + typ + ">"
 	}
 	return typ
 }
@@ -141,9 +141,9 @@ func (d ArgumentData) InputFieldType() string {
 func primitiveType(t schema.Type) string {
 	switch t {
 	case schema.TypeString, schema.TypeEmpty:
-		return "string"
+		return "std::string"
 	case schema.TypeInteger:
-		return "int64"
+		return "std::int64_t"
 	case schema.TypeBoolean:
 		return "bool"
 	default:
@@ -151,7 +151,7 @@ func primitiveType(t schema.Type) string {
 	}
 }
 
-func ConstructData(s schema.Schema, moduleName, packageName, generatorName string) Data {
+func ConstructData(s schema.Schema, headerFile, namespace, generatorName string) Data {
 	commands := s.PropagateOptions().ListCommand()
 	commandList := lo.Map(commands, func(cmd schema.PathCommand, _ int) CommandData {
 		options := []OptionData{}
@@ -189,9 +189,9 @@ func ConstructData(s schema.Schema, moduleName, packageName, generatorName strin
 	slices.SortFunc(commandList, func(a, b CommandData) int { return a.Name.Cmp(b.Name) })
 
 	data := Data{
-		Module:    moduleName,
-		Package:   packageName,
-		Generator: generatorName,
+		HeaderFile: headerFile,
+		Namespace:  namespace,
+		Generator:  generatorName,
 		Program: ProgramData{
 			Name:    s.Program.Name,
 			Version: s.Program.Version,

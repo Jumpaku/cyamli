@@ -16,7 +16,7 @@ func GenerateText(program string, path []string, cmd schema.Command) (string, er
 	data := Construct(program, path, cmd)
 	buf := bytes.NewBuffer(nil)
 	if err := executorText.Execute(buf, data); err != nil {
-		return "", fmt.Errorf("fail to execute template for text: %w", err)
+		return "", fmt.Errorf("failed to execute template for text: %w", err)
 	}
 	return buf.String(), nil
 }

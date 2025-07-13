@@ -38,19 +38,19 @@ func Generate(schema schema.Schema, format DocFormat, out io.Writer) error {
 		return fmt.Errorf("unsupported doc format: %s", format)
 	case DocFormatHTML:
 		if err := executorHTML.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 	case DocFormatMarkdown:
 		if err := executorMD.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 	case DocFormatText:
 		if err := executorTXT.Execute(buf, d); err != nil {
-			return fmt.Errorf("fail to execute template: %w", err)
+			return fmt.Errorf("failed to execute template: %w", err)
 		}
 	}
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }

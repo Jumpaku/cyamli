@@ -1,8 +1,7 @@
 cyamli (v2.0.0-alpha.5)
 
 
-
-    cyamli
+cyamli
 
     Description:
         A command line tool to generate CLI for your app from YAML-based schema.
@@ -22,9 +21,7 @@ cyamli (v2.0.0-alpha.5)
             shows version of this app.
 
 
-
-
-    cyamli generate
+cyamli generate
 
     Description:
         holds subcommands to generate CLI code.
@@ -36,13 +33,16 @@ cyamli (v2.0.0-alpha.5)
         -help[=<boolean>], -h[=<boolean>]  (default=false):
             shows description of this app.
 
-        -out-path=<string>  (default=""):
-            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
-
         -schema-path=<string>  (default=""):
             if specified then reads schema file from the path, otherwise reads from stdin.
 
     Subcommands:
+        cpp:
+            generates CLI for your app written in C++ 11.
+
+        csharp:
+            generates CLI for your app written in C#.
+
         dart3:
             generates CLI for your app written in Dart.
 
@@ -55,6 +55,9 @@ cyamli (v2.0.0-alpha.5)
         kotlin:
             generates CLI for your app written in Kotlin.
 
+        php:
+            generates CLI for your app written in PHP 7.4.
+
         python3:
             generates CLI for your app written in Python3.
 
@@ -62,9 +65,54 @@ cyamli (v2.0.0-alpha.5)
             generates CLI for your app written in TypeScript.
 
 
+cyamli generate cpp
+
+    Description:
+        generates CLI for your app written in C++ 11.
+
+    Syntax:
+        $ cyamli generate cpp [<option>]...
+
+    Options:
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of this app.
+
+        -namespace=<string>  (default=""):
+            namespace where the generated file will be placed.
+
+        -out-header-path=<string>  (default=""):
+            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+
+        -out-source-path=<string>  (default=""):
+            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+
+        -schema-path=<string>  (default=""):
+            if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-    cyamli generate dart3
+cyamli generate csharp
+
+    Description:
+        generates CLI for your app written in C#.
+
+    Syntax:
+        $ cyamli generate csharp [<option>]...
+
+    Options:
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of this app.
+
+        -namespace=<string>  (default=""):
+            namespace where the generated file will be placed.
+
+        -out-path=<string>  (default=""):
+            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+
+        -schema-path=<string>  (default=""):
+            if specified then reads schema file from the path, otherwise reads from stdin.
+
+
+cyamli generate dart3
 
     Description:
         generates CLI for your app written in Dart.
@@ -83,9 +131,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-    cyamli generate docs
+cyamli generate docs
 
     Description:
         generates documentation for your CLI app.
@@ -107,9 +153,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-    cyamli generate golang
+cyamli generate golang
 
     Description:
         generates CLI for your app written in Go.
@@ -131,9 +175,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-    cyamli generate kotlin
+cyamli generate kotlin
 
     Description:
         generates CLI for your app written in Kotlin.
@@ -155,9 +197,29 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
+cyamli generate php
+
+    Description:
+        generates CLI for your app written in PHP 7.4.
+
+    Syntax:
+        $ cyamli generate php [<option>]...
+
+    Options:
+        -help[=<boolean>], -h[=<boolean>]  (default=false):
+            shows description of this app.
+
+        -namespace=<string>  (default=""):
+            namespace where the generated file will be placed.
+
+        -out-dir=<string>  (default=""):
+            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
+
+        -schema-path=<string>  (default=""):
+            if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-    cyamli generate python3
+cyamli generate python3
 
     Description:
         generates CLI for your app written in Python3.
@@ -176,9 +238,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-    cyamli generate typescript
+cyamli generate typescript
 
     Description:
         generates CLI for your app written in TypeScript.
@@ -197,9 +257,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-    cyamli version
+cyamli version
 
     Description:
         shows version of this app.
@@ -210,7 +268,6 @@ cyamli (v2.0.0-alpha.5)
     Options:
         -help[=<boolean>], -h[=<boolean>]  (default=false):
             shows description of this app.
-
 
 
 

@@ -693,6 +693,7 @@ func resolveArgs(args []string) (subcommandPath []string, options []string, argu
 		"": true, "generate": true, "generate dart3": true, "generate docs": true, "generate golang": true, "generate kotlin": true, "generate python3": true, "generate typescript": true, "version": true,
 	}
 
+	subcommandPath, options, arguments = []string{}, []string{}, []string{}
 	for _, arg := range args[1:] {
 		if arg == "--" {
 			break
