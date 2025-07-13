@@ -306,6 +306,7 @@ func resolveArgs(args []string) (subcommandPath []string, options []string, argu
 		"": true, "sub1": true, "sub1 sub2": true, "sub1 sub2 sub3": true,
 	}
 
+	subcommandPath, options, arguments = []string{}, []string{}, []string{}
 	for _, arg := range args[1:] {
 		if arg == "--" {
 			break
