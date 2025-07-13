@@ -245,7 +245,7 @@ func (c cli) Run_GeneratePhp(input Input_GeneratePhp) error {
 		return fmt.Errorf("fail to load schema: %w", err)
 	}
 	if err := php.Generate(s, input.Opt_Namespace, generator(), phpNamedWriter{OutDir: input.Opt_OutDir}); err != nil {
-		return fmt.Errorf("fail to generate Golang code: %w", err)
+		return fmt.Errorf("fail to generate PHP code: %w", err)
 	}
 	return nil
 }
