@@ -11,9 +11,9 @@ The schema of a typed CLI can be written in YAML according to the JSON Schema wh
 
 ## Motivation
 
-- Schema-based approach leveraging standardized and consistent sources.
+- Introducing the schema-based approach utilizing language-independent and consistent sources.
 - Promoting typed CLIs for the benefits of static checking and code completion.
-- Reducing boilerplate by automatically generating the necessary code.
+- Reducing boilerplate by generating the necessary code automatically.
 
 
 ## Installation
