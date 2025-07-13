@@ -1,8 +1,7 @@
 cyamli (v2.0.0-alpha.5)
 
 
-
-	cyamli
+cyamli
 
     Description:
         A command line tool to generate CLI for your app from YAML-based schema.
@@ -22,9 +21,7 @@ cyamli (v2.0.0-alpha.5)
             shows version of this app.
 
 
-
-
-	cyamli generate
+cyamli generate
 
     Description:
         holds subcommands to generate CLI code.
@@ -68,9 +65,7 @@ cyamli (v2.0.0-alpha.5)
             generates CLI for your app written in TypeScript.
 
 
-
-
-	cyamli generate cpp
+cyamli generate cpp
 
     Description:
         generates CLI for your app written in C++ 11.
@@ -95,9 +90,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate csharp
+cyamli generate csharp
 
     Description:
         generates CLI for your app written in C#.
@@ -119,9 +112,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate dart3
+cyamli generate dart3
 
     Description:
         generates CLI for your app written in Dart.
@@ -140,9 +131,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate docs
+cyamli generate docs
 
     Description:
         generates documentation for your CLI app.
@@ -164,9 +153,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate golang
+cyamli generate golang
 
     Description:
         generates CLI for your app written in Go.
@@ -188,9 +175,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate kotlin
+cyamli generate kotlin
 
     Description:
         generates CLI for your app written in Kotlin.
@@ -212,9 +197,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate php
+cyamli generate php
 
     Description:
         generates CLI for your app written in PHP 7.4.
@@ -236,9 +219,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate python3
+cyamli generate python3
 
     Description:
         generates CLI for your app written in Python3.
@@ -257,9 +238,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli generate typescript
+cyamli generate typescript
 
     Description:
         generates CLI for your app written in TypeScript.
@@ -278,9 +257,7 @@ cyamli (v2.0.0-alpha.5)
             if specified then reads schema file from the path, otherwise reads from stdin.
 
 
-
-
-	cyamli version
+cyamli version
 
     Description:
         shows version of this app.
@@ -291,7 +268,6 @@ cyamli (v2.0.0-alpha.5)
     Options:
         -help[=<boolean>], -h[=<boolean>]  (default=false):
             shows description of this app.
-
 
 
 
