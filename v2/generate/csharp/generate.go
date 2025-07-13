@@ -22,7 +22,7 @@ func Generate(schema schema.Schema, namespace, generator string, out io.Writer) 
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }
@@ -40,7 +40,7 @@ func GenerateTest(schema schema.Schema, namespace, generator string, out io.Writ
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }

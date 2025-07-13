@@ -23,7 +23,7 @@ func Generate(schema schema.Schema, packageName, generator string, out io.Writer
 
 	// Write the generated code without any post-processing
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }
@@ -42,7 +42,7 @@ func GenerateTest(schema schema.Schema, packageName, generator string, out io.Wr
 
 	// Write the generated code without any post-processing
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }

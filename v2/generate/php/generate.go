@@ -34,7 +34,7 @@ func Generate(schema schema.Schema, namespace, generator string, out NamedWriter
 		}
 
 		if _, err := out.Write("Cyamli.php", buf.Bytes()); err != nil {
-			return fmt.Errorf("fail to write generated code: %w", err)
+			return fmt.Errorf("failed to write generated code: %w", err)
 		}
 	}
 	{
@@ -44,7 +44,7 @@ func Generate(schema schema.Schema, namespace, generator string, out NamedWriter
 		}
 
 		if _, err := out.Write("CliHandler.php", buf.Bytes()); err != nil {
-			return fmt.Errorf("fail to write generated code: %w", err)
+			return fmt.Errorf("failed to write generated code: %w", err)
 		}
 	}
 	for _, d := range d.CommandList {
@@ -54,7 +54,7 @@ func Generate(schema schema.Schema, namespace, generator string, out NamedWriter
 		}
 
 		if _, err := out.Write(d.HandlerInputType()+".php", buf.Bytes()); err != nil {
-			return fmt.Errorf("fail to write generated code: %w", err)
+			return fmt.Errorf("failed to write generated code: %w", err)
 		}
 	}
 	return nil
@@ -77,7 +77,7 @@ func GenerateTest(schema schema.Schema, namespace, generator string, out NamedWr
 		}
 
 		if _, err := out.Write("CLIHandlerMock.php", buf.Bytes()); err != nil {
-			return fmt.Errorf("fail to write generated code: %w", err)
+			return fmt.Errorf("failed to write generated code: %w", err)
 		}
 	}
 	for _, d := range d.CommandList {
@@ -87,7 +87,7 @@ func GenerateTest(schema schema.Schema, namespace, generator string, out NamedWr
 		}
 
 		if _, err := out.Write(d.HandlerMethodName()+"_Test.php", buf.Bytes()); err != nil {
-			return fmt.Errorf("fail to write generated code: %w", err)
+			return fmt.Errorf("failed to write generated code: %w", err)
 		}
 	}
 

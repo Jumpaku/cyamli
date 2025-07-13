@@ -22,7 +22,7 @@ func GenerateCpp(schema schema.Schema, headerFile, namespace, generator string, 
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }
@@ -40,7 +40,7 @@ func GenerateH(schema schema.Schema, namespace, generator string, out io.Writer)
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }
@@ -58,7 +58,7 @@ func GenerateTestCpp(schema schema.Schema, headerFile, namespace, generator stri
 	}
 
 	if _, err := out.Write(buf.Bytes()); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }

@@ -28,7 +28,7 @@ func Generate(schema schema.Schema, packageName, generator string, out io.Writer
 	}
 
 	if _, err := out.Write(b); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }
@@ -50,7 +50,7 @@ func GenerateTest(schema schema.Schema, moduleName, packageName, generator strin
 	}
 
 	if _, err := out.Write(b); err != nil {
-		return fmt.Errorf("fail to write generated code: %w", err)
+		return fmt.Errorf("failed to write generated code: %w", err)
 	}
 	return nil
 }
