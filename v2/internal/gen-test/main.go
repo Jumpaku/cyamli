@@ -7,6 +7,7 @@ import (
 	"github.com/Jumpaku/cyamli/v2/generate/csharp"
 	"github.com/Jumpaku/cyamli/v2/generate/dart3"
 	"github.com/Jumpaku/cyamli/v2/generate/golang"
+	"github.com/Jumpaku/cyamli/v2/generate/kotlin"
 	"github.com/Jumpaku/cyamli/v2/schema"
 	"os"
 	"path/filepath"
@@ -93,7 +94,7 @@ func main() {
 	case "dart3":
 		{
 			if len(os.Args) != 4 {
-				fmt.Fprintf(os.Stderr, "Usage: %s [target] [outDir] [sourceDir] < [schema.yaml]\n", os.Args[0])
+				fmt.Fprintf(os.Stderr, "Usage: %s [target] [outDir] [package] < [schema.yaml]\n", os.Args[0])
 				os.Exit(1)
 			}
 			packageName := os.Args[3]
@@ -107,6 +108,21 @@ func main() {
 			}
 		}
 	case "kotlin":
+		{
+			if len(os.Args) != 4 {
+				fmt.Fprintf(os.Stderr, "Usage: %s [target] [outDir] [package] < [schema.yaml]\n", os.Args[0])
+				os.Exit(1)
+			}
+			packageName := os.Args[3]
+			t, err := os.Create(filepath.Join(outDir, "CliTest.kt"))
+			if err != nil {
+				panic(fmt.Sprintf("fail to create output file: %+v", err))
+			}
+			defer t.Close()
+			if err = kotlin.GenerateTest(s, packageName, "cyamli", t); err != nil {
+				panic(err)
+			}
+		}
 	case "php":
 	case "python3":
 	case "typescript":
