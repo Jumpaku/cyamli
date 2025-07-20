@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <cstdint>
+#include <stdexcept>
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, std::vector<T> const &v) {

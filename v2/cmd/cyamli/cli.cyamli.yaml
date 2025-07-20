@@ -1,5 +1,5 @@
 name: cyamli
-version: v2.0.0-beta.1
+version: v2.0.0-beta.2
 description: A command line tool to generate CLI for your app from YAML-based schema.
 options:
   -help:
@@ -66,6 +66,8 @@ subcommands:
         options:
           -namespace:
             description: namespace where the generated file will be placed.
+          -include-header:
+            description: 'path to the generated header file referred from #include "..." of the generated cpp source file'
           -out-source-path:
             description: if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.
           -out-header-path:

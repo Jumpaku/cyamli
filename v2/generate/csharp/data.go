@@ -79,7 +79,7 @@ func (d OptionData) InputFieldName() string {
 func (d OptionData) InputFieldType() string {
 	typ := primitiveType(d.Type)
 	if d.Repeated {
-		return "[]" + typ
+		return "List<" + typ + ">"
 	}
 	return typ
 }
@@ -87,9 +87,11 @@ func (d OptionData) InputFieldType() string {
 func (d OptionData) InputFieldInit() string {
 	typ := primitiveType(d.Type)
 	if d.Repeated {
-		return "[]" + typ + "{}"
+		return "new List<" + typ + ">{}"
 	}
 	switch typ {
+	default:
+		panic("unexpected type: " + typ)
 	case "bool":
 		switch strings.ToLower(d.DefaultValue) {
 		default:
@@ -106,17 +108,16 @@ func (d OptionData) InputFieldInit() string {
 			return `""`
 		}
 		return fmt.Sprintf("%q", d.DefaultValue)
-	case "int64":
+	case "long":
 		if d.DefaultValue == "" {
-			return "0"
+			return "0L"
 		}
 		v, err := strconv.ParseInt(d.DefaultValue, 0, 64)
 		if err != nil {
 			panic(fmt.Sprintf("failed to parse %q as int64", d.DefaultValue))
 		}
-		return fmt.Sprintf("%d", v)
+		return fmt.Sprintf("%dL", v)
 	}
-	return typ
 }
 
 type ArgumentData struct {
@@ -132,9 +133,26 @@ func (d ArgumentData) InputFieldName() string {
 func (d ArgumentData) InputFieldType() string {
 	typ := primitiveType(d.Type)
 	if d.Variadic {
-		return "[]" + typ
+		return "List<" + typ + ">"
 	}
 	return typ
+}
+
+func (d ArgumentData) InputFieldInit() string {
+	typ := primitiveType(d.Type)
+	if d.Variadic {
+		return "new List<" + typ + ">{}"
+	}
+	switch typ {
+	default:
+		panic("unexpected type: " + typ)
+	case "bool":
+		return "false"
+	case "string":
+		return `""`
+	case "long":
+		return "0L"
+	}
 }
 
 func primitiveType(t schema.Type) string {
@@ -142,7 +160,7 @@ func primitiveType(t schema.Type) string {
 	case schema.TypeString, schema.TypeEmpty:
 		return "string"
 	case schema.TypeInteger:
-		return "int64"
+		return "long"
 	case schema.TypeBoolean:
 		return "bool"
 	default:

@@ -4,6 +4,7 @@
 #include <cctype>
 #include <string>
 #include <tuple>
+#include <cstdint>
 #include <stdexcept>
 
 namespace {{.Namespace}} {

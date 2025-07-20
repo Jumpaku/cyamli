@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  test:
+    build: .
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: ["dart", "test", "--verbose-trace", "--reporter=expanded"]

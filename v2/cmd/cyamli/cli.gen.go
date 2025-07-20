@@ -188,6 +188,7 @@ func (input *Input_Generate) resolveInput(subcommand, options, arguments []strin
 
 type Input_GenerateCpp struct {
 	Opt_Help          bool
+	Opt_IncludeHeader string
 	Opt_Namespace     string
 	Opt_OutHeaderPath string
 	Opt_OutSourcePath string
@@ -201,6 +202,7 @@ type Input_GenerateCpp struct {
 
 func (input *Input_GenerateCpp) resolveInput(subcommand, options, arguments []string) {
 	*input = Input_GenerateCpp{Opt_Help: false,
+		Opt_IncludeHeader: "",
 		Opt_Namespace:     "",
 		Opt_OutHeaderPath: "",
 		Opt_OutSourcePath: "",
@@ -224,6 +226,18 @@ func (input *Input_GenerateCpp) resolveInput(subcommand, options, arguments []st
 				return
 			} else {
 				input.Opt_Help = v.(bool)
+			}
+
+		case "-include-header":
+			if !cut {
+				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
+				return
+			}
+			if v, err := parseValue("string", lit); err != nil {
+				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
+				return
+			} else {
+				input.Opt_IncludeHeader = v.(string)
 			}
 
 		case "-namespace":
@@ -1046,7 +1060,7 @@ func parseValue(typ string, strValue ...string) (dst any, err error) {
 }
 
 func GetVersion() string {
-	return "v2.0.0-beta.1"
+	return "v2.0.0-beta.2"
 }
 func GetProgram() string {
 	return "cyamli"
@@ -1060,7 +1074,7 @@ func GetDoc(subcommands []string) string {
 		return "cyamli generate\n\n    Description:\n        holds subcommands to generate CLI code.\n\n    Syntax:\n        $ cyamli generate [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n    Subcommands:\n        cpp:\n            generates CLI for your app written in C++ 11.\n\n        csharp:\n            generates CLI for your app written in C#.\n\n        dart3:\n            generates CLI for your app written in Dart.\n\n        docs:\n            generates documentation for your CLI app.\n\n        golang:\n            generates CLI for your app written in Go.\n\n        kotlin:\n            generates CLI for your app written in Kotlin.\n\n        php:\n            generates CLI for your app written in PHP 7.4.\n\n        python3:\n            generates CLI for your app written in Python3.\n\n        typescript:\n            generates CLI for your app written in TypeScript.\n\n\n"
 
 	case "generate cpp":
-		return "cyamli generate cpp\n\n    Description:\n        generates CLI for your app written in C++ 11.\n\n    Syntax:\n        $ cyamli generate cpp [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -namespace=<string>  (default=\"\"):\n            namespace where the generated file will be placed.\n\n        -out-header-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -out-source-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
+		return "cyamli generate cpp\n\n    Description:\n        generates CLI for your app written in C++ 11.\n\n    Syntax:\n        $ cyamli generate cpp [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -include-header=<string>  (default=\"\"):\n            path to the generated header file referred from #include \"...\" of the generated cpp source file\n\n        -namespace=<string>  (default=\"\"):\n            namespace where the generated file will be placed.\n\n        -out-header-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -out-source-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
 
 	case "generate csharp":
 		return "cyamli generate csharp\n\n    Description:\n        generates CLI for your app written in C#.\n\n    Syntax:\n        $ cyamli generate csharp [<option>]...\n\n    Options:\n        -help[=<boolean>], -h[=<boolean>]  (default=false):\n            shows description of this app.\n\n        -namespace=<string>  (default=\"\"):\n            namespace where the generated file will be placed.\n\n        -out-path=<string>  (default=\"\"):\n            if specified then creates a file at the path and writes generated code, otherwise outputs to stdout.\n\n        -schema-path=<string>  (default=\"\"):\n            if specified then reads schema file from the path, otherwise reads from stdin.\n\n\n"
