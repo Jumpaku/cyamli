@@ -12,10 +12,11 @@ import (
 )
 
 type Data struct {
-	Namespace   string
-	Generator   string
-	Program     ProgramData
-	CommandList []CommandData
+	Namespace     string
+	TestNamespace string
+	Generator     string
+	Program       ProgramData
+	CommandList   []CommandData
 }
 
 type ProgramData struct {
@@ -26,8 +27,9 @@ type ProgramData struct {
 type CommandData struct {
 	schema.Command
 
-	Namespace string
-	Generator string
+	Namespace     string
+	TestNamespace string
+	Generator     string
 
 	Program   string
 	Name      name.Name
@@ -168,7 +170,7 @@ func primitiveType(t schema.Type) string {
 	}
 }
 
-func ConstructData(s schema.Schema, namespace, generatorName string) Data {
+func ConstructData(s schema.Schema, namespace, testNamespace, generatorName string) Data {
 	commands := s.PropagateOptions().ListCommand()
 	commandList := lo.Map(commands, func(cmd schema.PathCommand, _ int) CommandData {
 		options := []OptionData{}
@@ -196,20 +198,22 @@ func ConstructData(s schema.Schema, namespace, generatorName string) Data {
 		slices.SortFunc(arguments, func(a, b ArgumentData) int { return a.Name.Cmp(b.Name) })
 
 		return CommandData{
-			Command:   cmd.Command,
-			Namespace: namespace,
-			Generator: generatorName,
-			Program:   s.Program.Name,
-			Name:      name.Words(cmd.Path),
-			Options:   options,
-			Arguments: arguments,
+			Command:       cmd.Command,
+			TestNamespace: testNamespace,
+			Namespace:     namespace,
+			Generator:     generatorName,
+			Program:       s.Program.Name,
+			Name:          name.Words(cmd.Path),
+			Options:       options,
+			Arguments:     arguments,
 		}
 	})
 	slices.SortFunc(commandList, func(a, b CommandData) int { return a.Name.Cmp(b.Name) })
 
 	data := Data{
-		Namespace: namespace,
-		Generator: generatorName,
+		Namespace:     namespace,
+		TestNamespace: testNamespace,
+		Generator:     generatorName,
 		Program: ProgramData{
 			Name:    s.Program.Name,
 			Version: s.Program.Version,

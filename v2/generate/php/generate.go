@@ -25,7 +25,7 @@ var inputPhpTemplate string
 var executorInput = template.Must(template.New("Input.php.tpl").Parse(inputPhpTemplate))
 
 func Generate(schema schema.Schema, namespace, generator string, out NamedWriter) error {
-	d := ConstructData(schema, namespace, generator)
+	d := ConstructData(schema, namespace, "", generator)
 
 	{
 		buf := bytes.NewBuffer(nil)
@@ -68,8 +68,8 @@ var executorMock = template.Must(template.New("CLIHandler.php.tpl").Parse(cliHan
 var runTestPhpTemplate string
 var executorTest = template.Must(template.New("RunTest.php.tpl").Parse(runTestPhpTemplate))
 
-func GenerateTest(schema schema.Schema, namespace, generator string, out NamedWriter) error {
-	d := ConstructData(schema, namespace, generator)
+func GenerateTest(schema schema.Schema, namespace, testNamespace, generator string, out NamedWriter) error {
+	d := ConstructData(schema, namespace, testNamespace, generator)
 	{
 		buf := bytes.NewBuffer(nil)
 		if err := executorMock.Execute(buf, d); err != nil {
