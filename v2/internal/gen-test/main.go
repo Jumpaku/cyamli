@@ -10,6 +10,7 @@ import (
 	"github.com/Jumpaku/cyamli/v2/generate/kotlin"
 	"github.com/Jumpaku/cyamli/v2/generate/php"
 	"github.com/Jumpaku/cyamli/v2/generate/python3"
+	"github.com/Jumpaku/cyamli/v2/generate/typescript"
 	"github.com/Jumpaku/cyamli/v2/schema"
 	"os"
 	"path/filepath"
@@ -141,6 +142,21 @@ func main() {
 			}
 		}
 	case "typescript":
+		{
+			if len(os.Args) != 4 {
+				fmt.Fprintf(os.Stderr, "Usage: %s [target] [outDir] [module] < [schema.yaml]\n", os.Args[0])
+				os.Exit(1)
+			}
+			module := os.Args[3]
+			t, err := os.Create(filepath.Join(outDir, "cli_gen.test.ts"))
+			if err != nil {
+				panic(fmt.Sprintf("fail to create output file: %+v", err))
+			}
+			defer t.Close()
+			if err = typescript.GenerateTest(s, module, "cyamli", t); err != nil {
+				panic(err)
+			}
+		}
 	}
 	/*
 		if err = typescript.GenerateTest(s, "./cli.gen.mjs", "cyamli", t); err != nil {

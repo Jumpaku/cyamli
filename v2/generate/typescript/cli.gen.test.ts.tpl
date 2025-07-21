@@ -18,7 +18,7 @@ test.describe('{{.HandlerMethodName}}', () => {
         {
             name: 'command-line-arguments',
             args: [
-                '', {{range .Path}}'{{.}}', {{end}}
+                {{range .Path}}'{{.}}', {{end}}
                 {{- range $Index, $Option := .Options }}'{{$Option.Option}}=0',{{end}}
                 '--',
                 {{- range $Index, $Argument := .Arguments }}'0',{{end}}
@@ -35,7 +35,7 @@ test.describe('{{.HandlerMethodName}}', () => {
         {
             name: 'default-options',
             args: [
-                '', {{range .Path}}'{{.}}', {{end}}
+                {{range .Path}}'{{.}}', {{end}}
                 '--',
                 {{- range $Index, $Argument := .Arguments }}'0',{{end}}
             ],
@@ -49,7 +49,7 @@ test.describe('{{.HandlerMethodName}}', () => {
         {
             name: 'short-options',
             args: [
-                '', {{range .Path}}'{{.}}', {{end}}
+                {{range .Path}}'{{.}}', {{end}}
                 {{- range $Index, $Option := .Options }}'{{if $Option.ShortOption}}{{$Option.ShortOption}}{{else}}{{$Option.Option}}{{end}}=0',{{end}}
                 '--',
                 {{- range $Index, $Argument := .Arguments }}'0',{{end}}
@@ -66,7 +66,7 @@ test.describe('{{.HandlerMethodName}}', () => {
         {
             name: 'negated-options',
             args: [
-                '', {{range .Path}}'{{.}}', {{end}}
+                {{range .Path}}'{{.}}', {{end}}
                 {{- range $Index, $Option := .Options }}'{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',{{end}}
                 '--',
                 {{- range $Index, $Argument := .Arguments }}'0',{{end}}
@@ -83,7 +83,7 @@ test.describe('{{.HandlerMethodName}}', () => {
         {
             name: 'variadic-arguments-zero',
             args: [
-                '', {{range .Path}}'{{.}}', {{end}}
+                {{range .Path}}'{{.}}', {{end}}
                 {{- range $Index, $Option := .Options }}'{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',{{end}}
                 '--',
                 {{- range $Index, $Argument := .Arguments }}{{if not $Argument.Variadic}}'0',{{end}}{{end}}
@@ -100,7 +100,7 @@ test.describe('{{.HandlerMethodName}}', () => {
         {
             name: 'variadic-arguments-two',
             args: [
-                '', {{range .Path}}'{{.}}', {{end}}
+                {{range .Path}}'{{.}}', {{end}}
                 {{- range $Index, $Option := .Options }}'{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}',{{end}}
                 '--',
                 {{- range $Index, $Argument := .Arguments }}'0'{{if $Argument.Variadic}}, '0'{{end}},{{end}}
