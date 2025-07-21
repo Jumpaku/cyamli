@@ -9,6 +9,7 @@ import (
 	"github.com/Jumpaku/cyamli/v2/generate/golang"
 	"github.com/Jumpaku/cyamli/v2/generate/kotlin"
 	"github.com/Jumpaku/cyamli/v2/generate/php"
+	"github.com/Jumpaku/cyamli/v2/generate/python3"
 	"github.com/Jumpaku/cyamli/v2/schema"
 	"os"
 	"path/filepath"
@@ -124,12 +125,24 @@ func main() {
 			}
 		}
 	case "python3":
+		{
+			if len(os.Args) != 4 {
+				fmt.Fprintf(os.Stderr, "Usage: %s [target] [outDir] [module] < [schema.yaml]\n", os.Args[0])
+				os.Exit(1)
+			}
+			module := os.Args[3]
+			t, err := os.Create(filepath.Join(outDir, "test_cli_gen.py"))
+			if err != nil {
+				panic(fmt.Sprintf("fail to create output file: %+v", err))
+			}
+			defer t.Close()
+			if err = python3.GenerateTest(s, module, "cyamli", t); err != nil {
+				panic(err)
+			}
+		}
 	case "typescript":
 	}
 	/*
-		if err = python3.GenerateTest(s, "cli_gen", "cyamli", t); err != nil {
-			panic(err)
-		}
 		if err = typescript.GenerateTest(s, "./cli.gen.mjs", "cyamli", t); err != nil {
 			panic(err)
 		}
