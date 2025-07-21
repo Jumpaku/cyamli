@@ -34,3 +34,14 @@ docs: install ## Generates documentation for cyamli CLI tool.
 .PHONY: examples
 examples: install ## Generates example console apps using cyamli.
 	cd v2 && go test -v ./examples/...
+
+.PHONY: test
+test: ## Generates example console apps using cyamli.
+	cd test/cpp && make test
+	cd test/csharp && make test
+	cd test/dart3 && make test
+	cd test/golang && make test
+	cd test/kotlin && make test
+	cd test/php && make test
+	cd test/python3 && make test
+	cd test/typescript && make test

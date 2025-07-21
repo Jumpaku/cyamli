@@ -1,3 +1,4 @@
-FROM node:18-slim
+FROM node:24.4.1-slim
 
 WORKDIR /workspace
+

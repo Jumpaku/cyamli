@@ -5,4 +5,4 @@ services:
     working_dir: /workspace
     volumes:
       - .:/workspace
-    command: ["node", "--test"]
+    command: ["node", "--test", "--no-experimental-strip-types"]
