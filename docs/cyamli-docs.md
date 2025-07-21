@@ -1,4 +1,4 @@
-# cyamli (v2.0.0-beta.1)
+# cyamli (v2.0.0-beta.2)
 
 
 ## cyamli
@@ -97,6 +97,9 @@ cyamli generate cpp [<option>]...
 
 * `-help[=<boolean>]`, `-h[=<boolean>]`  (default=`false`):  
   shows description of this app.  
+
+* `-include-header=<string>`  (default=`""`):  
+  path to the generated header file referred from #include "..." of the generated cpp source file  
 
 * `-namespace=<string>`  (default=`""`):  
   namespace where the generated file will be placed.  

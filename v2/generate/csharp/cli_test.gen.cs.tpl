@@ -6,10 +6,10 @@ using {{.Namespace}};
 
 namespace {{.Namespace}}.Tests {
 
-public class CLIHandlerMock : ICLIHandler {
-    public object GotInput { get; set; }
+public class CliHandlerMock : ICliHandler {
+    public object? GotInput { get; set; }
     {{ range $Index, $Command := .CommandList -}}
-    public void {{.HandlerMethodName}}(CLI.{{.HandlerInputType}} input) {
+    public void {{.HandlerMethodName}}(Cli.{{.HandlerInputType}} input) {
         GotInput = input;
     }
     {{end}}
@@ -19,9 +19,9 @@ public class CLIHandlerMock : ICLIHandler {
 [TestFixture]
 public class {{.HandlerMethodName}}Tests {
     public class TestCase {
-        public string Name { get; set; }
-        public string[] Args { get; set; }
-        public CLI.{{.HandlerInputType}} WantInput { get; set; }
+        public required string Name { get; set; }
+        public required string[] Args { get; set; }
+        public required Cli.{{.HandlerInputType}} WantInput { get; set; }
     }
 
     static IEnumerable<TestCase> TestCases() {
@@ -29,7 +29,7 @@ public class {{.HandlerMethodName}}Tests {
             new TestCase {
                 Name = "command-line-arguments",
                 Args = new[]{ "", {{range .Path}}"{{.}}", {{end}}{{range $Index, $Option := .Options}}"{{$Option.Option}}=0",{{end}}"--",{{range $Index, $Argument := .Arguments}}"0",{{end}} },
-                WantInput = new CLI.{{.HandlerInputType}} {
+                WantInput = new Cli.{{.HandlerInputType}} {
                     {{- range $Index, $Option := .Options }}
                     {{.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}new List<long>{0}{{else}}0L{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}new List<bool>{false}{{else}}false{{end}}{{else}}{{if $Option.Repeated}}new List<string>{"0"}{{else}}"0"{{end}}{{end}},
                     {{- end }}
@@ -41,7 +41,7 @@ public class {{.HandlerMethodName}}Tests {
             new TestCase {
                 Name = "default-options",
                 Args = new[]{ "", {{range .Path}}"{{.}}", {{end}}"--",{{range $Index, $Argument := .Arguments}}"0",{{end}} },
-                WantInput = new CLI.{{.HandlerInputType}} {
+                WantInput = new Cli.{{.HandlerInputType}} {
                     {{- range $Index, $Option := .Options }}
                     {{.InputFieldName}} = {{.InputFieldInit}},
                     {{- end }}
@@ -53,7 +53,7 @@ public class {{.HandlerMethodName}}Tests {
             new TestCase {
                 Name = "short-options",
                 Args = new[]{ "", {{range .Path}}"{{.}}", {{end}}{{range $Index, $Option := .Options}}"{{if $Option.ShortOption}}{{$Option.ShortOption}}{{else}}{{$Option.Option}}{{end}}=0",{{end}}"--",{{range $Index, $Argument := .Arguments}}"0",{{end}} },
-                WantInput = new CLI.{{.HandlerInputType}} {
+                WantInput = new Cli.{{.HandlerInputType}} {
                     {{- range $Index, $Option := .Options }}
                     {{.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}new List<long>{0}{{else}}0L{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}new List<bool>{false}{{else}}false{{end}}{{else}}{{if $Option.Repeated}}new List<string>{"0"}{{else}}"0"{{end}}{{end}},
                     {{- end }}
@@ -65,7 +65,7 @@ public class {{.HandlerMethodName}}Tests {
             new TestCase {
                 Name = "negated-options",
                 Args = new[]{ "", {{range .Path}}"{{.}}", {{end}}{{range $Index, $Option := .Options}}"{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}",{{end}}"--",{{range $Index, $Argument := .Arguments}}"0",{{end}} },
-                WantInput = new CLI.{{.HandlerInputType}} {
+                WantInput = new Cli.{{.HandlerInputType}} {
                     {{- range $Index, $Option := .Options }}
                     {{.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}new List<long>{0}{{else}}0L{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}new List<bool>{false}{{else}}false{{end}}{{else}}{{if $Option.Repeated}}new List<string>{"0"}{{else}}"0"{{end}}{{end}},
                     {{- end }}
@@ -77,7 +77,7 @@ public class {{.HandlerMethodName}}Tests {
             new TestCase {
                 Name = "variadic-arguments-zero",
                 Args = new[]{ "", {{range .Path}}"{{.}}", {{end}}{{range $Index, $Option := .Options}}"{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}",{{end}}"--",{{range $Index, $Argument := .Arguments}}{{if not $Argument.Variadic}}"0",{{end}}{{end}} },
-                WantInput = new CLI.{{.HandlerInputType}} {
+                WantInput = new Cli.{{.HandlerInputType}} {
                     {{- range $Index, $Option := .Options }}
                     {{.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}new List<long>{0}{{else}}0L{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}new List<bool>{false}{{else}}false{{end}}{{else}}{{if $Option.Repeated}}new List<string>{"0"}{{else}}"0"{{end}}{{end}},
                     {{- end }}
@@ -89,7 +89,7 @@ public class {{.HandlerMethodName}}Tests {
             new TestCase {
                 Name = "variadic-arguments-two",
                 Args = new[]{ "", {{range .Path}}"{{.}}", {{end}}{{range $Index, $Option := .Options}}"{{if $Option.Negation}}-no{{$Option.Option}}=1{{else}}{{$Option.Option}}=0{{end}}",{{end}}"--",{{range $Index, $Argument := .Arguments}}"0"{{if $Argument.Variadic}}, "0"{{end}},{{end}} },
-                WantInput = new CLI.{{.HandlerInputType}} {
+                WantInput = new Cli.{{.HandlerInputType}} {
                     {{- range $Index, $Option := .Options }}
                     {{.InputFieldName}} = {{if eq $Option.Type "integer"}}{{if $Option.Repeated}}new List<long>{0}{{else}}0L{{end}}{{else if eq $Option.Type "boolean"}}{{if $Option.Repeated}}new List<bool>{false}{{else}}false{{end}}{{else}}{{if $Option.Repeated}}new List<string>{"0"}{{else}}"0"{{end}}{{end}},
                     {{- end }}
@@ -103,15 +103,15 @@ public class {{.HandlerMethodName}}Tests {
 
     [Test, TestCaseSource(nameof(TestCases))]
     public void RunTest(TestCase tc) {
-        var mock = new CLIHandlerMock();
-        CLI.Run(mock, tc.Args);
-        var got = mock.GotInput as CLI.{{.HandlerInputType}};
+        var mock = new CliHandlerMock();
+        Cli.Run(mock, tc.Args);
+        var got = (mock.GotInput as Cli.{{.HandlerInputType}})!;
         var want = tc.WantInput;
         {{range $Index, $Option := .Options }}
-        Assert.That(got.{{.InputFieldName}}, Is.EqualTo(want.{{.InputFieldName}}), $"unexpected input for option: {{.Option}}");
+        Assert.That(got.{{.InputFieldName}}, Is.EqualTo(want.{{.InputFieldName}}), $"{tc.Name}: unexpected input for option: {{.Option}}");
         {{end}}
         {{range $Index, $Argument := .Arguments }}
-        Assert.That(got.{{.InputFieldName}}, Is.EqualTo(want.{{.InputFieldName}}), $"unexpected input for argument: {{.Name}}");
+        Assert.That(got.{{.InputFieldName}}, Is.EqualTo(want.{{.InputFieldName}}), $"{tc.Name}: unexpected input for argument: {{.Name}}");
         {{end}}
     }
 }

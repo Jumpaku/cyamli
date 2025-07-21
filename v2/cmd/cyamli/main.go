@@ -164,6 +164,9 @@ func (c cli) Run_GenerateCpp(input Input_GenerateCpp) error {
 	exitIfErrorMessage(input.ErrorMessage, input.Subcommand)
 	help(input.Opt_Help, input.Subcommand)
 
+	if input.Opt_IncludeHeader == "" {
+		return fmt.Errorf("include header path is required")
+	}
 	s, err := loadSchema(input.Opt_SchemaPath)
 	if err != nil {
 		return fmt.Errorf("fail to load schema: %w", err)
@@ -186,7 +189,7 @@ func (c cli) Run_GenerateCpp(input Input_GenerateCpp) error {
 		}
 		defer w.Close()
 
-		if err := cpp.GenerateCpp(s, input.Opt_OutHeaderPath, input.Opt_Namespace, generator(), w); err != nil {
+		if err := cpp.GenerateCpp(s, input.Opt_IncludeHeader, input.Opt_Namespace, generator(), w); err != nil {
 			return fmt.Errorf("fail to generate C++ source file: %w", err)
 		}
 	}

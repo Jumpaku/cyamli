@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  test:
+    build: .
+    working_dir: /workspace
+    volumes:
+      - '.:/workspace'
+    command: [ "gradle", "test", "--warning-mode", "all" ]

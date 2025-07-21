@@ -5,14 +5,14 @@ using System.Linq;
 
 namespace {{.Namespace}} {
 
-public interface ICLIHandler {
+public interface ICliHandler {
     {{ range $Index, $Command := .CommandList -}}
-    void {{.HandlerMethodName}}(CLI.{{.HandlerInputType}} input);
+    void {{.HandlerMethodName}}(Cli.{{.HandlerInputType}} input);
     {{end}}
 }
 
-public static class CLI {
-    public static void Run(ICLIHandler handler, string[] args) {
+public static class Cli {
+    public static void Run(ICliHandler handler, string[] args) {
         var (subcommandPath, options, arguments) = ResolveArgs(args);
         switch (string.Join(" ", subcommandPath)) {
             {{range .CommandList}}
@@ -30,21 +30,17 @@ public static class CLI {
     {{range $Index, $Command := .CommandList}}
     public class {{.HandlerInputType}} {
         {{range $Index, $Option := .Options -}}
-        public {{if eq $Option.InputFieldType "bool"}}bool{{else if eq $Option.InputFieldType "int64"}}long{{else if eq $Option.InputFieldType "string"}}string{{else if eq $Option.InputFieldType "[]bool"}}List<bool>{{else if eq $Option.InputFieldType "[]int64"}}List<long>{{else if eq $Option.InputFieldType "[]string"}}List<string>{{end}} {{.InputFieldName}} { get; set; }
+        public {{$Option.InputFieldType}} {{.InputFieldName}} = {{.InputFieldInit}};
         {{end}}
         {{- range $Index, $Argument := .Arguments -}}
-        public {{if eq $Argument.InputFieldType "bool"}}bool{{else if eq $Argument.InputFieldType "int64"}}long{{else if eq $Argument.InputFieldType "string"}}string{{else if eq $Argument.InputFieldType "[]bool"}}List<bool>{{else if eq $Argument.InputFieldType "[]int64"}}List<long>{{else if eq $Argument.InputFieldType "[]string"}}List<string>{{end}} {{.InputFieldName}} { get; set; }
+        public {{$Argument.InputFieldType}} {{.InputFieldName}} = {{.InputFieldInit}};
         {{end}}
-        public List<string> Subcommand { get; set; }
-        public List<string> Options { get; set; }
-        public List<string> Arguments { get; set; }
-        public string ErrorMessage { get; set; }
+        public List<string> Subcommand = new List<string>{};
+        public List<string> Options = new List<string>{};
+        public List<string> Arguments = new List<string>{};
+        public string? ErrorMessage = null;
 
         public void ResolveInput(List<string> subcommand, List<string> options, List<string> arguments) {
-            // Set defaults
-            {{range $Index, $Option := .Options -}}
-            this.{{.InputFieldName}} = {{$Option.InputFieldInit}};
-            {{end}}
             this.Subcommand = subcommand;
             this.Options = options;
             this.Arguments = arguments;
@@ -60,7 +56,7 @@ public static class CLI {
                 {{if .ShortOption}}case "{{.ShortOption}}":{{end}}
                     {
                         if (lit == null) {
-                            {{if or (eq $Option.InputFieldType "bool") (eq $Option.InputFieldType "[]bool") -}}
+                            {{if or (eq $Option.InputFieldType "bool") (eq $Option.InputFieldType "List<bool>") -}}
                             lit = "true";
                             {{- else -}}
                             this.ErrorMessage = $"value is not specified to option {optName}";
@@ -107,8 +103,9 @@ public static class CLI {
                     return;
                 }
             }
-
+            {{if .Arguments }}
             var expectedArgs = {{len .Arguments}};
+            {{end}}
             {{range $Index, $Argument := .Arguments}}
             {{if $Argument.Variadic -}}
             if (this.Arguments.Count < {{$Index}}) {
@@ -169,11 +166,11 @@ public static class CLI {
 
     private static object ParseValue(string typ, params string[] strValue) {
         switch (typ) {
-            case "[]bool":
+            case "List<bool>":
                 return strValue.Select(s => (bool)ParseValue("bool", s)).ToList();
-            case "[]int64":
-                return strValue.Select(s => (long)ParseValue("int64", s)).ToList();
-            case "[]string":
+            case "List<long>":
+                return strValue.Select(s => (long)ParseValue("long", s)).ToList();
+            case "List<string>":
                 return strValue.Select(s => (string)ParseValue("string", s)).ToList();
             case "bool":
                 switch (strValue[0].ToLower()) {
@@ -181,7 +178,7 @@ public static class CLI {
                     case "false": case "0": case "f": return false;
                     default: throw new Exception($"fail to parse {strValue[0]} as bool: unknown value");
                 }
-            case "int64":
+            case "long":
                 return long.Parse(strValue[0]);
             case "string":
                 return strValue[0];

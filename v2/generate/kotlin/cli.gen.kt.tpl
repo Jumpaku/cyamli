@@ -118,9 +118,9 @@ data class {{.HandlerInputType}}(
             }
         }
 
-        val expectedArgs = {{len .Arguments}}
+        {{if .Arguments}}val expectedArgs = {{len .Arguments}}{{end}}
 
-{{range $Index, $Argument := .Arguments}}
+    {{range $Index, $Argument := .Arguments}}
         {{if $Argument.Variadic -}}
         if (arguments.size < {{$Index}}) {
             errorMessage = "Too few arguments: required at least ${expectedArgs - 1}, got ${arguments.size}"
@@ -150,7 +150,7 @@ data class {{.HandlerInputType}}(
             return
         }
         {{- end}}
-{{end}}
+    {{end}}
     }
 }
 {{end}}
