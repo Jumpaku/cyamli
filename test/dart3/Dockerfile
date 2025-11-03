@@ -4,6 +4,8 @@ WORKDIR /workspace
 
 
 RUN dart --disable-analytics
-COPY pubspec.yaml .
+
+WORKDIR /workspace
+COPY . /workspace
 RUN dart pub get
 
