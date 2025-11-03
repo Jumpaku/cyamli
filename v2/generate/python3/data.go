@@ -179,7 +179,6 @@ func ConstructData(s schema.Schema, moduleName, generatorName string) Data {
 				Variadic: argument.Variadic,
 			})
 		}
-		slices.SortFunc(arguments, func(a, b ArgumentData) int { return a.Name.Cmp(b.Name) })
 
 		return CommandData{
 			Program:   s.Program.Name,

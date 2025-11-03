@@ -1,4 +1,4 @@
-# cyamli (v2.0.0-beta.2)
+# cyamli (v2.0.0)
 
 
 ## cyamli

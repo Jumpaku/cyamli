@@ -5,12 +5,13 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"github.com/goccy/go-yaml"
-	"github.com/samber/lo"
-	"github.com/santhosh-tekuri/jsonschema/v5"
 	"io"
 	"slices"
 	"strconv"
+
+	"github.com/goccy/go-yaml"
+	"github.com/samber/lo"
+	"github.com/santhosh-tekuri/jsonschema/v5"
 )
 
 type Schema struct {
@@ -265,7 +266,6 @@ func (cmd Command) validate(propagatedOptions []string, propagated bool) error {
 		if err := arg.validate(); err != nil {
 			return fmt.Errorf("invalid argument %q: %w", arg.Name, err)
 		}
-
 	}
 
 	// Validate subcommands

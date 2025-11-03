@@ -2,13 +2,14 @@ package cpp
 
 import (
 	"fmt"
+	"slices"
+	"strconv"
+	"strings"
+
 	"github.com/Jumpaku/cyamli/v2/docs"
 	"github.com/Jumpaku/cyamli/v2/name"
 	"github.com/Jumpaku/cyamli/v2/schema"
 	"github.com/samber/lo"
-	"slices"
-	"strconv"
-	"strings"
 )
 
 type Data struct {
@@ -176,7 +177,6 @@ func ConstructData(s schema.Schema, headerFile, namespace, generatorName string)
 				Variadic: argument.Variadic,
 			})
 		}
-		slices.SortFunc(arguments, func(a, b ArgumentData) int { return a.Name.Cmp(b.Name) })
 
 		return CommandData{
 			Program:   s.Program.Name,
