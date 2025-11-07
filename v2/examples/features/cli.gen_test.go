@@ -44,7 +44,7 @@ type Input struct {
 	Opt_NegationOption    bool
 	Opt_Option            int64
 	Opt_PropagationOption string
-	Opt_RepeatableOption  string
+	Opt_RepeatableOption  []bool
 	Arg_FirstArg          bool
 	Arg_SecondArg         int64
 	Arg_ThirdArg          []string
@@ -59,7 +59,7 @@ func (input *Input) resolveInput(subcommand, options, arguments []string) {
 	*input = Input{Opt_NegationOption: false,
 		Opt_Option:            123,
 		Opt_PropagationOption: "",
-		Opt_RepeatableOption:  "",
+		Opt_RepeatableOption:  []bool{},
 		Subcommand:            subcommand,
 		Options:               options,
 		Arguments:             arguments,
@@ -117,14 +117,13 @@ func (input *Input) resolveInput(subcommand, options, arguments []string) {
 
 		case "-repeatable-option":
 			if !cut {
-				input.ErrorMessage = fmt.Sprintf("value is not specified to option %q", optName)
-				return
+				lit = "true"
 			}
-			if v, err := parseValue("string", lit); err != nil {
+			if v, err := parseValue("[]bool", lit); err != nil {
 				input.ErrorMessage = fmt.Sprintf("value %q is not assignable to option %q", lit, optName)
 				return
 			} else {
-				input.Opt_RepeatableOption = v.(string)
+				input.Opt_RepeatableOption = append(input.Opt_RepeatableOption, v.([]bool)[0])
 			}
 
 		default:
@@ -397,7 +396,7 @@ func GetProgram() string {
 func GetDoc(subcommands []string) string {
 	switch strings.Join(subcommands, " ") {
 	case "":
-		return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        $ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>]  (default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>  (default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option=<string>  (default=\"\"):\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n"
+		return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        $ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>]  (default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>  (default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option[=<boolean>] ...  :\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n"
 
 	case "sub1":
 		return "features sub1\n\n    Description:\n        this is a child command.\n\n    Syntax:\n        $ features sub1 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub2:\n            this is a grandchild command.\n\n\n"

@@ -68,7 +68,7 @@ class {{.HandlerInputType}} {
                         return;
                     }
                     {{if $Option.Repeated -}}
-                    $this->{{.InputFieldName}}[] = $v;
+                    $this->{{.InputFieldName}}[] = $v[0];
                     {{- else -}}
                     $this->{{.InputFieldName}} = $v;
                     {{- end}}
@@ -81,7 +81,7 @@ class {{.HandlerInputType}} {
                         return;
                     }
                     {{if $Option.Repeated -}}
-                    $this->{{.InputFieldName}}[] = !$v;
+                    $this->{{.InputFieldName}}[] = !$v[0];
                     {{- else -}}
                     $this->{{.InputFieldName}} = !$v;
                     {{- end}}
@@ -139,7 +139,7 @@ class {{.HandlerInputType}} {
             case 'int[]':
                 $val = [];
                 foreach ($strValue as $str) {
-                    $v = self::parseValue('int64', $str);
+                    $v = self::parseValue('int', $str);
                     if ($v === null) return null;
                     $val[] = $v;
                 }

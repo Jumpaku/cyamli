@@ -49,7 +49,7 @@ class Run_Test extends TestCase {
                     
                     $input->Opt_PropagationOption = "0";
                     
-                    $input->Opt_RepeatableOption = "0";
+                    $input->Opt_RepeatableOption = [0];
                     
                     
                     $input->Arg_FirstArg = false;
@@ -74,7 +74,7 @@ class Run_Test extends TestCase {
                     
                     $input->Opt_PropagationOption = "";
                     
-                    $input->Opt_RepeatableOption = "";
+                    $input->Opt_RepeatableOption = [];
                     
                     
                     $input->Arg_FirstArg = false;
@@ -89,7 +89,7 @@ class Run_Test extends TestCase {
             // short-options
             [
                 'short-options',
-                ["", "-negation-option=0","-o=0","-propagation-option=0","-repeatable-option=0","--","0","0","0",],
+                ["", "-negation-option=0","-o=0","-propagation-option=0","-r=0","--","0","0","0",],
                 (function() {
                     $input = new Input();
                     
@@ -99,7 +99,7 @@ class Run_Test extends TestCase {
                     
                     $input->Opt_PropagationOption = "0";
                     
-                    $input->Opt_RepeatableOption = "0";
+                    $input->Opt_RepeatableOption = [0];
                     
                     
                     $input->Arg_FirstArg = false;
@@ -124,7 +124,7 @@ class Run_Test extends TestCase {
                     
                     $input->Opt_PropagationOption = "0";
                     
-                    $input->Opt_RepeatableOption = "0";
+                    $input->Opt_RepeatableOption = [0];
                     
                     
                     $input->Arg_FirstArg = false;
@@ -149,7 +149,7 @@ class Run_Test extends TestCase {
                     
                     $input->Opt_PropagationOption = "0";
                     
-                    $input->Opt_RepeatableOption = "0";
+                    $input->Opt_RepeatableOption = [0];
                     
                     
                     $input->Arg_FirstArg = false;
@@ -174,7 +174,7 @@ class Run_Test extends TestCase {
                     
                     $input->Opt_PropagationOption = "0";
                     
-                    $input->Opt_RepeatableOption = "0";
+                    $input->Opt_RepeatableOption = [0];
                     
                     
                     $input->Arg_FirstArg = false;

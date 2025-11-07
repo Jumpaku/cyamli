@@ -58,9 +58,9 @@ export class Input {
     opt_PropagationOption = "";
     /**
      * -repeatable-option option.
-     * @type { (string) }
+     * @type { (number[]) }
      */
-    opt_RepeatableOption = "";
+    opt_RepeatableOption = [];
     /**
      * Argument of type boolean.
      * @type { (boolean) }
@@ -186,6 +186,7 @@ export class Input {
                     }
                     break;
                 case '-repeatable-option':
+                case '-r':
                     {
                         if (cut < 0) {
                             this.errorMessage = `Value is not specified to option "${optName}"`;
@@ -193,13 +194,13 @@ export class Input {
                         }
                         let v;
                         try {
-                            v = parseValue(lit, 'string');
+                            v = parseValue(lit, 'number[]');
                         }
                         catch (e) {
                             this.errorMessage = `Value "${lit}" is not assignable to option "${optName}"`;
                             return;
                         }
-                        this.opt_RepeatableOption = v;
+                        this.opt_RepeatableOption = [...this.opt_RepeatableOption, v[0]];
                     }
                     break;
                 default:
@@ -568,13 +569,13 @@ export function getProgram() {
 export function getDoc(subcommands) {
     switch (subcommands.join(' ')) {
         case "":
-            return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        $ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>]  (default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>  (default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option=<string>  (default=\"\"):\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n";
+            return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        $ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>](default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>(default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option=<integer> ... , -r=<integer> ... :\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n";
         case "sub1":
-            return "features sub1\n\n    Description:\n        this is a child command.\n\n    Syntax:\n        $ features sub1 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub2:\n            this is a grandchild command.\n\n\n";
+            return "features sub1\n\n    Description:\n        this is a child command.\n\n    Syntax:\n        $ features sub1 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub2:\n            this is a grandchild command.\n\n\n";
         case "sub1 sub2":
-            return "features sub1 sub2\n\n    Description:\n        this is a grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub3:\n            this is a great-grandchild command.\n\n\n";
+            return "features sub1 sub2\n\n    Description:\n        this is a grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub3:\n            this is a great-grandchild command.\n\n\n";
         case "sub1 sub2 sub3":
-            return "features sub1 sub2 sub3\n\n    Description:\n        this is a great-grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 sub3 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n\n";
+            return "features sub1 sub2 sub3\n\n    Description:\n        this is a great-grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 sub3 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n\n";
         default:
             throw new Error(`Invalid subcommands: ${subcommands}`);
     }

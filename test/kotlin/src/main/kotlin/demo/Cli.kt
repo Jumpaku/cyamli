@@ -404,13 +404,13 @@ fun getProgram(): String {
 fun getDoc(subcommands: List<String>): String {
     return when (subcommands.joinToString(" ")) {
 
-        "" -> "demo \n\n    Syntax:\n        $ demo  [<option>]...\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n    Subcommands:\n        data:\n            dump data from the specified table from the database.\n\n        schema:\n            fetch schema of the specified table from the database.\n\n        tables:\n            list tables from the database.\n\n\n"
+        "" -> "demo \n\n    Syntax:\n        $ demo  [<option>]...\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n    Subcommands:\n        data:\n            dump data from the specified table from the database.\n\n        schema:\n            fetch schema of the specified table from the database.\n\n        tables:\n            list tables from the database.\n\n\n"
 
-        "data" -> "demo data\n\n    Description:\n        dump data from the specified table from the database.\n\n    Syntax:\n        $ demo data [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n        -where=<string>  (default=\"\"):\n            filter data by the condition.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
+        "data" -> "demo data\n\n    Description:\n        dump data from the specified table from the database.\n\n    Syntax:\n        $ demo data [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n        -where=<string>(default=\"\"):\n            filter data by the condition.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
 
-        "schema" -> "demo schema\n\n    Description:\n        fetch schema of the specified table from the database.\n\n    Syntax:\n        $ demo schema [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
+        "schema" -> "demo schema\n\n    Description:\n        fetch schema of the specified table from the database.\n\n    Syntax:\n        $ demo schema [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
 
-        "tables" -> "demo tables\n\n    Description:\n        list tables from the database.\n\n    Syntax:\n        $ demo tables [<option>]...\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n\n"
+        "tables" -> "demo tables\n\n    Description:\n        list tables from the database.\n\n    Syntax:\n        $ demo tables [<option>]...\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n\n"
 
         else -> throw IllegalArgumentException("Invalid subcommands: $subcommands")
     }

@@ -359,13 +359,13 @@ std::string GetProgram() {
 std::string GetDoc(std::vector<std::string> const &subcommands) {
     std::string key = join(subcommands, " ");
     
-    if (key == "") return "demo \n\n    Syntax:\n        $ demo  [<option>]...\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n    Subcommands:\n        data:\n            dump data from the specified table from the database.\n\n        schema:\n            fetch schema of the specified table from the database.\n\n        tables:\n            list tables from the database.\n\n\n";
+    if (key == "") return "demo \n\n    Syntax:\n        $ demo  [<option>]...\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n    Subcommands:\n        data:\n            dump data from the specified table from the database.\n\n        schema:\n            fetch schema of the specified table from the database.\n\n        tables:\n            list tables from the database.\n\n\n";
     
-    if (key == "data") return "demo data\n\n    Description:\n        dump data from the specified table from the database.\n\n    Syntax:\n        $ demo data [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n        -where=<string>  (default=\"\"):\n            filter data by the condition.\n\n    Arguments:\n        1.  <table:string>\n\n\n";
+    if (key == "data") return "demo data\n\n    Description:\n        dump data from the specified table from the database.\n\n    Syntax:\n        $ demo data [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n        -where=<string>(default=\"\"):\n            filter data by the condition.\n\n    Arguments:\n        1.  <table:string>\n\n\n";
     
-    if (key == "schema") return "demo schema\n\n    Description:\n        fetch schema of the specified table from the database.\n\n    Syntax:\n        $ demo schema [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n    Arguments:\n        1.  <table:string>\n\n\n";
+    if (key == "schema") return "demo schema\n\n    Description:\n        fetch schema of the specified table from the database.\n\n    Syntax:\n        $ demo schema [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n    Arguments:\n        1.  <table:string>\n\n\n";
     
-    if (key == "tables") return "demo tables\n\n    Description:\n        list tables from the database.\n\n    Syntax:\n        $ demo tables [<option>]...\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n\n";
+    if (key == "tables") return "demo tables\n\n    Description:\n        list tables from the database.\n\n    Syntax:\n        $ demo tables [<option>]...\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n\n";
     
     throw std::runtime_error("invalid subcommands: " + key);
 }

@@ -93,7 +93,7 @@ class {{$Command.HandlerInputType}} {
           return;
         }
         {{if $Option.Repeated -}}
-        {{$Option.InputFieldName}}.addAll([v].map((e) => e as bool).toList());
+        {{$Option.InputFieldName}}.addAll([v].map((e) => e as {{if eq $Option.Type "boolean"}}bool{{else if eq $Option.Type "integer"}}int{{else}}string{{end}}).toList());
         {{- else -}}
         {{$Option.InputFieldName}} = v;
         {{- end}}
