@@ -137,7 +137,7 @@ class Input_GenerateGolang {
             case 'int[]':
                 $val = [];
                 foreach ($strValue as $str) {
-                    $v = self::parseValue('int64', $str);
+                    $v = self::parseValue('int', $str);
                     if ($v === null) return null;
                     $val[] = $v;
                 }

@@ -43,7 +43,7 @@ Future<void> run(CLIHandler handler, List<String> args) async {
 class Input {bool Opt_NegationOption = false;
   int Opt_Option = 123;
   String Opt_PropagationOption = "";
-  String Opt_RepeatableOption = "";
+  List<int> Opt_RepeatableOption = <int>[];
   bool? Arg_FirstArg;
   int? Arg_SecondArg;
   List<String>? Arg_ThirdArg;
@@ -150,19 +150,19 @@ class Input {bool Opt_NegationOption = false;
       }
       
       
-      if (['-repeatable-option'].contains(optName)) {
+      if (['-repeatable-option', '-r'].contains(optName)) {
         if (cut < 0) {
           errorMessage = 'Value is not specified to option "$optName"';
           return;
         }
         dynamic v;
         try {
-          v = parseValue(lit!, 'String');
+          v = parseValue(lit!, 'List<int>');
         } catch (e) {
           errorMessage = 'Value "$lit" is not assignable to option "$optName"';
           return;
         }
-        Opt_RepeatableOption = v;
+        Opt_RepeatableOption.addAll([v].map((e) => e as int).toList());
         continue;
       }
       
@@ -480,16 +480,16 @@ String getProgram() {
 String getDoc(List<String> subcommands) {
   switch (subcommands.join(' ')) {
     case "":
-      return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        \$ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>]  (default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>  (default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option=<string>  (default=\"\"):\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n";
+      return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        \$ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>](default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>(default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option=<integer> ... , -r=<integer> ... :\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n";
   
     case "sub1":
-      return "features sub1\n\n    Description:\n        this is a child command.\n\n    Syntax:\n        \$ features sub1 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub2:\n            this is a grandchild command.\n\n\n";
+      return "features sub1\n\n    Description:\n        this is a child command.\n\n    Syntax:\n        \$ features sub1 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub2:\n            this is a grandchild command.\n\n\n";
   
     case "sub1 sub2":
-      return "features sub1 sub2\n\n    Description:\n        this is a grandchild command.\n\n    Syntax:\n        \$ features sub1 sub2 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub3:\n            this is a great-grandchild command.\n\n\n";
+      return "features sub1 sub2\n\n    Description:\n        this is a grandchild command.\n\n    Syntax:\n        \$ features sub1 sub2 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub3:\n            this is a great-grandchild command.\n\n\n";
   
     case "sub1 sub2 sub3":
-      return "features sub1 sub2 sub3\n\n    Description:\n        this is a great-grandchild command.\n\n    Syntax:\n        \$ features sub1 sub2 sub3 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n\n";
+      return "features sub1 sub2 sub3\n\n    Description:\n        this is a great-grandchild command.\n\n    Syntax:\n        \$ features sub1 sub2 sub3 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n\n";
   default:
       throw Exception('Invalid subcommands: $subcommands');
   }

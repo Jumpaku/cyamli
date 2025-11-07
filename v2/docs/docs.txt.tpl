@@ -21,10 +21,10 @@
             {{$Name}}
             {{- if (eq $Option.Type "boolean") -}}[=<{{$Option.Type}}>]
             {{- else -}}=<{{$Option.Type}}>
-            {{- end -}}
-        {{- end -}}{{"  "}}(default={{$Option.Default}})
+            {{- end -}}{{- if $Option.Repeated}} ... {{end -}}
+        {{- end -}}{{- if not $Option.Repeated -}}  (default={{$Option.Default}}){{end -}}
         {{- if $Option.Negation -}}
-            {{",\n        "}}{{$Option.NegatedOption}}[=<{{$Option.Type}}>]
+            {{",\n        "}}{{$Option.NegatedOption}}[=<{{$Option.Type}}>]{{- if $Option.Repeated}} ...{{end -}}
         {{- end -}}:
         {{- range $Index, $Line := $Option.DescriptionLines -}}
             {{"\n            "}}{{$Line}}

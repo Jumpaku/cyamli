@@ -167,7 +167,7 @@ void Input::resolveInput(std::vector<std::string> const &subcommand, std::vector
     this->Opt_NegationOption = false;
     this->Opt_Option = 123;
     this->Opt_PropagationOption = std::string("");
-    this->Opt_RepeatableOption = std::string("");
+    this->Opt_RepeatableOption = std::vector<std::int64_t>{};
     
     this->Subcommand = subcommand;
     this->Options = options;
@@ -231,13 +231,14 @@ void Input::resolveInput(std::vector<std::string> const &subcommand, std::vector
         }
         
         
-        else if (optName == "-repeatable-option") {
+        else if (optName == "-repeatable-option" || optName == "-r") {
             if (!cut) {
                 this->ErrorMessage = "value is not specified to option '" + optName + "'";
                 return;
             }
             try {
-				this->Opt_RepeatableOption = parseValue<std::string>(lit);
+				auto v = parseValue<std::vector<std::int64_t>>(std::vector<std::string>{lit});
+				this->Opt_RepeatableOption.insert(this->Opt_RepeatableOption.end(), v.begin(), v.end());
             } catch (const std::exception& e) {
                 this->ErrorMessage = std::string("value '") + lit + "' is not assignable to option '" + optName + "'";
                 return;
@@ -410,13 +411,13 @@ std::string GetProgram() {
 std::string GetDoc(std::vector<std::string> const &subcommands) {
     std::string key = join(subcommands, " ");
     
-    if (key == "") return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        $ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>]  (default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>  (default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option=<string>  (default=\"\"):\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n";
+    if (key == "") return "features \n\n    Description:\n        This is root command, which is a command with name and version.\n\n    Syntax:\n        $ features  [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -negation-option[=<boolean>](default=false),\n        -no-negation-option[=<boolean>]:\n            this option's negated version `-no-negation-option` can be available.\n\n        -option=<integer>, -o=<integer>(default=123):\n            option can have:\n              a description,\n              a type of string, integer, or boolean,\n              a short name,\n              and a default value.\n\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n        -repeatable-option=<integer> ... , -r=<integer> ... :\n            this option can be repeated multiple times.\n\n    Arguments:\n        1.  <first_arg:boolean>\n            first argument with type boolean\n\n        2.  <second_arg:integer>\n            second argument with type boolean\n\n        3. [<third_arg:string>]...\n            third argument, which can take multiple values.\n\n    Subcommands:\n        sub1:\n            this is a child command.\n\n\n";
     
-    if (key == "sub1") return "features sub1\n\n    Description:\n        this is a child command.\n\n    Syntax:\n        $ features sub1 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub2:\n            this is a grandchild command.\n\n\n";
+    if (key == "sub1") return "features sub1\n\n    Description:\n        this is a child command.\n\n    Syntax:\n        $ features sub1 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub2:\n            this is a grandchild command.\n\n\n";
     
-    if (key == "sub1 sub2") return "features sub1 sub2\n\n    Description:\n        this is a grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub3:\n            this is a great-grandchild command.\n\n\n";
+    if (key == "sub1 sub2") return "features sub1 sub2\n\n    Description:\n        this is a grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n    Subcommands:\n        sub3:\n            this is a great-grandchild command.\n\n\n";
     
-    if (key == "sub1 sub2 sub3") return "features sub1 sub2 sub3\n\n    Description:\n        this is a great-grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 sub3 [<option>]...\n\n    Options:\n        -propagation-option=<string>  (default=\"\"):\n            this option is available with the descendant commands.\n\n\n";
+    if (key == "sub1 sub2 sub3") return "features sub1 sub2 sub3\n\n    Description:\n        this is a great-grandchild command.\n\n    Syntax:\n        $ features sub1 sub2 sub3 [<option>]...\n\n    Options:\n        -propagation-option=<string>(default=\"\"):\n            this option is available with the descendant commands.\n\n\n";
     
     throw std::runtime_error("invalid subcommands: " + key);
 }

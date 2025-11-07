@@ -70,7 +70,7 @@ void test_Run() {
                 
                 v.Opt_PropagationOption = "0";
                 
-                v.Opt_RepeatableOption = "0";
+                v.Opt_RepeatableOption = std::vector<std::int64_t>{0};
                 
                 
                 v.Arg_FirstArg = false;
@@ -94,7 +94,7 @@ void test_Run() {
                 
                 v.Opt_PropagationOption = std::string("");
                 
-                v.Opt_RepeatableOption = std::string("");
+                v.Opt_RepeatableOption = std::vector<std::int64_t>{};
                 
                 
                 v.Arg_FirstArg = false;
@@ -108,7 +108,7 @@ void test_Run() {
         },
         // short-options
         {"short-options",
-            {"", "-negation-option=0","-o=0","-propagation-option=0","-repeatable-option=0","--","0","0","0",},
+            {"", "-negation-option=0","-o=0","-propagation-option=0","-r=0","--","0","0","0",},
             []{
                 Input v;
                 
@@ -118,7 +118,7 @@ void test_Run() {
                 
                 v.Opt_PropagationOption = "0";
                 
-                v.Opt_RepeatableOption = "0";
+                v.Opt_RepeatableOption = std::vector<std::int64_t>{0};
                 
                 
                 v.Arg_FirstArg = false;
@@ -142,7 +142,7 @@ void test_Run() {
                 
                 v.Opt_PropagationOption = "0";
                 
-                v.Opt_RepeatableOption = "0";
+                v.Opt_RepeatableOption = std::vector<std::int64_t>{0};
                 
                 
                 v.Arg_FirstArg = false;
@@ -166,7 +166,7 @@ void test_Run() {
                 
                 v.Opt_PropagationOption = "0";
                 
-                v.Opt_RepeatableOption = "0";
+                v.Opt_RepeatableOption = std::vector<std::int64_t>{0};
                 
                 
                 v.Arg_FirstArg = false;
@@ -190,7 +190,7 @@ void test_Run() {
                 
                 v.Opt_PropagationOption = "0";
                 
-                v.Opt_RepeatableOption = "0";
+                v.Opt_RepeatableOption = std::vector<std::int64_t>{0};
                 
                 
                 v.Arg_FirstArg = false;

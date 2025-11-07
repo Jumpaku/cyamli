@@ -168,7 +168,8 @@ void {{.HandlerInputType}}::resolveInput(std::vector<std::string> const &subcomm
             }
             try {
 				{{if $Option.Repeated -}}
-				this->{{$Option.InputFieldName}}.emplace_back(parseValue<{{.InputFieldType}}>(lit));
+                auto v = parseValue<{{.InputFieldType}}>(std::vector<std::string>{lit});
+				this->{{$Option.InputFieldName}}.insert(this->{{$Option.InputFieldName}}.end(), v.begin(), v.end());
 				{{- else -}}
 				this->{{$Option.InputFieldName}} = parseValue<{{.InputFieldType}}>(lit);
 				{{- end}}
@@ -183,7 +184,8 @@ void {{.HandlerInputType}}::resolveInput(std::vector<std::string> const &subcomm
             }
             try {
 				{{if $Option.Repeated -}}
-				this->{{$Option.InputFieldName}}.emplace_back(!parseValue<{{.InputFieldType}}>(lit));
+                auto v = parseValue<{{.InputFieldType}}>(std::vector<std::string>{lit});
+				this->{{$Option.InputFieldName}}.insert(this->{{$Option.InputFieldName}}.end(), v.begin(), v.end());
 				{{- else -}}
 				this->{{$Option.InputFieldName}} = !parseValue<{{.InputFieldType}}>(lit);
 				{{- end}}

@@ -11,7 +11,7 @@ struct Input {
     bool Opt_NegationOption;
     std::int64_t Opt_Option;
     std::string Opt_PropagationOption;
-    std::string Opt_RepeatableOption;
+    std::vector<std::int64_t> Opt_RepeatableOption;
     
     bool Arg_FirstArg;
     std::int64_t Arg_SecondArg;

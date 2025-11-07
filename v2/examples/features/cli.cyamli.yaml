@@ -16,7 +16,10 @@ options:
     description: this option is available with the descendant commands.
     propagates: true
   -repeatable-option:
+    short: -r
     description: this option can be repeated multiple times.
+    repeated: true
+    type: integer
   -negation-option:
     description: this option's negated version `-no-negation-option` can be available.
     type: boolean

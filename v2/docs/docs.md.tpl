@@ -28,10 +28,10 @@
         `{{$Name}}
         {{- if (eq $Option.Type "boolean") -}}[=<{{$Option.Type}}>]
         {{- else -}}=<{{$Option.Type}}>
-        {{- end -}}`
+        {{- end -}}{{- if $Option.Repeated}} ...{{end -}}`
     {{- end -}}
-    {{"  "}}(default=`{{$Option.Default}}`)
-    {{- if $Option.Negation -}},{{"  \n  "}}`{{$Option.NegatedOption}}[=<{{$Option.Type}}>]`{{- end -}}:{{"  \n"}}
+    {{"  "}}{{- if not $Option.Repeated -}}(default=`{{$Option.Default}}`){{end -}}
+    {{- if $Option.Negation -}},{{"  \n  "}}`{{$Option.NegatedOption}}[=<{{$Option.Type}}>]{{- if $Option.Repeated}} ...{{end -}}`{{- end -}}:{{"  \n"}}
     {{- range $Index, $Line := $Option.DescriptionLines -}}
         {{"  "}}{{$Line}}{{"  \n"}}
     {{- end -}}

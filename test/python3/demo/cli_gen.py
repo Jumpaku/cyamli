@@ -355,15 +355,15 @@ def get_doc(subcommands: List[str]) -> str:
     """Get documentation for a command."""
     subcommand_str = " ".join(subcommands)
     if subcommand_str == "":
-        return "demo \n\n    Syntax:\n        $ demo  [<option>]...\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n    Subcommands:\n        data:\n            dump data from the specified table from the database.\n\n        schema:\n            fetch schema of the specified table from the database.\n\n        tables:\n            list tables from the database.\n\n\n"
+        return "demo \n\n    Syntax:\n        $ demo  [<option>]...\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n    Subcommands:\n        data:\n            dump data from the specified table from the database.\n\n        schema:\n            fetch schema of the specified table from the database.\n\n        tables:\n            list tables from the database.\n\n\n"
     
     if subcommand_str == "data":
-        return "demo data\n\n    Description:\n        dump data from the specified table from the database.\n\n    Syntax:\n        $ demo data [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n        -where=<string>  (default=\"\"):\n            filter data by the condition.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
+        return "demo data\n\n    Description:\n        dump data from the specified table from the database.\n\n    Syntax:\n        $ demo data [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n        -where=<string>(default=\"\"):\n            filter data by the condition.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
     
     if subcommand_str == "schema":
-        return "demo schema\n\n    Description:\n        fetch schema of the specified table from the database.\n\n    Syntax:\n        $ demo schema [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
+        return "demo schema\n\n    Description:\n        fetch schema of the specified table from the database.\n\n    Syntax:\n        $ demo schema [<option>|<argument>]... [-- [<argument>]...]\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n    Arguments:\n        1.  <table:string>\n\n\n"
     
     if subcommand_str == "tables":
-        return "demo tables\n\n    Description:\n        list tables from the database.\n\n    Syntax:\n        $ demo tables [<option>]...\n\n    Options:\n        -config=<string>  (default=\"\"):\n            path to the config file.\n\n\n"
+        return "demo tables\n\n    Description:\n        list tables from the database.\n\n    Syntax:\n        $ demo tables [<option>]...\n\n    Options:\n        -config=<string>(default=\"\"):\n            path to the config file.\n\n\n"
     # If we get here, the subcommand is invalid
     raise ValueError(f"invalid subcommands: {subcommands}")

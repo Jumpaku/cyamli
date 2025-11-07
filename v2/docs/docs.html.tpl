@@ -27,9 +27,9 @@
                                     {{$Name}}
                                     {{- if (eq $Option.Type "boolean") -}}[=<{{$Option.Type}}>]
                                     {{- else -}}=<{{$Option.Type}}>
-                                    {{- end -}}
+                                    {{- end -}}{{- if $Option.Repeated}} ...{{end -}}
                                 </code>
-                            {{- end }} (default=<code>{{$Option.Default}}</code>){{ if $Option.Negation -}}, <br><code>{{$Option.NegatedOption}}[=<{{$Option.Type}}>]</code>{{ end }}:
+                            {{- end }} {{if not $Option.Repeated}}(default=<code>{{$Option.Default}}</code>){{end}}{{ if $Option.Negation -}}, <br><code>{{$Option.NegatedOption}}[=<{{$Option.Type}}>]{{- if $Option.Repeated}} ...{{end}}</code>{{ end }}:
                         </h4>
                         <p>
                             {{ range $Index, $Line := $Option.DescriptionLines }}{{$Line}}

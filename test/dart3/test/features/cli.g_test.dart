@@ -47,7 +47,7 @@ void main() {
           ..Opt_NegationOption = false
           ..Opt_Option = 0
           ..Opt_PropagationOption = '0'
-          ..Opt_RepeatableOption = '0'
+          ..Opt_RepeatableOption = [0]
           ..Arg_FirstArg = false
           ..Arg_SecondArg = 0
           ..Arg_ThirdArg = ['0']
@@ -65,7 +65,7 @@ void main() {
           ..Opt_NegationOption = false
           ..Opt_Option = 123
           ..Opt_PropagationOption = ""
-          ..Opt_RepeatableOption = ""
+          ..Opt_RepeatableOption = <int>[]
           ..Arg_FirstArg = false
           ..Arg_SecondArg = 0
           ..Arg_ThirdArg = ['0']
@@ -77,7 +77,7 @@ void main() {
           '-negation-option=0',
           '-o=0',
           '-propagation-option=0',
-          '-repeatable-option=0',
+          '-r=0',
           '--',
           '0',
           '0',
@@ -87,7 +87,7 @@ void main() {
           ..Opt_NegationOption = false
           ..Opt_Option = 0
           ..Opt_PropagationOption = '0'
-          ..Opt_RepeatableOption = '0'
+          ..Opt_RepeatableOption = [0]
           ..Arg_FirstArg = false
           ..Arg_SecondArg = 0
           ..Arg_ThirdArg = ['0']
@@ -109,7 +109,7 @@ void main() {
           ..Opt_NegationOption = false
           ..Opt_Option = 0
           ..Opt_PropagationOption = '0'
-          ..Opt_RepeatableOption = '0'
+          ..Opt_RepeatableOption = [0]
           ..Arg_FirstArg = false
           ..Arg_SecondArg = 0
           ..Arg_ThirdArg = ['0']
@@ -131,7 +131,7 @@ void main() {
           ..Opt_NegationOption = false
           ..Opt_Option = 0
           ..Opt_PropagationOption = '0'
-          ..Opt_RepeatableOption = '0'
+          ..Opt_RepeatableOption = [0]
           ..Arg_FirstArg = false
           ..Arg_SecondArg = 0
           ..Arg_ThirdArg = <String>[]
@@ -153,7 +153,7 @@ void main() {
           ..Opt_NegationOption = false
           ..Opt_Option = 0
           ..Opt_PropagationOption = '0'
-          ..Opt_RepeatableOption = '0'
+          ..Opt_RepeatableOption = [0]
           ..Arg_FirstArg = false
           ..Arg_SecondArg = 0
           ..Arg_ThirdArg = ['0', '0']

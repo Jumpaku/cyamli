@@ -9,7 +9,7 @@ namespace Cyamli\features;
  * @property bool $Opt_NegationOption 
  * @property int $Opt_Option 
  * @property string $Opt_PropagationOption 
- * @property string $Opt_RepeatableOption 
+ * @property array $Opt_RepeatableOption 
  *
  * @property bool $Arg_FirstArg 
  * @property int $Arg_SecondArg 
@@ -27,8 +27,8 @@ class Input {
     public int $Opt_Option;
     /** @var string */
     public string $Opt_PropagationOption;
-    /** @var string */
-    public string $Opt_RepeatableOption;
+    /** @var int[] */
+    public array $Opt_RepeatableOption;
     /** @var bool */
     public bool $Arg_FirstArg;
     /** @var int */
@@ -53,7 +53,7 @@ class Input {
         $this->Opt_NegationOption = false;
         $this->Opt_Option = 123;
         $this->Opt_PropagationOption = "";
-        $this->Opt_RepeatableOption = "";
+        $this->Opt_RepeatableOption = [];
         $this->Subcommand = $subcommand;
         $this->Options = $options;
         $this->Arguments = $arguments;
@@ -115,16 +115,17 @@ class Input {
                 
                 
                 case '-repeatable-option':
+                case '-r':
                     if ($cut === false) {
                         $this->ErrorMessage = "value is not specified to option '$optName'";
                         return;
                     }
-                    $v = self::parseValue('string', $lit);
+                    $v = self::parseValue('int[]', $lit);
                     if ($v === null) {
                         $this->ErrorMessage = "value '$lit' is not assignable to option '$optName'";
                         return;
                     }
-                    $this->Opt_RepeatableOption = $v;
+                    $this->Opt_RepeatableOption[] = $v[0];
                     break;
                 
                 
@@ -188,7 +189,7 @@ class Input {
             case 'int[]':
                 $val = [];
                 foreach ($strValue as $str) {
-                    $v = self::parseValue('int64', $str);
+                    $v = self::parseValue('int', $str);
                     if ($v === null) return null;
                     $val[] = $v;
                 }

@@ -67,7 +67,7 @@ public static class Cli {
                             var v = ParseValue("{{.InputFieldType}}", lit);
                             {{if .Repeated -}}
                             if (this.{{.InputFieldName}} == null) this.{{.InputFieldName}} = new List<{{if eq $Option.Type "integer"}}long{{else if eq $Option.Type "boolean"}}bool{{else}}string{{end}}>();
-                            this.{{.InputFieldName}}.Add(({{if eq $Option.Type "integer"}}long{{else if eq $Option.Type "boolean"}}bool{{else}}string{{end}})v);
+                            this.{{.InputFieldName}}.Add(((List<{{if eq $Option.Type "integer"}}long{{else if eq $Option.Type "boolean"}}bool{{else}}string{{end}}>)v)[0]);
                             {{- else -}}
                             this.{{.InputFieldName}} = ({{if eq $Option.Type "integer"}}long{{else if eq $Option.Type "boolean"}}bool{{else}}string{{end}})v;
                             {{- end}}
@@ -84,7 +84,7 @@ public static class Cli {
                             var v = ParseValue("{{.InputFieldType}}", lit);
                             {{if .Repeated -}}
                             if (this.{{.InputFieldName}} == null) this.{{.InputFieldName}} = new List<{{if eq $Option.Type "integer"}}long{{else if eq $Option.Type "boolean"}}bool{{else}}string{{end}}>();
-                            this.{{.InputFieldName}}.Add(!((bool)v));
+                            this.{{.InputFieldName}}.Add(!(((List<bool>)v)[0]));
                             {{- else -}}
                             this.{{.InputFieldName}} = !((bool)v);
                             {{- end}}
